@@ -1,0 +1,73 @@
+#include "Driver.h"
+#include <iostream>
+#include <utility>
+
+Driver::Driver(std::string name, const int experience, const int race_craft, const int awareness, const int race_pace)
+    :name(std::move(name)),experience(experience),race_craft(race_craft),awareness(awareness),race_pace(race_pace)
+{
+    value = market_value();
+}
+Driver::Driver(const Driver &other) = default;
+Driver &Driver::operator=(const Driver &other) = default;
+Driver::~Driver() {
+    std::cout << "destructor pilot: " << name << std::endl;
+}
+int Driver::rating() const {
+    return static_cast<int>(0.25 * experience + 0.25 * race_craft + 0.25 * awareness + 0.25 * race_pace);
+}
+float Driver::market_value() const {
+    return static_cast<float>(rating() - 55);
+}
+std::string& Driver::get_name() {
+    return name;
+}
+int Driver::get_rating() const {
+    return rating();
+}
+float Driver::get_market_value() const {
+    return value;
+}
+void Driver::upgrade_skill() {
+    upgrades++;
+    std::cout << "puncte upgrade: " << upgrades << std::endl;
+    while (upgrades >= 5) {
+        upgrades -= 5;
+        apply_upgrade();
+    }
+}
+
+void Driver::downgrade_skill() {
+    downgrades++;
+    std::cout << "puncte downgrade: " << downgrades << std::endl;
+    while (downgrades >= 5) {
+        downgrades -= 5;
+        apply_downgrade();
+    }
+}
+
+void Driver::apply_upgrade() {
+    upgrades = 0;
+    experience += 2;
+    race_craft += 1;
+    awareness += 1;
+    race_pace += 2;
+    std::cout << "noul rating: " << rating() << std::endl;
+}
+void Driver::apply_downgrade() {
+    downgrades = 0;
+    experience -= 2;
+    race_craft -= 1;
+    awareness -= 1;
+    race_pace -= 2;
+    std::cout << "noul rating: " << rating() << std::endl;
+}
+
+std::ostream& operator<<(std::ostream& os, const Driver& driver) {
+    os << "Nume: " << driver.name << "\nExperienta: " << driver.experience
+       << "\nRace Craft: " << driver.race_craft << "\nAwareness: " << driver.awareness
+       << "\nPace: " << driver.race_pace << "\nRating: " << driver.rating()
+       << "\nValue " << driver.value << "\n";
+    return os;
+}
+
+
