@@ -56,6 +56,8 @@ add_executable(${PROJECT_NAME}
         env_fixes.h
         sources/Driver.cpp
         headers/Driver.h
+        sources/Car.cpp
+        headers/Car.h
 
 )
 
