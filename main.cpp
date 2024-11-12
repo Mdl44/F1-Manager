@@ -1,30 +1,46 @@
 #include "Driver.h"
 #include "Car.h"
+#include "Team.h"
 #include <iostream>
 
-
 int main() {
-    Driver lando("Lando Norris", 81, 90, 84, 93);
-    Driver oscar("Oscar Piastri", 71, 89, 89, 88);
-    std::cout << lando << std::endl;
-    std::cout << oscar << std::endl;
-    for(int i = 0; i < 10; i++) {
+    Driver lando("Lando Norris", 81, 90, 84, 93, nullptr, nullptr);
+    Driver oscar("Oscar Piastri", 71, 89, 89, 88, nullptr, nullptr);
+    Driver lewis("Lewis Hamilton", 99, 97, 96, 95, nullptr, nullptr);
+    Driver george("George Russell", 85, 93, 91, 90, nullptr, nullptr);
+
+    Car car1(80, 85, 90, 80, nullptr);
+    Car car2(80, 85, 90, 80, nullptr);
+    Car mercedes_car1(90, 95, 95, 90, nullptr);
+    Car mercedes_car2(90, 95, 95, 90, nullptr);
+
+    Team mclaren("McLaren", &car1, &car2, &lando, &oscar, 2);
+    Team mercedes("Mercedes", &mercedes_car1, &mercedes_car2, &lewis, &george, 1);
+
+    std::cout << "Details:\n";
+    std::cout << mclaren << "\n";
+    std::cout << mercedes << "\n";
+
+    std::cout << "Upgrading " << lando.get_name() << std::endl;
+    for (int i = 0; i < 12; i++) {
         lando.upgrade_skill();
     }
-    oscar.downgrade_skill();
-    std::cout << lando << std::endl;
-    std::cout << oscar << std::endl;
 
-    Car car1(80,85,90,80);
-    Car car2(80,85,90,80);
-    std::cout << car1 << std::endl;
-    std::cout << car2 << std::endl;
-    for(int i = 0; i < 10; i++) {
-        car1.upgrade();
+    std::cout << "Upgrading " << mercedes.get_name() << std::endl;
+    for (int i = 0; i < 12; i++) {
+        mercedes_car1.upgrade();
     }
-    car2.downgrade();
-    std::cout << car1 << std::endl;
-    std::cout << car2 << std::endl;
 
+    mercedes.set_control(true);
+    std::cout << mercedes.get_name() << " is player controlled\n";
+
+    std::cout << "Driver swap:\n";
+    Driver* lando_ptr = &lando;
+    Driver* george_ptr = &george;
+    if (mclaren.swap(lando_ptr, george_ptr, mercedes)) {
+        std::cout << "After swap:\n";
+        std::cout << mclaren << "\n";
+        std::cout << mercedes << "\n";
+    }
     return 0;
 }

@@ -58,6 +58,8 @@ add_executable(${PROJECT_NAME}
         headers/Driver.h
         sources/Car.cpp
         headers/Car.h
+        sources/Team.cpp
+        headers/Team.h
 
 )
 
