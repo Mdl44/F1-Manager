@@ -1,9 +1,5 @@
 # F1 Manager
-Jocul "Formula 1 Manager" oferă jucătorului o experiență complexă de gestionare a unei echipe de Formula 1, plasându-l în rolul de team principal într-o simulare realistă.
-
-Jucătorul va începe prin a-și alege echipa favorită dintr-o selecție de echipe cunoscute de Formula 1. În această calitate de team principal, va gestiona toate aspectele echipei, de la selecția piloților până la optimizarea mașinilor și luarea deciziilor strategice care vor influența succesul echipei de-a lungul sezonului. Resursele obținute după fiecare cursă vor putea fi utilizate pentru a îmbunătăți performanța mașinilor.
-
-Fiecare cursă va include o simulare vizuală în care jucătorul poate urmări desfășurarea acțiunii pe un layout al circuitului. Mașinile vor fi reprezentate prin cercuri care se mișcă în timp real pe pistă, simulând evoluția cursei. Performanța fiecărui pilot și a mașinii acestuia va fi reflectată printr-un rating general (overall rating), astfel încât combinațiile optime între pilot și mașină vor avea cele mai mari șanse de succes.
+Jucătorul poate prelua una dintre cele 10 echipe participante în sezonul 2023-2024 de Formula 1, având responsabilitatea de a lua decizii strategice esențiale pentru succesul echipei. Printre deciziile cheie se numără schimbarea piloților și momentul oportun pentru a îmbunătăți atributele mașinilor și ale piloților. Simularea acoperă toate cele 24 de curse reale din sezon, iar cheia succesului constă în obținerea celor mai bune combinații de pilot/mașină.
 
 ### Important!
 Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar în folder-ul `generated`.
