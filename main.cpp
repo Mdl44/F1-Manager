@@ -2,6 +2,7 @@
 #include "Car.h"
 #include "Team.h"
 #include "Player.h"
+#include "RaceWeekend.h"
 #include <iostream>
 
 int main() {
@@ -45,5 +46,14 @@ int main() {
         std::cout << mclaren << "\n";
         std::cout << mercedes << "\n";
     }
+    RaceWeekend raceWeekend("Monaco Grand Prix", 78, 85000);
+    std::vector<Driver*> drivers = {&lando, &oscar, &lewis, &george};
+
+    raceWeekend.quali(drivers);
+    raceWeekend.display_quali();
+
+    raceWeekend.race();
+    raceWeekend.display_race();
+
     return 0;
 }

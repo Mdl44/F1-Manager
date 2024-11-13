@@ -35,6 +35,8 @@ public:
     float get_market_value() const;
     void set_car(Car* car_set);
     void set_team(Team* team_set);
+    Car *get_car() const;
+    Team *get_team() const;
 };
 
 #endif

@@ -75,6 +75,15 @@ void Driver::set_team(Team *team_set) {
     this->team = team_set;
 }
 
+Car *Driver::get_car() const {
+    return car;
+}
+
+Team *Driver::get_team() const {
+    return team;
+}
+
+
 std::ostream& operator<<(std::ostream& os, const Driver& driver) {
     os << "Name: " << driver.name << "\nExperience: " << driver.experience
        << "\nRace Craft: " << driver.race_craft << "\nAwareness: " << driver.awareness
