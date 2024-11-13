@@ -1,6 +1,8 @@
 #include "Driver.h"
 #include <iostream>
 
+#include "Team.h"
+
 Driver::Driver(std::string name, const int experience, const int race_craft, const int awareness, const int race_pace, Car* car,Team* team)
     :name(std::move(name)),experience(experience),race_craft(race_craft),awareness(awareness),race_pace(race_pace),car(car),team(team)
 {
@@ -13,17 +15,20 @@ float Driver::market_value() const {
     return static_cast<float>(rating() - 55);
 }
 void Driver::upgrade_skill() {
-    upgrades++;
-    std::cout << "puncte upgrade: " << upgrades << std::endl;
-    while (upgrades >= 5) {
-        upgrades -= 5;
-        apply_upgrade();
+    if (team && team->is_player_controlled()) {
+        upgrades++;
+    } else {
+        upgrades++;
+        while (upgrades >= 5) {
+            upgrades -= 5;
+            apply_upgrade();
+        }
     }
 }
 
 void Driver::downgrade_skill() {
     downgrades++;
-    std::cout << "puncte downgrade: " << downgrades << std::endl;
+    std::cout << "downgrade points: " << downgrades << std::endl;
     while (downgrades >= 5) {
         downgrades -= 5;
         apply_downgrade();
@@ -36,7 +41,7 @@ void Driver::apply_upgrade() {
     race_craft += 1;
     awareness += 1;
     race_pace += 2;
-    std::cout << "noul rating: " << rating() << std::endl;
+    std::cout << "new rating: " << rating() << std::endl;
 }
 void Driver::apply_downgrade() {
     downgrades = 0;
@@ -44,7 +49,7 @@ void Driver::apply_downgrade() {
     race_craft -= 1;
     awareness -= 1;
     race_pace -= 2;
-    std::cout << "noul rating: " << rating() << std::endl;
+    std::cout << "new rating: " << rating() << std::endl;
 }
 
 Driver::Driver(const Driver &other) = default;
@@ -71,7 +76,7 @@ void Driver::set_team(Team *team_set) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Driver& driver) {
-    os << "Nume: " << driver.name << "\nExperienta: " << driver.experience
+    os << "Name: " << driver.name << "\nExperience: " << driver.experience
        << "\nRace Craft: " << driver.race_craft << "\nAwareness: " << driver.awareness
        << "\nPace: " << driver.race_pace << "\nRating: " << driver.rating()
        << "\nValue " << driver.value << "\n";

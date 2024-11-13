@@ -1,4 +1,5 @@
 #include "Team.h"
+
 Team::Team(std::string name, Car* car1, Car* car2, Driver* driver1, Driver* driver2, int position)
     : name(std::move(name)), car1(car1), car2(car2), driver1(driver1), driver2(driver2), position(position) {
         if (driver1) {
@@ -54,6 +55,10 @@ bool Team::swap(Driver*& my_driver, Driver*& other_driver, Team& other_team) {
 void Team::set_control(const bool value) {
         player = value;
 }
+bool Team::is_player_controlled() const {
+        return player;
+}
+
 Team::Team(const Team& other) = default;
 
 Team& Team::operator=(const Team& other) = default;
@@ -78,10 +83,10 @@ Car *Team::get_car2() const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Team& team) {
-        os << "Echipa: " << team.name << "\n";
-        os << "Pilot 1:\n" << *(team.driver1) << "\n";
-        os << "Pilot 2:\n" << *(team.driver2) << "\n";
-        os << "Masina 1:\n" << *(team.car1) << "\n";
-        os << "Masina 2:\n" << *(team.car2) << "\n";
+        os << "Team: " << team.name << "\n";
+        os << "Driver 1:\n" << *(team.driver1) << "\n";
+        os << "Driver 2:\n" << *(team.driver2) << "\n";
+        os << "Car 1:\n" << *(team.car1) << "\n";
+        os << "Car 2:\n" << *(team.car2) << "\n";
         return os;
 }

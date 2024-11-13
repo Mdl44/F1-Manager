@@ -16,7 +16,7 @@ class Team {
 public:
     void set_control(bool value);
     bool swap(Driver*& my_driver, Driver*& other_driver, Team& other_team);
-
+    bool is_player_controlled() const;
     Team(std::string name, Car* car1, Car* car2, Driver* driver1, Driver* driver2, int initial_position);
     Team(const Team& other);
     Team& operator=(const Team& other);
@@ -31,3 +31,4 @@ public:
 };
 
 #endif
+

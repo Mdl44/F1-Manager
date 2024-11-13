@@ -1,20 +1,25 @@
 #include "Car.h"
 
+#include "Team.h"
+
 Car::Car(const int aerodynamics, const int powertrain, const int durability, const int chasis, Team* team)
     : aerodynamics(aerodynamics), powertrain(powertrain), durability(durability), chasis(chasis), team(team) {}
 
 void Car::upgrade() {
-    upgrades++;
-    std::cout << "puncte upgrade: " << upgrades << std::endl;
-    while (upgrades >= 5) {
-        upgrades -= 5;
-        apply_upgrades();
+    if (team && team->is_player_controlled()) {
+        upgrades++;
+    } else {
+        upgrades++;
+        while (upgrades >= 5) {
+            upgrades -= 5;
+            apply_upgrades();
+        }
     }
 }
 
 void Car::downgrade() {
     downgrades++;
-    std::cout << "puncte downgrade: " << downgrades << std::endl;
+    std::cout << "downgrade points: " << downgrades << std::endl;
     while (downgrades >= 5) {
         downgrades -= 5;
         apply_downgrades();
@@ -27,7 +32,7 @@ void Car::apply_upgrades() {
     powertrain += 1;
     durability += 1;
     chasis += 2;
-    std::cout << "noul rating: " << rating() << std::endl;
+    std::cout << "new rating: " << rating() << std::endl;
 }
 void Car::apply_downgrades() {
     downgrades = 0;
@@ -35,7 +40,7 @@ void Car::apply_downgrades() {
     powertrain -= 1;
     durability -= 1;
     chasis -= 2;
-    std::cout << "noul rating: " << rating() << std::endl;
+    std::cout << "new rating: " << rating() << std::endl;
 }
 int Car::rating() const {
     return static_cast<int>(0.25* aerodynamics + 0.25 * powertrain + 0.25 * durability + 0.25 * chasis);
