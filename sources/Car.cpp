@@ -48,8 +48,8 @@ Car::~Car() = default;
 int Car::get_rating() const {
     return rating();
 }
-void Car::set_team(Team *team) {
-    this->team = team;
+void Car::set_team(Team *team_set) {
+    this->team = team_set;
 }
 
 std::ostream& operator<<(std::ostream& os, const Car& obj) {

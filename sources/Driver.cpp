@@ -63,11 +63,11 @@ float Driver::get_market_value() const {
     return value;
 }
 
-void Driver::set_car(Car *car) {
-    this->car = car;
+void Driver::set_car(Car *car_set) {
+    this->car = car_set;
 }
-void Driver::set_team(Team *team) {
-    this->team = team;
+void Driver::set_team(Team *team_set) {
+    this->team = team_set;
 }
 
 std::ostream& operator<<(std::ostream& os, const Driver& driver) {

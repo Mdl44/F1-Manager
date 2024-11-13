@@ -33,8 +33,8 @@ public:
     std::string& get_name();
     int get_rating() const;
     float get_market_value() const;
-    void set_car(Car* car);
-    void set_team(Team* team);
+    void set_car(Car* car_set);
+    void set_team(Team* team_set);
 };
 
 #endif

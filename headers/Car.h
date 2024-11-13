@@ -25,7 +25,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Car& obj);
 
     int get_rating() const;
-    void set_team(Team* team);
+    void set_team(Team* team_set);
 
 };
 
