@@ -11,19 +11,12 @@ class Driver {
     int awareness;
     int race_pace;
     float value;
-    int upgrades = 0;
-    int downgrades = 0;
     Car* car;
     Team* team;
-
     int rating() const;
-public:
-    void upgrade_skill();
-    void downgrade_skill();
     float market_value() const;
-    void apply_upgrade();
-    void apply_downgrade();
 
+public:
     Driver(std::string name, int experience, int race_craft,int awareness, int race_pace, Car* car,Team* team);
     Driver(const Driver& other);
     Driver& operator=(const Driver& other);

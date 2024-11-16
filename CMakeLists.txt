@@ -64,6 +64,8 @@ add_executable(${PROJECT_NAME}
         headers/Player.h
         sources/RaceWeekend.cpp
         headers/RaceWeekend.h
+        headers/Season.h
+        sources/Season.cpp
 
 )
 

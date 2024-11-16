@@ -2,91 +2,142 @@
 
 Team::Team(std::string name, Car* car1, Car* car2, Driver* driver1, Driver* driver2, int position)
     : name(std::move(name)), car1(car1), car2(car2), driver1(driver1), driver2(driver2), position(position) {
-        if (driver1) {
-                driver1->set_team(this);
-                driver1->set_car(car1);
-        }
-        if (driver2) {
-                driver2->set_team(this);
-                driver2->set_car(car2);
-        }
-        if (car1) car1->set_team(this);
-        if (car2) car2->set_team(this);
+    if (driver1) {
+        driver1->set_team(this);
+        driver1->set_car(car1);
+    }
+    if (driver2) {
+        driver2->set_team(this);
+        driver2->set_car(car2);
+    }
+    if (car1) car1->set_team(this);
+    if (car2) car2->set_team(this);
+}
+Team::~Team() {
+    std::cout << "Destructor Team: " << name << std::endl;
+    delete driver1;
+    delete driver2;
+    delete car1;
+    delete car2;
+}
+
+Team::Team(const Team& other) :
+    name(other.name),
+    player(other.player),
+    car1(new Car(*other.car1)),
+    car2(new Car(*other.car2)),
+    driver1(new Driver(*other.driver1)),
+    driver2(new Driver(*other.driver2)),
+    position(other.position) {
+}
+
+Team& Team::operator=(const Team& other) {
+    if (this != &other) {
+        delete car1;
+        delete car2;
+        delete driver1;
+        delete driver2;
+        name = other.name;
+        player = other.player;
+        car1 = new Car(*other.car1);
+        car2 = new Car(*other.car2);
+        driver1 = new Driver(*other.driver1);
+        driver2 = new Driver(*other.driver2);
+        position = other.position;
+    }
+    return *this;
 }
 
 bool Team::swap(Driver*& my_driver, Driver*& other_driver, Team& other_team) {
-        if (my_driver->get_market_value() > other_driver->get_market_value()) {
-                std::cout << "Can't swap" << std::endl;
-                return false;
-        }
-        Car* my_team_car = nullptr;
-        if (driver1 == my_driver) {
-                my_team_car = car1;
-        } else if (driver2 == my_driver) {
-                my_team_car = car2;
-        }
+    if (my_driver->get_market_value() <= other_driver->get_market_value()) {
+        std::cout << "Can't swap" << std::endl;
+        return false;
+    }
 
-        Car* other_team_car = nullptr;
-        if (other_team.driver1 == other_driver) {
-                other_team_car = other_team.car1;
-        } else if (other_team.driver2 == other_driver) {
-                other_team_car = other_team.car2;
-        }
+    Car* my_team_car = nullptr;
+    if (driver1 == my_driver) {
+        my_team_car = car1;
+    } else if (driver2 == my_driver) {
+        my_team_car = car2;
+    }
 
-        if (!my_team_car || !other_team_car) {
-                return false;
-        }
-        if (driver1 == my_driver) driver1 = other_driver;
-        else driver2 = other_driver;
+    Car* other_team_car = nullptr;
+    if (other_team.driver1 == other_driver) {
+        other_team_car = other_team.car1;
+    } else if (other_team.driver2 == other_driver) {
+        other_team_car = other_team.car2;
+    }
 
-        if (other_team.driver1 == other_driver) other_team.driver1 = my_driver;
-        else other_team.driver2 = my_driver;
+    if (!my_team_car || !other_team_car) {
+        return false;
+    }
 
-        my_driver->set_team(&other_team);
-        my_driver->set_car(other_team_car);
-        other_driver->set_team(this);
-        other_driver->set_car(my_team_car);
+    if (driver1 == my_driver) driver1 = other_driver;
+    else driver2 = other_driver;
 
-        std::swap(my_driver, other_driver);
+    if (other_team.driver1 == other_driver) other_team.driver1 = my_driver;
+    else other_team.driver2 = my_driver;
 
-        std::cout << "Swap completed" << std::endl;
-        return true;
+    my_driver->set_team(&other_team);
+    my_driver->set_car(other_team_car);
+    other_driver->set_team(this);
+    other_driver->set_car(my_team_car);
+
+    std::swap(my_driver, other_driver);
+
+    std::cout << "Swap completed" << std::endl;
+    return true;
 }
+
 void Team::set_control(const bool value) {
-        player = value;
+    player = value;
 }
+
 bool Team::is_player_controlled() const {
-        return player;
+    return player;
 }
 
-Team::Team(const Team& other) = default;
-
-Team& Team::operator=(const Team& other) = default;
-
-Team::~Team() {
-        std::cout << "Destructor Team: " << name << std::endl;
-}
 std::string Team::get_name() {
-        return name;
+    return name;
 }
+
 Driver* Team::get_driver1() const {
-        return driver1;
+    return driver1;
 }
+
 Driver* Team::get_driver2() const {
-        return driver2;
+    return driver2;
 }
-Car *Team::get_car1() const {
-        return car1;
+
+Car* Team::get_car1() const {
+    return car1;
 }
-Car *Team::get_car2() const {
-        return car2;
+
+Car* Team::get_car2() const {
+    return car2;
+}
+
+int Team::get_position() const {
+    return position;
 }
 
 std::ostream& operator<<(std::ostream& os, const Team& team) {
-        os << "Team: " << team.name << "\n";
-        os << "Driver 1:\n" << *(team.driver1) << "\n";
-        os << "Driver 2:\n" << *(team.driver2) << "\n";
-        os << "Car 1:\n" << *(team.car1) << "\n";
-        os << "Car 2:\n" << *(team.car2) << "\n";
-        return os;
+    os << "Team: " << team.name << "\n"
+       << "Position: " << team.position << "\n"
+       << std::string(60, '=') << "\n"
+       << "First Driver Details:\n"
+       << std::string(30, '-') << "\n"
+       << *team.driver1 << "\n"
+       << "\nFirst Driver's Car:\n"
+       << std::string(30, '-') << "\n"
+       << *team.car1 << "\n"
+       << std::string(60, '=') << "\n"
+       << "Second Driver Details:\n"
+       << std::string(30, '-') << "\n"
+       << *team.driver2 << "\n"
+       << "\nSecond Driver's Car:\n"
+       << std::string(30, '-') << "\n"
+       << *team.car2;
+    return os;
 }
+

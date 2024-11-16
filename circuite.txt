@@ -1,0 +1,72 @@
+Bahrain International Circuit
+89100
+57
+Jeddah Street Circuit
+87400
+50
+Melbourne Grand Prix Circuit
+75900
+58
+Suzuka
+88100
+53
+Shanghai International Circuit
+93600
+56
+Hard Rock Stadium Circuit
+87200
+57
+Autodromo Internazionale Enzo e Dino Ferrari
+74700
+63
+Circuit de Monaco
+70200
+78
+Circuit Gilles Villeneuve
+72000
+70
+Circuit de Barcelona-Catalunya
+71300
+66
+Red Bull Ring
+64300
+71
+Silverstone Circuit
+85800
+52
+Hungaroring
+81200
+70
+Circuit de Spa-Francorchamps
+113700
+44
+Zandvoort
+69600
+72
+Autodromo Nazionale di Monza
+79300
+53
+Baku City Circuit
+101300
+51
+Marina Bay Street Circuit
+89500
+61
+Circuit of the Americas
+92300
+56
+Autodromo Hermanos Rodriguez
+75900
+71
+Autodromo Jose Carlos Pace
+70700
+71
+Las Vegas Street Circuit
+92700
+50
+Lusail Circuit
+83700
+57
+Yas Marina Circuit
+83400
+55
