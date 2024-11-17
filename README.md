@@ -1,5 +1,5 @@
 # F1 Manager
-Jucătorul poate prelua una dintre cele 10 echipe participante în sezonul 2023-2024 de Formula 1, având responsabilitatea de a lua decizii strategice esențiale pentru succesul echipei. Printre deciziile cheie se numără schimbarea piloților și momentul oportun pentru a îmbunătăți atributele mașinilor și ale piloților. Simularea acoperă toate cele 24 de curse reale din sezon, iar cheia succesului constă în obținerea celor mai bune combinații de pilot/mașină.
+Jucătorul poate prelua una dintre cele 10 echipe participante în sezonul 2023-2024 de Formula 1, având responsabilitatea de a lua decizii strategice esențiale pentru succesul echipei. Simularea acoperă toate cele 24 de curse reale din sezon, iar cheia succesului constă în obținerea celor mai bune combinații de pilot/mașină.
 
 ### Important!
 Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar în folder-ul `generated`.
