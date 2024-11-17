@@ -19,8 +19,8 @@ void RaceWeekend::quali(const std::vector<Driver*>& drivers) {
         int car_rating = driver->get_car()->get_rating();
         int combined = (driver_rating + car_rating) / 2;
         int performance_factor = 100 - combined;
-        int time = reference_time + (performance_factor * 3) + random_time_generator();
-        quali_results.emplace_back(driver, time / 1000.0);
+        long long time = reference_time + (performance_factor * 3) + random_time_generator();
+        quali_results.emplace_back(driver, time);
     }
     std::ranges::sort(quali_results, [](const auto& lhs, const auto& rhs) {
         return lhs.second < rhs.second;
@@ -56,9 +56,10 @@ void RaceWeekend::display_quali() const {
     int pos = 1;
     for (const auto& [driver, time] : quali_results) {
         std::string pos_str = (pos < 10 ? " " : "") + std::to_string(pos) + ".";
-        int minutes = static_cast<int>(time / 60);
-        int seconds = static_cast<int>(time) % 60;
-        int milliseconds = static_cast<int>((time - static_cast<int>(time)) * 1000);
+
+        int minutes = static_cast<int>(time / (1000 * 60));
+        int seconds = static_cast<int>((time % (1000 * 60)) / 1000);
+        int milliseconds = static_cast<int>(time % 1000);
 
         std::string driver_name = driver->get_name();
         if (driver_name.length() < 25) {
@@ -103,6 +104,6 @@ void RaceWeekend::display_race() const {
 std::string RaceWeekend::get_name() const {
     return name;
 }
-const std::vector<std::pair<Driver *, double> > &RaceWeekend::get_quali_results() const {
+const std::vector<std::pair<Driver*, long long>>& RaceWeekend::get_quali_results() const {
     return quali_results;
 }

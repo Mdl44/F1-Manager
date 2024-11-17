@@ -21,35 +21,12 @@ Team::~Team() {
     delete car2;
 }
 
-Team::Team(const Team& other) :
-    name(other.name),
-    player(other.player),
-    car1(new Car(*other.car1)),
-    car2(new Car(*other.car2)),
-    driver1(new Driver(*other.driver1)),
-    driver2(new Driver(*other.driver2)),
-    position(other.position) {
-}
+Team::Team(const Team& other) = default;
 
-Team& Team::operator=(const Team& other) {
-    if (this != &other) {
-        delete car1;
-        delete car2;
-        delete driver1;
-        delete driver2;
-        name = other.name;
-        player = other.player;
-        car1 = new Car(*other.car1);
-        car2 = new Car(*other.car2);
-        driver1 = new Driver(*other.driver1);
-        driver2 = new Driver(*other.driver2);
-        position = other.position;
-    }
-    return *this;
-}
+Team& Team::operator=(const Team& other) = default;
 
 bool Team::swap(Driver*& my_driver, Driver*& other_driver, Team& other_team) {
-    if (my_driver->get_market_value() <= other_driver->get_market_value()) {
+    if (my_driver->get_market_value() < other_driver->get_market_value()) {
         std::cout << "Can't swap" << std::endl;
         return false;
     }
@@ -72,11 +49,11 @@ bool Team::swap(Driver*& my_driver, Driver*& other_driver, Team& other_team) {
         return false;
     }
 
-    if (driver1 == my_driver) driver1 = other_driver;
-    else driver2 = other_driver;
+    //if (driver1 == my_driver) driver1 = other_driver;
+    //else driver2 = other_driver;
 
-    if (other_team.driver1 == other_driver) other_team.driver1 = my_driver;
-    else other_team.driver2 = my_driver;
+    //if (other_team.driver1 == other_driver) other_team.driver1 = my_driver;
+    //else other_team.driver2 = my_driver;
 
     my_driver->set_team(&other_team);
     my_driver->set_car(other_team_car);
@@ -124,19 +101,13 @@ int Team::get_position() const {
 std::ostream& operator<<(std::ostream& os, const Team& team) {
     os << "Team: " << team.name << "\n"
        << "Position: " << team.position << "\n"
-       << std::string(60, '=') << "\n"
        << "First Driver Details:\n"
-       << std::string(30, '-') << "\n"
        << *team.driver1 << "\n"
        << "\nFirst Driver's Car:\n"
-       << std::string(30, '-') << "\n"
        << *team.car1 << "\n"
-       << std::string(60, '=') << "\n"
        << "Second Driver Details:\n"
-       << std::string(30, '-') << "\n"
        << *team.driver2 << "\n"
        << "\nSecond Driver's Car:\n"
-       << std::string(30, '-') << "\n"
        << *team.car2;
     return os;
 }

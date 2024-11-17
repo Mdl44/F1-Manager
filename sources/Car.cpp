@@ -9,7 +9,9 @@ int Car::rating() const {
 
 Car::Car(const Car& other) = default;
 Car& Car::operator=(const Car& other) = default;
-Car::~Car() = default;
+Car::~Car() {
+    std::cout << "destructor car" << std::endl;
+}
 
 int Car::get_rating() const {
     return rating();

@@ -40,13 +40,7 @@ void Season::standings(const std::vector<std::pair<Driver*, long long>>& results
 }
 
 void Season::display_standings() {
-    auto pad_string = [](const std::string& str, size_t width) {
-        if (str.length() >= width) return str;
-        return str + std::string(width - str.length(), ' ');
-    };
-
     std::cout << "\nDriver Championship\n";
-    std::cout << std::string(60, '-') << "\n";
 
     std::vector<std::pair<std::string, int>> drivers_standings(driver_points.begin(), driver_points.end());
     std::ranges::sort(drivers_standings, [](const auto& a, const auto& b) {
@@ -56,14 +50,15 @@ void Season::display_standings() {
     int pos = 1;
     for (const auto& [name, points] : drivers_standings) {
         std::string pos_str = (pos < 10 ? " " : "") + std::to_string(pos) + ".";
-        std::cout << pos_str << " "
-                  << pad_string(name, 25)
-                  << points << " pts\n";
+        std::string formatted_name = name;
+        while (formatted_name.length() < 25) {
+            formatted_name += " ";
+        }
+        std::cout << pos_str << " " << formatted_name << points << " pts\n";
         pos++;
     }
 
     std::cout << "\nConstructor Championship\n";
-    std::cout << std::string(60, '-') << "\n";
 
     std::vector<std::pair<std::string, int>> team_standings(team_points.begin(), team_points.end());
     std::ranges::sort(team_standings, [](const auto& a, const auto& b) {
@@ -73,12 +68,31 @@ void Season::display_standings() {
     pos = 1;
     for (const auto& [name, points] : team_standings) {
         std::string pos_str = (pos < 10 ? " " : "") + std::to_string(pos) + ".";
-        std::cout << pos_str << " "
-                  << pad_string(name, 35)
-                  << points << " pts\n";
+        std::string formatted_name = name;
+        while (formatted_name.length() < 35) {
+            formatted_name += " ";
+        }
+        std::cout << pos_str << " " << formatted_name << points << " pts\n";
         pos++;
     }
-    std::cout << std::string(60, '-') << "\n\n";
+    std::cout << std::string(60, '-') << "\n";
+
+    if (current_race == races) {
+        std::cout << "\nFINAL CHAMPIONS\n";
+        std::cout << std::string(60, '*') << "\n";
+        if (!drivers_standings.empty()) {
+            const auto& champion_driver = drivers_standings[0];
+            std::cout << "World Drivers' Champions : " << champion_driver.first
+                     << " with " << champion_driver.second << " points\n";
+        }
+        if (!team_standings.empty()) {
+            const auto& champion_team = team_standings[0];
+            std::cout << "Constructors Champion: " << champion_team.first
+                     << " with " << champion_team.second << " points\n";
+        }
+        std::cout << std::string(60, '*') << "\n";
+    }
+    std::cout << "\n";
 }
 
 std::vector<std::pair<std::string, int>> Season::get_driver_standings() const {

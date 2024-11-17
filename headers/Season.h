@@ -10,11 +10,7 @@ class Season {
     std::map<std::string, int> driver_points;
     std::map<std::string, int> team_points;
     int races;
-    int current_race = 0;
-    static std::string pad_right(const std::string& str, size_t width) {
-        if (str.length() >= width) return str;
-        return str + std::string(width - str.length() + 1, ' ');
-    }
+    int current_race = 1;
 
 public:
     Season(const std::vector<Team*>& teamList, int totalRaces = 24);

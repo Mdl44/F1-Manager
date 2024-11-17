@@ -7,7 +7,7 @@ class RaceWeekend {
     std::string name;
     int laps;
     int reference_time;
-    std::vector<std::pair<Driver*, double>> quali_results;
+    std::vector<std::pair<Driver*, long long>> quali_results;
     std::vector<std::pair<Driver*, long long>> race_results;
 
 public:
@@ -18,7 +18,7 @@ public:
     void display_race() const;
 
     std::string get_name() const;
-    const std::vector<std::pair<Driver*, double>>& get_quali_results() const;
+    const std::vector<std::pair<Driver*, long long>>& get_quali_results() const;
 };
 
 #endif

@@ -61,26 +61,23 @@ int main() {
         teams.push_back(std::make_unique<Team>(team_name, car1.release(), car2.release(), driver1.release(), driver2.release(), i + 1));
     }
 
-    Team* player_team = teams[1].get();
-    Player player(player_team);
+    Team* userTeam = teams[1].get();
+    Player player(userTeam);
 
-    std::vector<Team*> raw_team_ptrs;
-    raw_team_ptrs.reserve(teams.size());
+    std::vector<Team*> teamPtrs;
+    teamPtrs.reserve(teams.size());
     for (const auto& team : teams) {
-        raw_team_ptrs.push_back(team.get());
+        teamPtrs.push_back(team.get());
     }
-    Season season(raw_team_ptrs);
+    Season season(teamPtrs);
 
     for (size_t i = 0; i < circuits.size() && i < 24; ++i) {
-        auto& circuit = circuits[i];
-        season.race(circuit);
+        season.race(circuits[i]);
 
         if (i == 0) {
-            Driver* my_driver = player_team->get_driver2();
-            Team* other_team = teams[0].get();
-            Driver* other_driver = other_team->get_driver2();
-
-            player.swap_try(my_driver, other_driver, *other_team);
+            Driver* firstDriver = userTeam->get_driver2();
+            Driver* secondDriver = teams[0]->get_driver2();
+            player.swap_try(firstDriver, secondDriver, *teams[0]);
         }
     }
     return 0;
