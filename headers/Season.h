@@ -13,15 +13,15 @@ class Season {
     int current_race = 1;
 
 public:
-    Season(const std::vector<Team*>& teamList, int totalRaces = 24);
+    explicit Season(const std::vector<Team*>& teamList, int totalRaces = 24);
     Season(const Season&) = delete;
     Season& operator=(const Season&) = delete;
 
     void race(RaceWeekend& weekend);
     void standings(const std::vector<std::pair<Driver *, long long>> &raceResults);
     void display_standings();
-    std::vector<std::pair<std::string, int>> get_driver_standings() const;
-    std::vector<std::pair<std::string, int>> get_team_standings() const;
+    //std::vector<std::pair<std::string, int>> get_driver_standings() const;
+    //std::vector<std::pair<std::string, int>> get_team_standings() const;
 };
 
 #endif

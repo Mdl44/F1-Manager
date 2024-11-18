@@ -6,7 +6,7 @@ class Player {
     Team* my_team;
 public:
     bool swap_try(Driver *&my_driver, Driver *&other_driver, Team &other_team) const;
-    Player(Team* my_team);
+    explicit Player(Team* my_team);
 };
 
 #endif

@@ -17,8 +17,8 @@ public:
     void display_quali() const;
     void display_race() const;
 
-    std::string get_name() const;
-    const std::vector<std::pair<Driver*, long long>>& get_quali_results() const;
+    [[nodiscard]] std::string get_name() const;
+    //[[nodiscard]] const std::vector<std::pair<Driver*, long long>>& get_quali_results() const;
 };
 
 #endif

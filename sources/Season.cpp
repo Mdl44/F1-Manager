@@ -1,8 +1,8 @@
 #include "Season.h"
 #include <algorithm>
 
-Season::Season(const std::vector<Team*>& teamList, int races)
-    : teams(teamList), races(races) {
+Season::Season(const std::vector<Team*>& teamList, const int totalRaces)
+    : teams(teamList), races(totalRaces) {
     for (const auto& team : teams) {
         if (auto d1 = team->get_driver1()) {
             drivers.push_back(d1);
@@ -17,20 +17,20 @@ Season::Season(const std::vector<Team*>& teamList, int races)
 }
 
 void Season::race(RaceWeekend& weekend) {
-    std::vector<Driver*> drivers_team = drivers;
+    const std::vector<Driver*> drivers_team = drivers;
     weekend.quali(drivers_team);
     weekend.display_quali();
-    auto results = weekend.race();
+    const auto results = weekend.race();
     weekend.display_race();
     standings(results);
     display_standings();
     current_race++;
 }
 
-void Season::standings(const std::vector<std::pair<Driver*, long long>>& results) {
+void Season::standings(const std::vector<std::pair<Driver*, long long>>& raceResults) {
     const int points[] = {25, 18, 15, 12, 10, 8, 6, 4, 2, 1};
-    for (size_t i = 0; i < results.size() && i < 10; i++) {
-        Driver* driver = results[i].first;
+    for (size_t i = 0; i < raceResults.size() && i < 10; i++) {
+        Driver* driver = raceResults[i].first;
         driver_points[driver->get_name()] += points[i];
         if (Team* team = driver->get_team()) {
             std::cout << driver->get_name() << " scores " << points[i] << " points for " << team->get_name() << "\n";

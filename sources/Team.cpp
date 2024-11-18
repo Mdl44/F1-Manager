@@ -1,7 +1,7 @@
 #include "Team.h"
 
-Team::Team(std::string name, Car* car1, Car* car2, Driver* driver1, Driver* driver2, int position)
-    : name(std::move(name)), car1(car1), car2(car2), driver1(driver1), driver2(driver2), position(position) {
+Team::Team(std::string name, Car* car1, Car* car2, Driver* driver1, Driver* driver2, const int initial_position)
+    : name(std::move(name)), car1(car1), car2(car2), driver1(driver1), driver2(driver2), position(initial_position) {
     if (driver1) {
         driver1->set_team(this);
         driver1->set_car(car1);
