@@ -21,7 +21,7 @@ public:
     Team& operator=(const Team& other);
     friend std::ostream& operator<<(std::ostream& os, const Team& team);
 
-    std::string get_name();
+    [[nodiscard]] const std::string& get_name() const;
     [[nodiscard]] Driver *get_driver1() const;
     [[nodiscard]] Driver *get_driver2() const;
     //[[nodiscard]] Car* get_car1() const;

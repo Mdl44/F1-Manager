@@ -3,11 +3,11 @@
 #include <algorithm>
 #include <random>
 
-RaceWeekend::RaceWeekend(std::string name, int laps, int reference_time)
+RaceWeekend::RaceWeekend(std::string name, const int laps, const int reference_time)
     : name(std::move(name)), laps(laps), reference_time(reference_time) {}
 
 
-int random_time_generator(int maxOffset = 200) {
+int random_time_generator(const int maxOffset = 200) {
     static std::default_random_engine generator(std::random_device{}());
     std::uniform_int_distribution<int> distribution(-maxOffset, maxOffset);
     return distribution(generator);
@@ -15,10 +15,10 @@ int random_time_generator(int maxOffset = 200) {
 
 void RaceWeekend::quali(const std::vector<Driver*>& drivers) {
     for (auto driver : drivers) {
-        int driver_rating = driver->get_rating();
-        int car_rating = driver->get_car()->get_rating();
-        int combined = (driver_rating + car_rating) / 2;
-        int performance_factor = 100 - combined;
+        const int driver_rating = driver->get_rating();
+        const int car_rating = driver->get_car()->get_rating();
+        const int combined = (driver_rating + car_rating) / 2;
+        const int performance_factor = 100 - combined;
         long long time = reference_time + (performance_factor * 3) + random_time_generator();
         quali_results.emplace_back(driver, time);
     }
@@ -31,11 +31,11 @@ std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
     race_results.clear();
     for (size_t i = 0; i < quali_results.size(); ++i) {
         auto& driver = quali_results[i].first;
-        long long start_delay = static_cast<long long>(i) * 500;
+        const long long start_delay = static_cast<long long>(i) * 500;
 
-        int combined = (driver->get_rating() + driver->get_car()->get_rating()) / 2;
-        int performance_factor = 100 - combined;
-        long long lap_time = reference_time + (performance_factor * 3);
+        const int combined = (driver->get_rating() + driver->get_car()->get_rating()) / 2;
+        const int performance_factor = 100 - combined;
+        const long long lap_time = reference_time + (performance_factor * 3);
 
         long long total_time = start_delay;
         for (int lap = 0; lap < laps; ++lap) {
@@ -57,9 +57,9 @@ void RaceWeekend::display_quali() const {
     for (const auto& [driver, time] : quali_results) {
         std::string pos_str = (pos < 10 ? " " : "") + std::to_string(pos) + ".";
 
-        int minutes = static_cast<int>(time / (1000 * 60));
-        int seconds = static_cast<int>((time % (1000 * 60)) / 1000);
-        int milliseconds = static_cast<int>(time % 1000);
+        const int minutes = static_cast<int>(time / (1000 * 60));
+        const int seconds = static_cast<int>((time % (1000 * 60)) / 1000);
+        const int milliseconds = static_cast<int>(time % 1000);
 
         std::string driver_name = driver->get_name();
         if (driver_name.length() < 25) {
@@ -82,10 +82,10 @@ void RaceWeekend::display_race() const {
     for (const auto& [driver, time] : race_results) {
         std::string pos_str = (pos < 10 ? " " : "") + std::to_string(pos) + ".";
 
-        int hours = static_cast<int>(time / (1000 * 60 * 60));
-        int minutes = static_cast<int>((time % (1000 * 60 * 60)) / (1000 * 60));
-        int seconds = static_cast<int>((time % (1000 * 60)) / 1000);
-        int milliseconds = static_cast<int>(time % 1000);
+        const int hours = static_cast<int>(time / (1000 * 60 * 60));
+        const int minutes = static_cast<int>((time % (1000 * 60 * 60)) / (1000 * 60));
+        const int seconds = static_cast<int>((time % (1000 * 60)) / 1000);
+        const int milliseconds = static_cast<int>(time % 1000);
 
         std::string driver_name = driver->get_name();
         if (driver_name.length() < 25) {
@@ -101,7 +101,7 @@ void RaceWeekend::display_race() const {
     }
     std::cout << std::string(60, '-') << "\n\n";
 }
-std::string RaceWeekend::get_name() const {
+const std::string& RaceWeekend::get_name() const {
     return name;
 }
 //const std::vector<std::pair<Driver*, long long>>& RaceWeekend::get_quali_results() const {

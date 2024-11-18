@@ -74,7 +74,7 @@ void Team::set_control(const bool value) {
    /// return player;
 //}
 
-std::string Team::get_name() {
+const std::string& Team::get_name() const {
     return name;
 }
 
