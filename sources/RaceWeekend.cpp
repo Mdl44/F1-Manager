@@ -104,6 +104,6 @@ void RaceWeekend::display_race() const {
 std::string RaceWeekend::get_name() const {
     return name;
 }
-const std::vector<std::pair<Driver*, long long>>& RaceWeekend::get_quali_results() const {
-    return quali_results;
-}
+//const std::vector<std::pair<Driver*, long long>>& RaceWeekend::get_quali_results() const {
+  //  return quali_results;
+//}

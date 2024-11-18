@@ -95,18 +95,20 @@ void Season::display_standings() {
     std::cout << "\n";
 }
 
-std::vector<std::pair<std::string, int>> Season::get_driver_standings() const {
-    std::vector<std::pair<std::string, int>> standings(driver_points.begin(), driver_points.end());
-    std::ranges::sort(standings, [](const auto& a, const auto& b) {
+/*std::vector<std::pair<std::string, int>> Season::get_driver_standings() const {
+    std::vector<std::pair<std::string, int>> driver_standings(driver_points.begin(), driver_points.end());
+    std::ranges::sort(driver_standings, [](const auto& a, const auto& b) {
         return a.second > b.second;
     });
-    return standings;
+    return driver_standings;
 }
+*/
 
-std::vector<std::pair<std::string, int>> Season::get_team_standings() const {
-    std::vector<std::pair<std::string, int>> standings(team_points.begin(), team_points.end());
-    std::ranges::sort(standings, [](const auto& a, const auto& b) {
+/*std::vector<std::pair<std::string, int>> Season::get_team_standings() const {
+    std::vector<std::pair<std::string, int>> team_standings(team_points.begin(), team_points.end());
+    std::ranges::sort(team_standings, [](const auto& a, const auto& b) {
         return a.second > b.second;
     });
-    return standings;
+    return team_standings;
 }
+*/

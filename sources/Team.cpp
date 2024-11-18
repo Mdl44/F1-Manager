@@ -70,9 +70,9 @@ void Team::set_control(const bool value) {
     player = value;
 }
 
-bool Team::is_player_controlled() const {
-    return player;
-}
+//bool Team::is_player_controlled() const {
+   /// return player;
+//}
 
 std::string Team::get_name() {
     return name;
@@ -86,17 +86,17 @@ Driver* Team::get_driver2() const {
     return driver2;
 }
 
-Car* Team::get_car1() const {
-    return car1;
-}
+//Car* Team::get_car1() const {
+    //return car1;
+//}
 
-Car* Team::get_car2() const {
-    return car2;
-}
+//Car* Team::get_car2() const {
+   // return car2;
+//}
 
-int Team::get_position() const {
-    return position;
-}
+//int Team::get_position() const {
+ //   return position;
+//}
 
 std::ostream& operator<<(std::ostream& os, const Team& team) {
     os << "Team: " << team.name << "\n"
