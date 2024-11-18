@@ -3,7 +3,7 @@
 
 Season::Season(const std::vector<Team*>& teamList, const int totalRaces)
     : teams(teamList), races(totalRaces) {
-    for (const auto& team : teams) {
+    for (const Team* team : teams) {
         if (auto d1 = team->get_driver1()) {
             drivers.push_back(d1);
             driver_points[d1->get_name()] = 0;
@@ -32,7 +32,7 @@ void Season::standings(const std::vector<std::pair<Driver*, long long>>& raceRes
     for (size_t i = 0; i < raceResults.size() && i < 10; i++) {
         Driver* driver = raceResults[i].first;
         driver_points[driver->get_name()] += points[i];
-        if (Team* team = driver->get_team()) {
+        if (const Team* team = driver->get_team()) {
             std::cout << driver->get_name() << " scores " << points[i] << " points for " << team->get_name() << "\n";
             team_points[team->get_name()] += points[i];
         }
