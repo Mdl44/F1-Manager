@@ -16,9 +16,25 @@ Car::~Car() {
 int Car::get_rating() const {
     return rating();
 }
+
 void Car::set_team(Team *team_set) {
     this->team = team_set;
 }
+
+void Car::apply_upgrade() {
+    aerodynamics += 1;
+    powertrain += 1;
+    durability += 1;
+    chasis += 1;
+}
+
+void Car::apply_downgrade() {
+    aerodynamics -= 1;
+    powertrain -= 1;
+    durability -= 1;
+    chasis -= 1;
+}
+
 std::ostream& operator<<(std::ostream& os, const Car& obj) {
     os << "Car Stats:\n"
        << "Aerodynamics: " << obj.aerodynamics << "\n"

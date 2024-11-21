@@ -18,7 +18,6 @@ public:
     void display_race() const;
 
     [[nodiscard]] const std::string& get_name() const;
-    //[[nodiscard]] const std::vector<std::pair<Driver*, long long>>& get_quali_results() const;
 };
 
 #endif

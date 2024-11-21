@@ -3,7 +3,7 @@
 
 Driver::Driver(std::string name, const int experience, const int race_craft, const int awareness, const int race_pace, Car* car, Team* team)
     : name(std::move(name)), experience(experience), race_craft(race_craft), awareness(awareness), race_pace(race_pace), car(car), team(team) {
-    value = market_value();
+    this->value = market_value();
 }
 
 int Driver::rating() const {
@@ -47,6 +47,21 @@ Car* Driver::get_car() const {
 
 Team* Driver::get_team() const {
     return team;
+}
+
+void Driver::apply_upgrade() {
+    experience += 1;
+    race_craft += 1;
+    awareness += 1;
+    race_pace += 1;
+    value = market_value();
+}
+void Driver::apply_downgrade() {
+    experience -= 1;
+    race_craft -= 1;
+    awareness -= 1;
+    race_pace -= 1;
+    value = market_value();
 }
 
 std::ostream& operator<<(std::ostream& os, const Driver& driver) {

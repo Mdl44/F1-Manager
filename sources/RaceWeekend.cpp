@@ -65,10 +65,7 @@ void RaceWeekend::display_quali() const {
         if (driver_name.length() < 25) {
             driver_name += std::string(25 - driver_name.length(), ' ');
         }
-        std::cout << pos_str << " "
-                  << driver_name
-                  << minutes << ":"
-                  << (seconds < 10 ? "0" : "") << seconds << "."
+        std::cout << pos_str << " " << driver_name << minutes << ":" << (seconds < 10 ? "0" : "") << seconds << "."
                   << (milliseconds < 100 ? "0" : "") << (milliseconds < 10 ? "0" : "") << milliseconds << "\n";
         pos++;
     }
@@ -91,12 +88,9 @@ void RaceWeekend::display_race() const {
         if (driver_name.length() < 25) {
             driver_name += std::string(25 - driver_name.length(), ' ');
         }
-        std::cout << pos_str << " "
-                  << driver_name
-                  << hours << ":"
-                  << (minutes < 10 ? "0" : "") << minutes << ":"
-                  << (seconds < 10 ? "0" : "") << seconds << "."
-                  << (milliseconds < 100 ? "0" : "") << (milliseconds < 10 ? "0" : "") << milliseconds << "\n";
+        std::cout << pos_str << " " << driver_name << hours << ":" << (minutes < 10 ? "0" : "") << minutes << ":"
+                  << (seconds < 10 ? "0" : "") << seconds << "." << (milliseconds < 100 ? "0" : "")
+                  << (milliseconds < 10 ? "0" : "") << milliseconds << "\n";
         pos++;
     }
     std::cout << std::string(60, '-') << "\n\n";
@@ -104,6 +98,3 @@ void RaceWeekend::display_race() const {
 const std::string& RaceWeekend::get_name() const {
     return name;
 }
-//const std::vector<std::pair<Driver*, long long>>& RaceWeekend::get_quali_results() const {
-  //  return quali_results;
-//}

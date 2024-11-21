@@ -23,6 +23,9 @@ public:
     ~Driver();
     friend std::ostream& operator<<(std::ostream& os, const Driver& driver);
 
+    void apply_downgrade();
+    void apply_upgrade();
+
     std::string& get_name();
     [[nodiscard]] int get_rating() const;
     [[nodiscard]] float get_market_value() const;
