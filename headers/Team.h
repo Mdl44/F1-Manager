@@ -31,7 +31,6 @@ public:
 
     [[nodiscard]] int get_upgrade_points() const;
     [[nodiscard]] int get_downgrade_points() const;
-    [[nodiscard]] int get_position() const;
     [[nodiscard]] const std::string& get_name() const;
     [[nodiscard]] Driver *get_driver1() const;
     [[nodiscard]] Driver *get_driver2() const;

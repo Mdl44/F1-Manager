@@ -173,6 +173,3 @@ std::ostream& operator<<(std::ostream& os, const Team& team) {
        << *team.car2;
     return os;
 }
-int Team::get_position() const {
-    return position;
-}
