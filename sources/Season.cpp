@@ -118,16 +118,16 @@ void Season::display_standings() {
     std::cout << std::string(60, '-') << "\n";
 
     if (current_race == races) {
-        std::cout << "\nFINAL CHAMPIONS\n";
+        std::cout << "\nFINAL RESULTS\n";
         std::cout << std::string(60, '*') << "\n";
         if (!drivers_standings.empty()) {
             const auto& champion_driver = drivers_standings[0];
-            std::cout << "World Drivers' Champions : " << champion_driver.first
+            std::cout << "World Drivers' Championship winner : " << champion_driver.first
                      << " with " << champion_driver.second << " points\n";
         }
         if (!team_standings.empty()) {
             const auto& champion_team = team_standings[0];
-            std::cout << "Constructors Champion: " << champion_team.first
+            std::cout << "Constructors Championship winner : " << champion_team.first
                      << " with " << champion_team.second << " points\n";
         }
         std::cout << std::string(60, '*') << "\n";

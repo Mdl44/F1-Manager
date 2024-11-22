@@ -1,8 +1,5 @@
 #include <fstream>
 #include <memory>
-#include <iostream>
-#include <vector>
-#include <string>
 #include "Player.h"
 #include "Season.h"
 
@@ -15,8 +12,20 @@ void displayMenu() {
     std::cout << "5. Exit Season\n";
     std::cout << "Enter your choice: ";
 }
+bool isValidNumber(int &num) {
+    if (!(std::cin >> num)) {
+        std::cin.clear();
+        std::cin.ignore(10000, '\n');
+        return false;
+    }
+    return true;
+}
 
 int main() {
+    std::ifstream input_file("tastatura.txt");
+    if (!input_file) {
+        return 1;
+    }
     std::vector<std::vector<int>> car_stats;
     std::ifstream car_file("Date masini.txt");
     if (!car_file) {
@@ -97,7 +106,10 @@ int main() {
     while (currentRace < circuits.size()) {
         displayMenu();
         int action;
-        std::cin >> action;
+        if (!isValidNumber(action)) {
+            std::cout << "Invalid input! Please enter a number.\n";
+            continue;
+        }
 
         switch (action) {
             case 1:
@@ -154,7 +166,10 @@ int main() {
                 std::cout << "1. " << selectedTeam->get_driver1()->get_name() << "\n";
                 std::cout << "2. " << selectedTeam->get_driver2()->get_name() << "\n";
                 int targetDriverNum;
-                std::cin >> targetDriverNum;
+                if (!isValidNumber(targetDriverNum)) {
+                    std::cout << "Invalid input! Please enter 1 or 2.\n";
+                    break;
+                }
 
                 if (targetDriverNum != 1 && targetDriverNum != 2) {
                     std::cout << "Invalid driver selection!\n";
@@ -173,7 +188,7 @@ int main() {
 
 
             case 5:
-                std::cout << "Exiting the season. Thank you for playing!\n";
+                std::cout << "Exiting the season.\n";
             return 0;
 
             default:
@@ -181,7 +196,7 @@ int main() {
             break;
         }
     }
-    std::cout << "Season complete! Final standings:\n";
+    std::cout << "Season complete!:\n";
     season.display_standings();
     return 0;
 }

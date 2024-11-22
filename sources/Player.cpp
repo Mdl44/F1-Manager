@@ -62,5 +62,3 @@ void Player::upgrades() const {
         show_data();
     }
 }
-
-
