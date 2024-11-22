@@ -109,7 +109,7 @@ endif()
 
 include(cmake/CopyHelper.cmake)
 copy_files(FILES tastatura.txt)
-copy_files(FILES Date masini.txt)
+copy_files(FILES date_masini.txt)
 copy_files(FILES piloti.txt)
 copy_files(FILES circuite.txt)
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds)

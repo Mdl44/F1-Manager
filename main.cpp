@@ -27,7 +27,7 @@ int main() {
         return 1;
     }
     std::vector<std::vector<int>> car_stats;
-    std::ifstream car_file("Date masini.txt");
+    std::ifstream car_file("date_masini.txt");
     if (!car_file) {
         return 1;
     }
