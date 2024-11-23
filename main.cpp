@@ -196,7 +196,10 @@ int main() {
             break;
         }
     }
-    std::cout << "Season complete!:\n";
+    std::cout << "Season complete!\n";
     season.display_standings();
+    std::cout << "Press any key to exit...";
+    std::cin.ignore(10000, '\n');
+    std::cin.get();
     return 0;
 }
