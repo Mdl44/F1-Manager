@@ -66,10 +66,8 @@ void Season::standings(const std::vector<std::pair<Driver*, long long>>& race_re
 }
 
 void Season::apply_ai_team_upgrades(Team* team) {
-    if (team->get_upgrade_points() >= 5) {
         team->apply_upgrade_for_ai_team();
         std::cout << "AI Team Upgrade Applied\n";
-    }
 }
 
 void Season::apply_player_team_upgrades(const Team* team) {
