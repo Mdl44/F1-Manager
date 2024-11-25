@@ -5,7 +5,7 @@ Team::Team(std::string name, std::unique_ptr<Car> car1, std::unique_ptr<Car> car
     : name(std::move(name)), car1(std::move(car1)), car2(std::move(car2)), driver1(std::move(driver1)), driver2(std::move(driver2)), position(initial_position) {
 }
 
-void Team::update_performance_points(int actual_position) {
+void Team::update_performance_points(const int actual_position) {
     int diff = actual_position - position;
     if (diff == 0) upgrade_points++;
 
@@ -72,7 +72,7 @@ Team::~Team() {
     std::cout << "Destructor Team: " << name << std::endl;
 }
 
-bool Team::swap(Driver* const& my_driver, Driver* const& other_driver, Team& other_team) {
+bool Team::swap(const Driver* const& my_driver, const Driver* const& other_driver, Team& other_team) {
     if (my_driver->get_market_value() < other_driver->get_market_value()) {
         std::cout << "Can't swap: market value mismatch" << std::endl;
         return false;
@@ -81,30 +81,39 @@ bool Team::swap(Driver* const& my_driver, Driver* const& other_driver, Team& oth
     const Car* my_team_car = nullptr;
     if (driver1.get() == my_driver) {
         my_team_car = car1.get();
-    } else {
+    } else if (driver2.get() == my_driver) {
         my_team_car = car2.get();
     }
 
     const Car* other_team_car = nullptr;
     if (other_team.driver1.get() == other_driver) {
         other_team_car = other_team.car1.get();
-    } else {
+    } else if (other_team.driver2.get() == other_driver) {
         other_team_car = other_team.car2.get();
     }
 
     if (!my_team_car || !other_team_car) {
+        std::cout << "Driver or car not found for swap" << std::endl;
         return false;
     }
 
     if (driver1.get() == my_driver) {
-        std::swap(driver1, other_team.driver1);
-    } else {
-        std::swap(driver2, other_team.driver2);
+        if (other_team.driver1.get() == other_driver) {
+            std::swap(driver1, other_team.driver1);
+        } else if (other_team.driver2.get() == other_driver) {
+            std::swap(driver1, other_team.driver2);
+        }
+    } else if (driver2.get() == my_driver) {
+        if (other_team.driver1.get() == other_driver) {
+            std::swap(driver2, other_team.driver1);
+        } else if (other_team.driver2.get() == other_driver) {
+            std::swap(driver2, other_team.driver2);
+        }
     }
 
     std::cout << "Swap completed" << std::endl;
     return true;
-    }
+}
 
 Car* Team::get_car1() const {
     return car1.get();

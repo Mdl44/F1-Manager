@@ -18,7 +18,7 @@ public:
     void apply_downgrade();
 
     void set_control(bool value);
-    bool swap(Driver* const& my_driver, Driver* const& other_driver, Team& other_team);
+    bool swap(const Driver* const& my_driver, const Driver* const& other_driver, Team& other_team);
     [[nodiscard]] bool is_player_controlled() const;
     Team(std::string name, std::unique_ptr<Car> car1, std::unique_ptr<Car> car2, std::unique_ptr<Driver> driver1, std::unique_ptr<Driver> driver2, int initial_position);
     ~Team();
