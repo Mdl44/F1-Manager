@@ -72,7 +72,7 @@ Team::~Team() {
     std::cout << "Destructor Team: " << name << std::endl;
 }
 
-bool Team::swap(Driver*& my_driver, Driver*& other_driver, Team& other_team) {
+bool Team::swap(Driver* const& my_driver, Driver* const& other_driver, Team& other_team) {
     if (my_driver->get_market_value() < other_driver->get_market_value()) {
         std::cout << "Can't swap: market value mismatch" << std::endl;
         return false;
