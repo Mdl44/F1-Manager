@@ -2,16 +2,14 @@
 #define CAR_H
 #include <iostream>
 
-class Team;
 class Car {
     int aerodynamics;
     int powertrain;
     int durability;
     int chasis;
-    Team* team;
     [[nodiscard]] int rating() const;
 public:
-    Car(int aerodynamics, int powertrain, int durability, int chasis, Team* team);
+    Car(int aerodynamics, int powertrain, int durability, int chasis);
     Car(const Car& other);
     Car& operator=(const Car& other);
     ~Car();
@@ -20,6 +18,5 @@ public:
     void apply_downgrade();
     void apply_upgrade();
     [[nodiscard]] int get_rating() const;
-    void set_team(Team* team_set);
 };
 #endif

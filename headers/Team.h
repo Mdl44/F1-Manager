@@ -2,14 +2,15 @@
 #define TEAM_H
 #include "Car.h"
 #include "Driver.h"
+#include <memory>
 
 class Team {
     std::string name;
     bool player = false;
-    Car* car1;
-    Car* car2;
-    Driver* driver1;
-    Driver* driver2;
+    std::unique_ptr<Car> car1;
+    std::unique_ptr<Car> car2;
+    std::unique_ptr<Driver> driver1;
+    std::unique_ptr<Driver> driver2;
     int position;
     int upgrade_points = 0;
     int downgrade_points = 0;
@@ -19,10 +20,10 @@ public:
     void set_control(bool value);
     bool swap(Driver*& my_driver, Driver*& other_driver, Team& other_team);
     [[nodiscard]] bool is_player_controlled() const;
-    Team(std::string name, Car* car1, Car* car2, Driver* driver1, Driver* driver2, int initial_position);
-    virtual ~Team();
-    Team(const Team& other);
-    Team& operator=(const Team& other);
+    Team(std::string name, std::unique_ptr<Car> car1, std::unique_ptr<Car> car2, std::unique_ptr<Driver> driver1, std::unique_ptr<Driver> driver2, int initial_position);
+    ~Team();
+    Team(const Team& other) = delete;
+    Team& operator=(const Team& other) = delete;
     friend std::ostream& operator<<(std::ostream& os, const Team& team);
 
     void update_performance_points(int actual_position);
@@ -34,5 +35,7 @@ public:
     [[nodiscard]] const std::string& get_name() const;
     [[nodiscard]] Driver *get_driver1() const;
     [[nodiscard]] Driver *get_driver2() const;
+    [[nodiscard]] Car* get_car1() const;
+    [[nodiscard]] Car* get_car2() const;
 };
 #endif

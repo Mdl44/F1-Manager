@@ -1,20 +1,12 @@
 #include "Team.h"
+#include <iostream>
 
-Team::Team(std::string name, Car* car1, Car* car2, Driver* driver1, Driver* driver2, const int initial_position)
-    : name(std::move(name)), car1(car1), car2(car2), driver1(driver1), driver2(driver2), position(initial_position) {
-    if (driver1) {
-        driver1->set_team(this);
-        driver1->set_car(car1);
-    }
-    if (driver2) {
-        driver2->set_team(this);
-        driver2->set_car(car2);
-    }
-    if (car1) car1->set_team(this);
-    if (car2) car2->set_team(this);
+Team::Team(std::string name, std::unique_ptr<Car> car1, std::unique_ptr<Car> car2, std::unique_ptr<Driver> driver1, std::unique_ptr<Driver> driver2, const int initial_position)
+    : name(std::move(name)), car1(std::move(car1)), car2(std::move(car2)), driver1(std::move(driver1)), driver2(std::move(driver2)), position(initial_position) {
 }
-void Team::update_performance_points(int current_position) {
-    int diff = current_position - position;
+
+void Team::update_performance_points(int actual_position) {
+    int diff = actual_position - position;
     if (diff == 0) upgrade_points++;
 
     else if (diff < 0) upgrade_points += 2;
@@ -37,19 +29,14 @@ void Team::apply_upgrade_for_ai_team() {
         if (driver2) driver2->apply_upgrade();
     }
 
-    int points_used = upgrade_points;
+    const int points_used = upgrade_points;
     upgrade_points = 0;
     std::cout << "Applied " << points_used << " upgrade points to the AI team.\n";
 }
 
-void Team::apply_upgrade_for_player_team(int points) {
-    if (points <= 0) {
-        std::cout << "No upgrade points available for " << name << ".\n";
-        return;
-    }
-
-    if (points > upgrade_points) {
-        std::cout << "Not enough upgrade points available for " << name << ".\n";
+void Team::apply_upgrade_for_player_team(const int points) {
+    if (points <= 0 || points > upgrade_points) {
+        std::cout << "Invalid upgrade points for " << name << ".\n";
         return;
     }
 
@@ -65,8 +52,6 @@ void Team::apply_upgrade_for_player_team(int points) {
     upgrade_points -= points;
     std::cout << "Applied " << points << " upgrade points to the team.\n";
 }
-
-
 
 void Team::apply_downgrade() {
     if (downgrade_points <= 0) return;
@@ -85,52 +70,53 @@ void Team::apply_downgrade() {
 
 Team::~Team() {
     std::cout << "Destructor Team: " << name << std::endl;
-    delete driver1;
-    delete driver2;
-    delete car1;
-    delete car2;
 }
-Team::Team(const Team& other) = default;
-
-Team& Team::operator=(const Team& other) = default;
 
 bool Team::swap(Driver*& my_driver, Driver*& other_driver, Team& other_team) {
     if (my_driver->get_market_value() < other_driver->get_market_value()) {
-        std::cout << "Can't swap" << std::endl;
+        std::cout << "Can't swap: market value mismatch" << std::endl;
         return false;
     }
 
-    Car* my_team_car = nullptr;
-    if (driver1 == my_driver) {
-        my_team_car = car1;
-    } else if (driver2 == my_driver) {
-        my_team_car = car2;
+    const Car* my_team_car = nullptr;
+    if (driver1.get() == my_driver) {
+        my_team_car = car1.get();
+    } else {
+        my_team_car = car2.get();
     }
 
-    Car* other_team_car = nullptr;
-    if (other_team.driver1 == other_driver) {
-        other_team_car = other_team.car1;
-    } else if (other_team.driver2 == other_driver) {
-        other_team_car = other_team.car2;
+    const Car* other_team_car = nullptr;
+    if (other_team.driver1.get() == other_driver) {
+        other_team_car = other_team.car1.get();
+    } else {
+        other_team_car = other_team.car2.get();
     }
 
     if (!my_team_car || !other_team_car) {
         return false;
     }
 
-    my_driver->set_team(&other_team);
-    my_driver->set_car(other_team_car);
-    other_driver->set_team(this);
-    other_driver->set_car(my_team_car);
-
-    if (driver1 == my_driver) driver1 = other_driver;
-    else driver2 = other_driver;
-
-    if (other_team.driver1 == other_driver) other_team.driver1 = my_driver;
-    else other_team.driver2 = my_driver;
+    if (driver1.get() == my_driver) {
+        std::swap(driver1, other_team.driver1);
+    } else {
+        std::swap(driver2, other_team.driver2);
+    }
 
     std::cout << "Swap completed" << std::endl;
     return true;
+    }
+
+Car* Team::get_car1() const {
+    return car1.get();
+}
+Car* Team::get_car2() const {
+    return car2.get();
+}
+Driver* Team::get_driver1() const {
+    return driver1.get();
+}
+Driver* Team::get_driver2() const {
+    return driver2.get();
 }
 
 int Team::get_downgrade_points() const {
@@ -139,37 +125,22 @@ int Team::get_downgrade_points() const {
 int Team::get_upgrade_points() const {
     return upgrade_points;
 }
-
 void Team::set_control(const bool value) {
     player = value;
 }
-
 bool Team::is_player_controlled() const {
     return player;
 }
-
 const std::string& Team::get_name() const {
     return name;
-}
-
-Driver* Team::get_driver1() const {
-    return driver1;
-}
-
-Driver* Team::get_driver2() const {
-    return driver2;
 }
 
 std::ostream& operator<<(std::ostream& os, const Team& team) {
     os << "Team: " << team.name << "\n"
        << "Position: " << team.position << "\n"
-       << "First Driver Details:\n"
-       << *team.driver1 << "\n"
-       << "\nFirst Driver's Car:\n"
-       << *team.car1 << "\n"
-       << "Second Driver Details:\n"
-       << *team.driver2 << "\n"
-       << "\nSecond Driver's Car:\n"
-       << *team.car2;
+       << "First Driver Details:\n" << *team.driver1 << "\n"
+       << "\nFirst Driver's Car:\n" << *team.car1 << "\n"
+       << "Second Driver Details:\n" << *team.driver2 << "\n"
+       << "\nSecond Driver's Car:\n" << *team.car2;
     return os;
 }

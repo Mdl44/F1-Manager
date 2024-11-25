@@ -1,11 +1,11 @@
 #ifndef SEASON_H
 #define SEASON_H
 #include <map>
+#include <vector>
 #include "Team.h"
 #include "RaceWeekend.h"
 
 class Season {
-    std::vector<Driver*> drivers;
     std::vector<Team*> teams;
     std::map<std::string, int> driver_points;
     std::map<std::string, int> team_points;
@@ -18,13 +18,10 @@ public:
     Season& operator=(const Season&) = delete;
 
     void race(RaceWeekend& weekend);
-    void standings(const std::vector<std::pair<Driver *, long long>> &race_results);
+    void standings(const std::vector<std::pair<Driver*, long long>>& race_results);
 
-    static void apply_ai_team_upgrades(Team *team);
-
-    static void apply_player_team_upgrades(const Team *team);
-
+    void update_team_performance();
+    static int calculate_combined_rating(const Team* team, const Driver* driver);
     void display_standings();
 };
-
 #endif

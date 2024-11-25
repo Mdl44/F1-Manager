@@ -1,7 +1,7 @@
 #include "Car.h"
 
-Car::Car(const int aerodynamics, const int powertrain, const int durability, const int chasis, Team* team)
-    : aerodynamics(aerodynamics), powertrain(powertrain), durability(durability), chasis(chasis), team(team) {}
+Car::Car(const int aerodynamics, const int powertrain, const int durability, const int chasis)
+    : aerodynamics(aerodynamics), powertrain(powertrain), durability(durability), chasis(chasis) {}
 
 int Car::rating() const {
     return static_cast<int>(0.25* aerodynamics + 0.25 * powertrain + 0.25 * durability + 0.25 * chasis);
@@ -15,10 +15,6 @@ Car::~Car() {
 
 int Car::get_rating() const {
     return rating();
-}
-
-void Car::set_team(Team *team_set) {
-    this->team = team_set;
 }
 
 void Car::apply_upgrade() {
@@ -44,4 +40,3 @@ std::ostream& operator<<(std::ostream& os, const Car& obj) {
        << "Overall Rating: " << obj.rating() << "\n";
     return os;
 }
-

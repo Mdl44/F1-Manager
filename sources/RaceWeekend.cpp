@@ -1,31 +1,31 @@
 #include "RaceWeekend.h"
-#include "Car.h"
+#include <iostream>
 #include <algorithm>
 #include <random>
 
 RaceWeekend::RaceWeekend(std::string name, const int laps, const int reference_time)
     : name(std::move(name)), laps(laps), reference_time(reference_time) {}
 
-
 int random_time_generator(const int maxOffset = 200) {
-    static std::default_random_engine generator(std::random_device{}());
-    std::uniform_int_distribution<int> distribution(-maxOffset, maxOffset);
-    return distribution(generator);
-}
+        static std::default_random_engine generator(std::random_device{}());
+        std::uniform_int_distribution<int> distribution(-maxOffset, maxOffset);
+        return distribution(generator);
+    }
 
-void RaceWeekend::quali(const std::vector<Driver*>& drivers) {
-    for (auto driver : drivers) {
-        const int driver_rating = driver->get_rating();
-        const int car_rating = driver->get_car()->get_rating();
-        const int combined = (driver_rating + car_rating) / 2;
+
+void RaceWeekend::quali(const std::vector<std::pair<Driver*, int>>& combined_ratings) {
+    quali_results.clear();
+    for (const auto& [driver, rating] : combined_ratings) {
         int performance_factor = 0;
-        if(combined < 100) performance_factor = 100 - combined;
-        else if(combined < 150) performance_factor = 150 - combined;
-        else if(combined <200) performance_factor = 200 - combined;
-        else performance_factor = 250 - combined;
+        if (rating < 100) performance_factor = 100 - rating;
+        else if (rating < 150) performance_factor = 150 - rating;
+        else if (rating < 200) performance_factor = 200 - rating;
+        else performance_factor = 250 - rating;
+        
         long long time = reference_time + (performance_factor * 3) + random_time_generator();
         quali_results.emplace_back(driver, time);
     }
+    
     std::ranges::sort(quali_results, [](const auto& lhs, const auto& rhs) {
         return lhs.second < rhs.second;
     });
@@ -33,27 +33,32 @@ void RaceWeekend::quali(const std::vector<Driver*>& drivers) {
 
 std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
     race_results.clear();
+    
     for (size_t i = 0; i < quali_results.size(); ++i) {
-        auto& driver = quali_results[i].first;
+        auto& [driver, quali_time] = quali_results[i];
         const long long start_delay = static_cast<long long>(i) * 500;
-
-        const int combined = (driver->get_rating() + driver->get_car()->get_rating()) / 2;
+        
+        const int driver_rating = driver->get_rating();
         int performance_factor = 0;
-        if(combined < 100) performance_factor = 100 - combined;
-        else if(combined < 150) performance_factor = 150 - combined;
-        else if(combined <200) performance_factor = 200 - combined;
-        else performance_factor = 250 - combined;
+        if (driver_rating < 100) performance_factor = 100 - driver_rating;
+        else if (driver_rating < 150) performance_factor = 150 - driver_rating;
+        else if (driver_rating < 200) performance_factor = 200 - driver_rating;
+        else performance_factor = 250 - driver_rating;
+        
         const long long lap_time = reference_time + (performance_factor * 3);
         long long total_time = start_delay;
+        
         for (int lap = 0; lap < laps; ++lap) {
             total_time += lap_time + random_time_generator() + (420000/laps);
         }
+        
         race_results.emplace_back(driver, total_time);
     }
+    
     std::ranges::sort(race_results, [](const auto& lhs, const auto& rhs) {
         return lhs.second < rhs.second;
     });
-
+    
     return race_results;
 }
 

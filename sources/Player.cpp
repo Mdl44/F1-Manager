@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(Team *my_team):my_team(my_team) {
+Player::Player(Team* my_team) : my_team(my_team) {
     if(my_team) my_team->set_control(true);
 }
 
@@ -11,6 +11,7 @@ bool Player::swap_try(Driver*& my_driver, Driver*& other_driver, Team& other_tea
     std::cout << "No team assigned to player.\n";
     return false;
 }
+
 void Player::show_data() const {
     if (!my_team) {
         std::cout << "No team assigned to player.\n";
@@ -20,28 +21,9 @@ void Player::show_data() const {
     std::cout << "\n=== " << my_team->get_name() << " Team Data ===\n";
     std::cout << std::string(50, '=') << "\n";
 
-    std::cout << "First Driver:\n";
-    if (const Driver* driver1 = my_team->get_driver1()) {
-        std::cout << *driver1 << "\n";
-        if (const Car* car = driver1->get_car()) {
-            std::cout << "Car:\n" << *car << "\n";
-        }
-    }
-
-    std::cout << std::string(30, '-') << "\n";
-
-    std::cout << "Second Driver:\n";
-    if (const Driver* driver2 = my_team->get_driver2()) {
-        std::cout << *driver2 << "\n";
-        if (const Car* car = driver2->get_car()) {
-            std::cout << "Car:\n" << *car << "\n";
-        }
-    }
-
+    std::cout << *my_team;
     std::cout << std::string(50, '=') << "\n";
 }
-
-
 
 void Player::upgrades() const {
     if (my_team->get_upgrade_points() == 0) {
@@ -54,7 +36,7 @@ void Player::upgrades() const {
     std::cout << "How many upgrade points would you like to apply?\n";
     std::cin >> points_to_apply;
 
-    if (points_to_apply <= 0)  {
+    if (points_to_apply <= 0) {
         std::cout << "You must apply at least 1 upgrade point.\n";
     } else {
         my_team->apply_upgrade_for_player_team(points_to_apply);
