@@ -5,7 +5,7 @@
 class Player {
     Team* my_team;
 public:
-    bool swap_try(Driver *&my_driver, Driver *&other_driver, Team &other_team) const;
+    bool swap_try(Driver* const& my_driver, Driver* const& other_driver, Team& other_team) const;
     explicit Player(Team* my_team);
     void show_data() const;
     void upgrades() const;
