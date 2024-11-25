@@ -27,7 +27,7 @@ int Season::calculate_combined_rating(const Team* team, const Driver* driver) {
 
 void Season::race(RaceWeekend& weekend) {
     std::vector<std::pair<Driver*, int>> combined_ratings;
-    for (Team* team : teams) {
+    for (const Team* team : teams) {
         if (auto* d1 = team->get_driver1()) {
             combined_ratings.emplace_back(d1, calculate_combined_rating(team, d1));
         }
@@ -35,7 +35,7 @@ void Season::race(RaceWeekend& weekend) {
             combined_ratings.emplace_back(d2, calculate_combined_rating(team, d2));
         }
     }
-    
+
     weekend.quali(combined_ratings);
     weekend.display_quali();
     const auto results = weekend.race();
@@ -50,8 +50,8 @@ void Season::standings(const std::vector<std::pair<Driver*, long long>>& race_re
     for (size_t i = 0; i < race_results.size() && i < 10; i++) {
         Driver* driver = race_results[i].first;
         driver_points[driver->get_name()] += points[i];
-        
-        for (Team* team : teams) {
+
+        for (const Team* team : teams) {
             if (team->get_driver1() == driver || team->get_driver2() == driver) {
                 team_points[team->get_name()] += points[i];
                 break;
@@ -62,21 +62,21 @@ void Season::standings(const std::vector<std::pair<Driver*, long long>>& race_re
 }
 
 void Season::update_team_performance() {
-    std::vector<std::pair<std::string, int>> standings(team_points.begin(), team_points.end());
-    std::ranges::sort(standings, [](const auto& a, const auto& b) {
+    std::vector<std::pair<std::string, int>> sorted_standings(team_points.begin(), team_points.end());
+    std::ranges::sort(sorted_standings, [](const auto& a, const auto& b) {
         return a.second > b.second;
     });
 
-    for (size_t pos = 0; pos < standings.size(); pos++) {
-        const auto& [team_name, _] = standings[pos];
+    for (size_t pos = 0; pos < sorted_standings.size(); pos++) {
+        const auto& [team_name, _] = sorted_standings[pos];
         for (Team* team : teams) {
             if (team->get_name() == team_name) {
                 team->update_performance_points(static_cast<int>(pos + 1));
-                
+
                 if (team->get_downgrade_points() > 0) {
                     team->apply_downgrade();
                 }
-                
+
                 if (team->is_player_controlled()) {
                     if (team->get_upgrade_points() > 0) {
                         std::cout << "Player Team has " << team->get_upgrade_points() << " upgrade points available.\n";
@@ -135,7 +135,7 @@ void Season::display_standings() {
         std::cout << std::string(60, '*') << "\n";
         if (!driver_standings.empty()) {
             const auto& champion = driver_standings[0];
-            std::cout << "World Drivers' Champion: " << champion.first 
+            std::cout << "World Drivers' Champion: " << champion.first
                      << " with " << champion.second << " points\n";
         }
         if (!team_standings.empty()) {
