@@ -147,12 +147,12 @@ int main() {
                     break;
                 }
 
-                Driver* myDriver = (driverNum == 1) ? userTeam->get_driver1() : userTeam->get_driver2();
+                const Driver* my_driver = (driverNum == 1) ? userTeam->get_driver1() : userTeam->get_driver2();
 
                 std::cout << "\nAvailable teams for swap:\n";
                 size_t displayedIndex = 1;
                 std::vector<size_t> teamIndices;
-                
+
                 for (size_t i = 0; i < teams.size(); ++i) {
                     if (teams[i].get() != userTeam) {
                         std::cout << displayedIndex << ". " << teams[i]->get_name() << "\n";
@@ -163,7 +163,7 @@ int main() {
 
                 std::cout << "\nSelect a team to swap with: ";
                 int teamChoice;
-                if (!isValidNumber(teamChoice) || teamChoice < 1 || 
+                if (!isValidNumber(teamChoice) || teamChoice < 1 ||
                     teamChoice > static_cast<int>(teamIndices.size())) {
                     std::cout << "Invalid team selection!\n";
                     break;
@@ -174,17 +174,17 @@ int main() {
                 std::cout << "\nSelect a driver from " << selectedTeam->get_name() << " to swap with:\n";
                 std::cout << "1. " << selectedTeam->get_driver1()->get_name() << "\n";
                 std::cout << "2. " << selectedTeam->get_driver2()->get_name() << "\n";
-                
+
                 int targetDriverNum;
                 if (!isValidNumber(targetDriverNum) || (targetDriverNum != 1 && targetDriverNum != 2)) {
                     std::cout << "Invalid driver selection!\n";
                     break;
                 }
 
-                Driver* otherDriver = (targetDriverNum == 1) ? 
+                const Driver* other_driver = (targetDriverNum == 1) ?
                     selectedTeam->get_driver1() : selectedTeam->get_driver2();
 
-                if (player.swap_try(myDriver, otherDriver, *selectedTeam)) {
+                if (player.swap_try(my_driver, other_driver, *selectedTeam)) {
                     std::cout << "Swap successful!\n";
                 } else {
                     std::cout << "Swap failed - insufficient market value.\n";
