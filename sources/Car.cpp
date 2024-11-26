@@ -7,8 +7,23 @@ int Car::rating() const {
     return static_cast<int>(0.25* aerodynamics + 0.25 * powertrain + 0.25 * durability + 0.25 * chasis);
 }
 
-Car::Car(const Car& other) = default;
-Car& Car::operator=(const Car& other) = default;
+Car::Car(const Car& other) : 
+    aerodynamics(other.aerodynamics),
+    powertrain(other.powertrain),
+    durability(other.durability),
+    chasis(other.chasis) {
+}
+
+Car& Car::operator=(const Car& other) {
+    if (this != &other) { 
+        aerodynamics = other.aerodynamics;
+        powertrain = other.powertrain;
+        durability = other.durability;
+        chasis = other.chasis;
+    }
+    return *this;
+}
+
 Car::~Car() {
     std::cout << "destructor car" << std::endl;
 }

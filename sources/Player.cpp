@@ -45,3 +45,12 @@ void Player::upgrades() const {
         show_data();
     }
 }
+
+std::ostream& operator<<(std::ostream& os, const Player& player) {
+    if (player.my_team) {
+        os << "Player's Team:\n" << *player.my_team;
+    } else {
+        os << "Player has no team assigned";
+    }
+    return os;
+}

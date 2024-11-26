@@ -14,11 +14,29 @@ float Driver::market_value() const {
     return static_cast<float>(rating() - 55);
 }
 
-Driver::Driver(const Driver& other) = default;
-Driver& Driver::operator=(const Driver& other) = default;
+Driver::Driver(const Driver& other) : 
+    name(other.name),
+    experience(other.experience),
+    race_craft(other.race_craft),
+    awareness(other.awareness),
+    race_pace(other.race_pace),
+    value(other.value) {
+}
+
+Driver& Driver::operator=(const Driver& other) {
+    if (this != &other) {
+        name = other.name;
+        experience = other.experience;
+        race_craft = other.race_craft;
+        awareness = other.awareness;
+        race_pace = other.race_pace;
+        value = other.value;
+    }
+    return *this;
+}
 
 Driver::~Driver() {
-    std::cout << "Destructor pilot: " << name << std::endl;
+    std::cout << "Destructor driver: " << name << std::endl;
 }
 
 std::string& Driver::get_name() {

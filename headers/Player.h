@@ -9,6 +9,7 @@ public:
     explicit Player(Team* my_team);
     void show_data() const;
     void upgrades() const;
+    friend std::ostream& operator<<(std::ostream& os, const Player& player);
 };
 
 #endif
