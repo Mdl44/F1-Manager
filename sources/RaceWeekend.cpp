@@ -4,7 +4,7 @@
 #include <random>
 
 RaceWeekend::RaceWeekend(std::string name, const int laps, const int reference_time)
-    : name(std::move(name)), laps(laps), reference_time(reference_time) {}
+    : name(std::move(name)), laps(laps), reference_time(reference_time),quali_results(),race_results() {}
 
 int random_time_generator(const int maxOffset = 200) {
         static std::default_random_engine generator(std::random_device{}());
