@@ -22,8 +22,8 @@ public:
     [[nodiscard]] bool is_player_controlled() const;
     Team(std::string name, std::unique_ptr<Car> car1, std::unique_ptr<Car> car2, std::unique_ptr<Driver> driver1, std::unique_ptr<Driver> driver2, int initial_position);
     ~Team();
-    Team(const Team& other) = delete;
-    Team& operator=(const Team& other) = delete;
+    Team(const Team& other);
+    Team& operator=(const Team& other);
     friend std::ostream& operator<<(std::ostream& os, const Team& team);
 
     void update_performance_points(int actual_position);

@@ -73,6 +73,38 @@ Team::~Team() {
     std::cout << "Destructor Team: " << name << std::endl;
 }
 
+Team::Team(const Team& other)
+    : name(other.name), player(other.player), position(other.position),
+      upgrade_points(other.upgrade_points), downgrade_points(other.downgrade_points) {
+    if (other.car1) car1 = std::make_unique<Car>(*other.car1);
+    if (other.car2) car2 = std::make_unique<Car>(*other.car2);
+    if (other.driver1) driver1 = std::make_unique<Driver>(*other.driver1);
+    if (other.driver2) driver2 = std::make_unique<Driver>(*other.driver2);
+}
+
+Team& Team::operator=(const Team& other) {
+    if (this != &other) {
+        name = other.name;
+        player = other.player;
+        position = other.position;
+        upgrade_points = other.upgrade_points;
+        downgrade_points = other.downgrade_points;
+
+        if (other.car1) car1 = std::make_unique<Car>(*other.car1);
+        else car1.reset();
+
+        if (other.car2) car2 = std::make_unique<Car>(*other.car2);
+        else car2.reset();
+
+        if (other.driver1) driver1 = std::make_unique<Driver>(*other.driver1);
+        else driver1.reset();
+
+        if (other.driver2) driver2 = std::make_unique<Driver>(*other.driver2);
+        else driver2.reset();
+    }
+    return *this;
+}
+
 bool Team::swap(const Driver* const& my_driver, const Driver* const& other_driver, Team& other_team) {
     if (my_driver->get_market_value() < other_driver->get_market_value()) {
         std::cout << "Can't swap: market value mismatch" << std::endl;

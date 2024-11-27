@@ -36,7 +36,7 @@ int main() {
         car_stats.push_back({aero, power, durability, chassis});
     }
 
-    std::vector<RaceWeekend> circuits;
+    std::vector<std::unique_ptr<RaceWeekend>> circuits;
     std::ifstream circuit_file("circuite.txt");
     if (!circuit_file) {
         std::cerr << "Failed to open circuit data file\n";
@@ -48,7 +48,7 @@ int main() {
     while (std::getline(circuit_file, name)) {
         if (!(circuit_file >> reference_time >> laps)) break;
         circuit_file.ignore();
-        circuits.emplace_back(name, laps, reference_time);
+        circuits.emplace_back(std::make_unique<RaceWeekend>(name, laps, reference_time));
     }
 
     std::vector<std::unique_ptr<Team>> teams;
@@ -130,9 +130,9 @@ int main() {
                 break;
 
             case 3:
-                std::cout << "\nSimulating Race " << (currentRace + 1) << " - " 
-                         << circuits[currentRace].get_name() << "...\n";
-                season.race(circuits[currentRace]);
+                //std::cout << "\nSimulating Race " << (currentRace + 1) << " - "
+                         //<< circuits[currentRace].get_name() << "...\n";
+                season.race(*circuits[currentRace]);
                 ++currentRace;
                 break;
 
@@ -203,7 +203,7 @@ int main() {
     }
 
     std::cout << "Season complete!\n";
-    season.display_standings();
+    std::cout << season;
     std::cout << "Press any key to exit...";
     std::cin.ignore(10000, '\n');
     std::cin.get();

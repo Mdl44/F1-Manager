@@ -10,12 +10,15 @@ class RaceWeekend {
     std::vector<std::pair<Driver*, long long>> quali_results;
     std::vector<std::pair<Driver*, long long>> race_results;
 
+
 public:
     RaceWeekend(std::string name, int laps, int reference_time);
+    ~RaceWeekend();
+    RaceWeekend(const RaceWeekend& other);
+    RaceWeekend& operator=(const RaceWeekend& other);
     std::vector<std::pair<Driver*, long long>> race();
     void quali(const std::vector<std::pair<Driver*, int>>& drivers);
-    void display_quali() const;
-    void display_race() const;
     [[nodiscard]] const std::string& get_name() const;
+    friend std::ostream& operator<<(std::ostream& os, const RaceWeekend& weekend);
 };
 #endif

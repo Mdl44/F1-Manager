@@ -12,6 +12,26 @@ int random_time_generator(const int maxOffset = 200) {
         return distribution(generator);
     }
 
+RaceWeekend::~RaceWeekend() {
+    std::cout << "Deleting RaceWeekend " << name << std::endl;
+}
+RaceWeekend::RaceWeekend(const RaceWeekend& other)
+    : name(other.name), laps(other.laps), reference_time(other.reference_time) {
+    quali_results = other.quali_results;
+    race_results = other.race_results;
+}
+RaceWeekend& RaceWeekend::operator=(const RaceWeekend& other) {
+    if (this == &other) {
+        return *this;
+    }
+    name = other.name;
+    laps = other.laps;
+    reference_time = other.reference_time;
+    quali_results = other.quali_results;
+    race_results = other.race_results;
+
+    return *this;
+}
 
 void RaceWeekend::quali(const std::vector<std::pair<Driver*, int>>& combined_ratings) {
     quali_results.clear();
@@ -29,6 +49,11 @@ void RaceWeekend::quali(const std::vector<std::pair<Driver*, int>>& combined_rat
     std::ranges::sort(quali_results, [](const auto& lhs, const auto& rhs) {
         return lhs.second < rhs.second;
     });
+}
+
+const std::string &RaceWeekend::get_name() const
+{
+    return name;
 }
 
 std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
@@ -62,51 +87,64 @@ std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
     return race_results;
 }
 
-void RaceWeekend::display_quali() const {
-    std::cout << "\nQualifying Results - " << name << "\n";
-    std::cout << std::string(60, '-') << "\n";
-    int pos = 1;
-    for (const auto& [driver, time] : quali_results) {
-        std::string pos_str = (pos < 10 ? " " : "") + std::to_string(pos) + ".";
+std::ostream& operator<<(std::ostream& os, const RaceWeekend& weekend) {
+    os << "\n=== " << weekend.name << " Race Weekend ===\n";
+    os << "Laps: " << weekend.laps << "\n";
+    os << "Reference Time: " << weekend.reference_time << "\n";
+    
+    if (!weekend.quali_results.empty()) {
+        os << "\nQualifying Results:\n";
+        os << std::string(60, '-') << "\n";
+        int pos = 1;
+        for (const auto& [driver, time] : weekend.quali_results) {
+            const int minutes = static_cast<int>(time / (1000 * 60));
+            const int seconds = static_cast<int>((time % (1000 * 60)) / 1000);
+            const int milliseconds = static_cast<int>(time % 1000);
 
-        const int minutes = static_cast<int>(time / (1000 * 60));
-        const int seconds = static_cast<int>((time % (1000 * 60)) / 1000);
-        const int milliseconds = static_cast<int>(time % 1000);
-
-        std::string driver_name = driver->get_name();
-        if (driver_name.length() < 25) {
-            driver_name += std::string(25 - driver_name.length(), ' ');
+            std::string pos_str = (pos < 10 ? " " : "") + std::to_string(pos) + ".";
+            std::string driver_name = driver->get_name();
+            if (driver_name.length() < 25) {
+                driver_name += std::string(25 - driver_name.length(), ' ');
+            }
+            
+            os << pos_str << " " << driver_name 
+               << minutes << ":" 
+               << (seconds < 10 ? "0" : "") << seconds << "."
+               << (milliseconds < 100 ? "0" : "") 
+               << (milliseconds < 10 ? "0" : "") 
+               << milliseconds << "\n";
+            pos++;
         }
-        std::cout << pos_str << " " << driver_name << minutes << ":" << (seconds < 10 ? "0" : "") << seconds << "."
-                  << (milliseconds < 100 ? "0" : "") << (milliseconds < 10 ? "0" : "") << milliseconds << "\n";
-        pos++;
+        os << std::string(60, '-') << "\n";
     }
-    std::cout << std::string(60, '-') << "\n\n";
-}
 
-void RaceWeekend::display_race() const {
-    std::cout << "\nRace Results - " << name << "\n";
-    std::cout << std::string(60, '-') << "\n";
-    int pos = 1;
-    for (const auto& [driver, time] : race_results) {
-        std::string pos_str = (pos < 10 ? " " : "") + std::to_string(pos) + ".";
+    if (!weekend.race_results.empty()) {
+        os << "\nRace Results:\n";
+        os << std::string(60, '-') << "\n";
+        int pos = 1;
+        for (const auto& [driver, time] : weekend.race_results) {
+            const int hours = static_cast<int>(time / (1000 * 60 * 60));
+            const int minutes = static_cast<int>((time % (1000 * 60 * 60)) / (1000 * 60));
+            const int seconds = static_cast<int>((time % (1000 * 60)) / 1000);
+            const int milliseconds = static_cast<int>(time % 1000);
 
-        const int hours = static_cast<int>(time / (1000 * 60 * 60));
-        const int minutes = static_cast<int>((time % (1000 * 60 * 60)) / (1000 * 60));
-        const int seconds = static_cast<int>((time % (1000 * 60)) / 1000);
-        const int milliseconds = static_cast<int>(time % 1000);
-
-        std::string driver_name = driver->get_name();
-        if (driver_name.length() < 25) {
-            driver_name += std::string(25 - driver_name.length(), ' ');
+            std::string pos_str = (pos < 10 ? " " : "") + std::to_string(pos) + ".";
+            std::string driver_name = driver->get_name();
+            if (driver_name.length() < 25) {
+                driver_name += std::string(25 - driver_name.length(), ' ');
+            }
+            
+            os << pos_str << " " << driver_name 
+               << hours << ":" 
+               << (minutes < 10 ? "0" : "") << minutes << ":"
+               << (seconds < 10 ? "0" : "") << seconds << "."
+               << (milliseconds < 100 ? "0" : "") 
+               << (milliseconds < 10 ? "0" : "") 
+               << milliseconds << "\n";
+            pos++;
         }
-        std::cout << pos_str << " " << driver_name << hours << ":" << (minutes < 10 ? "0" : "") << minutes << ":"
-                  << (seconds < 10 ? "0" : "") << seconds << "." << (milliseconds < 100 ? "0" : "")
-                  << (milliseconds < 10 ? "0" : "") << milliseconds << "\n";
-        pos++;
+        os << std::string(60, '-') << "\n";
     }
-    std::cout << std::string(60, '-') << "\n\n";
-}
-const std::string& RaceWeekend::get_name() const {
-    return name;
+    
+    return os;
 }

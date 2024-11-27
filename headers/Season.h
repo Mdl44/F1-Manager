@@ -15,14 +15,15 @@ class Season {
 
 public:
     explicit Season(const std::vector<Team*>& team_list, int total_races = 24);
-    Season(const Season&) = delete;
-    Season& operator=(const Season&) = delete;
+    Season(const Season&);
+    Season& operator=(const Season&);
+    ~Season();
 
     void race(RaceWeekend& weekend);
     void standings(const std::vector<std::pair<Driver*, long long>>& race_results);
 
     void update_team_performance();
     static int calculate_combined_rating(const Team* team, const Driver* driver);
-    void display_standings();
+    friend std::ostream& operator<<(std::ostream& os, const Season& season);
 };
 #endif
