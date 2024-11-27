@@ -16,10 +16,12 @@ RaceWeekend::~RaceWeekend() {
     std::cout << "Deleting RaceWeekend " << name << std::endl;
 }
 RaceWeekend::RaceWeekend(const RaceWeekend& other)
-    : name(other.name), laps(other.laps), reference_time(other.reference_time) {
-    quali_results = other.quali_results;
-    race_results = other.race_results;
-}
+    : name(other.name),
+      laps(other.laps),
+      reference_time(other.reference_time),
+      quali_results(other.quali_results),
+      race_results(other.race_results) {}
+
 RaceWeekend& RaceWeekend::operator=(const RaceWeekend& other) {
     if (this == &other) {
         return *this;
