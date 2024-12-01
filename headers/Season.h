@@ -21,6 +21,7 @@ public:
 
     void race(RaceWeekend& weekend);
     void standings(const std::vector<std::pair<Driver*, long long>>& race_results);
+    static void printStandings(std::ostream& os, const std::vector<std::pair<std::string, int>>& standings, const std::string& title, int lungime) ;
 
     void update_team_performance();
     static int calculate_combined_rating(const Team* team, const Driver* driver);

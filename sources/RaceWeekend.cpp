@@ -89,63 +89,49 @@ std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
     return race_results;
 }
 
+void RaceWeekend::printResults(std::ostream& os, const std::vector<std::pair<Driver*, long long>>& results, bool isRace) {
+    int pos = 1;
+    for (const auto& [driver, time] : results) {
+        const int hours = isRace ? static_cast<int>(time / (1000 * 60 * 60)) : 0;
+        const int minutes = static_cast<int>((time % (1000 * 60 * 60)) / (1000 * 60));
+        const int seconds = static_cast<int>((time % (1000 * 60)) / 1000);
+        const int milliseconds = static_cast<int>(time % 1000);
+
+        std::string pos_str = (pos < 10 ? " " : "") + std::to_string(pos) + ".";
+        std::string driver_name = driver->get_name();
+        if (driver_name.length() < 25) {
+            driver_name += std::string(25 - driver_name.length(), ' ');
+        }
+
+        os << pos_str << " " << driver_name;
+        if (isRace) {
+            os << hours << ":";
+        }
+        os << minutes << ":"
+           << (seconds < 10 ? "0" : "") << seconds << "."
+           << (milliseconds < 100 ? "0" : "")
+           << (milliseconds < 10 ? "0" : "")
+           << milliseconds << "\n";
+        pos++;
+    }
+    os << std::string(60, '-') << "\n";
+}
+
 std::ostream& operator<<(std::ostream& os, const RaceWeekend& weekend) {
     os << "\n=== " << weekend.name << " Race Weekend ===\n";
     os << "Laps: " << weekend.laps << "\n";
     os << "Reference Time: " << weekend.reference_time << "\n";
-    
+
     if (!weekend.quali_results.empty()) {
         os << "\nQualifying Results:\n";
         os << std::string(60, '-') << "\n";
-        int pos = 1;
-        for (const auto& [driver, time] : weekend.quali_results) {
-            const int minutes = static_cast<int>(time / (1000 * 60));
-            const int seconds = static_cast<int>((time % (1000 * 60)) / 1000);
-            const int milliseconds = static_cast<int>(time % 1000);
-
-            std::string pos_str = (pos < 10 ? " " : "") + std::to_string(pos) + ".";
-            std::string driver_name = driver->get_name();
-            if (driver_name.length() < 25) {
-                driver_name += std::string(25 - driver_name.length(), ' ');
-            }
-            
-            os << pos_str << " " << driver_name 
-               << minutes << ":" 
-               << (seconds < 10 ? "0" : "") << seconds << "."
-               << (milliseconds < 100 ? "0" : "") 
-               << (milliseconds < 10 ? "0" : "") 
-               << milliseconds << "\n";
-            pos++;
-        }
-        os << std::string(60, '-') << "\n";
+        RaceWeekend::printResults(os, weekend.quali_results, false);
     }
 
     if (!weekend.race_results.empty()) {
         os << "\nRace Results:\n";
         os << std::string(60, '-') << "\n";
-        int pos = 1;
-        for (const auto& [driver, time] : weekend.race_results) {
-            const int hours = static_cast<int>(time / (1000 * 60 * 60));
-            const int minutes = static_cast<int>((time % (1000 * 60 * 60)) / (1000 * 60));
-            const int seconds = static_cast<int>((time % (1000 * 60)) / 1000);
-            const int milliseconds = static_cast<int>(time % 1000);
-
-            std::string pos_str = (pos < 10 ? " " : "") + std::to_string(pos) + ".";
-            std::string driver_name = driver->get_name();
-            if (driver_name.length() < 25) {
-                driver_name += std::string(25 - driver_name.length(), ' ');
-            }
-            
-            os << pos_str << " " << driver_name 
-               << hours << ":" 
-               << (minutes < 10 ? "0" : "") << minutes << ":"
-               << (seconds < 10 ? "0" : "") << seconds << "."
-               << (milliseconds < 100 ? "0" : "") 
-               << (milliseconds < 10 ? "0" : "") 
-               << milliseconds << "\n";
-            pos++;
-        }
-        os << std::string(60, '-') << "\n";
+        RaceWeekend::printResults(os, weekend.race_results, true);
     }
     
     return os;

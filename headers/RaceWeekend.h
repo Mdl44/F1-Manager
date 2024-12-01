@@ -16,6 +16,7 @@ public:
     ~RaceWeekend();
     RaceWeekend(const RaceWeekend& other);
     RaceWeekend& operator=(const RaceWeekend& other);
+    static void printResults(std::ostream& os, const std::vector<std::pair<Driver*, long long>>& results, bool isRace) ;
     std::vector<std::pair<Driver*, long long>> race();
     void quali(const std::vector<std::pair<Driver*, int>>& drivers);
     [[nodiscard]] const std::string& get_name() const;
