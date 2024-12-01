@@ -1,9 +1,26 @@
 #include "Player.h"
+#include <iostream>
 
 Player::Player(Team* my_team) : my_team(my_team) {
     if(my_team) my_team->set_control(true);
 }
 
+Player::Player(const Player& other) : my_team(other.my_team) {
+    if(my_team) my_team->set_control(true);
+}
+
+Player& Player::operator=(const Player& other) {
+    if (this != &other) {
+        if (my_team) {
+            my_team->set_control(false);
+        }
+        my_team = other.my_team;
+        if (my_team) {
+            my_team->set_control(true);
+        }
+    }
+    return *this;
+}
 
 bool Player::swap_try(const Driver* const& my_driver, const Driver* const& other_driver, Team& other_team) const {
     if (my_team) {
@@ -12,6 +29,7 @@ bool Player::swap_try(const Driver* const& my_driver, const Driver* const& other
     std::cout << "No team assigned to player.\n";
     return false;
 }
+
 Player::~Player() {
     std::cout << "Destroying player.\n";
     if (my_team) {
