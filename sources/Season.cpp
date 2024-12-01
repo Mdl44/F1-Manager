@@ -120,7 +120,7 @@ void Season::printStandings(std::ostream& os, const std::vector<std::pair<std::s
     for (const auto& [name, points] : standings) {
         std::string pos_str = (pos < 10 ? " " : "") + std::to_string(pos) + ".";
         std::string formatted_name = name;
-        if (formatted_name.length() < lungime) {
+        if (static_cast<int>(formatted_name.length()) < lungime) {
             formatted_name += std::string(lungime - formatted_name.length(), ' ');
         }
         os << pos_str << " " << formatted_name << points << " pts\n";
