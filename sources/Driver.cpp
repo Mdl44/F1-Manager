@@ -35,6 +35,10 @@ Driver& Driver::operator=(const Driver& other) {
         awareness = other.awareness;
         race_pace = other.race_pace;
         value = other.value;
+        age = other.age;
+        dry_skill = other.dry_skill;
+        intermediate_skill = other.intermediate_skill;
+        wet_skill = other.wet_skill;
     }
     return *this;
 }
@@ -53,9 +57,6 @@ int Driver::get_rating() const {
 
 float Driver::get_market_value() const {
     return value;
-}
-int Driver::get_age() const { 
-    return age; 
 }
 int Driver::get_dry_skill() const { 
     return dry_skill; 
@@ -82,18 +83,18 @@ void Driver::apply_downgrade() {
     race_pace -= 1;
     value = market_value();
 }
-void Driver::apply_race_upgrade(const int value) {
-    experience += value;
-    race_craft += value;
-    awareness += value;
-    race_pace += value;
+void Driver::apply_race_upgrade(const int value_) {
+    experience += value_;
+    race_craft += value_;
+    awareness += value_;
+    race_pace += value_;
 }
 
-void Driver::remove_race_upgrade(const int value) {
-    experience -= value;
-    race_craft -= value;
-    awareness -= value;
-    race_pace -= value;
+void Driver::remove_race_upgrade(const int value_) {
+    experience -= value_;
+    race_craft -= value_;
+    awareness -= value_;
+    race_pace -= value_;
 }
 
 int Driver::get_experience() const {

@@ -16,7 +16,7 @@ NightCondition& NightCondition::operator=(const NightCondition& other) {
 }
 
 void NightCondition::apply_effects(Team* team) {
-    if (auto* t = dynamic_cast<Team*>(team)) {
+    if (const auto* t = dynamic_cast<Team*>(team)) {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> temp_effect(-15, 15);
@@ -38,7 +38,7 @@ void NightCondition::apply_effects(Team* team) {
 }
 
 void NightCondition::remove_effects(Team* team) {
-    if (auto* t = dynamic_cast<Team*>(team)) {
+    if (const auto* t = dynamic_cast<Team*>(team)) {
         const int team_bonus = t->get_night_bonus();
         t->get_car1()->remove_race_upgrade(team_bonus);
         t->get_car2()->remove_race_upgrade(team_bonus);

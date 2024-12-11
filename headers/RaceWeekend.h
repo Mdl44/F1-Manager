@@ -34,7 +34,5 @@ public:
     void set_race_weather(std::unique_ptr<WeatherCondition> weather);
     [[nodiscard]] bool can_rain() const;
     [[nodiscard]] bool night() const;
-    [[nodiscard]] WeatherCondition* get_quali_weather() const;
-    [[nodiscard]] WeatherCondition* get_race_weather() const;
 };
 #endif

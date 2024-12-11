@@ -22,7 +22,6 @@ public:
     Driver& operator=(const Driver& other);
     ~Driver();
     friend std::ostream& operator<<(std::ostream& os, const Driver& driver);
-    [[nodiscard]] int get_age() const;
     [[nodiscard]] int get_dry_skill() const;
     [[nodiscard]] int get_wet_skill() const;
     [[nodiscard]] int get_intermediate_skill() const;
@@ -33,8 +32,8 @@ public:
     [[nodiscard]] int get_rating() const;
     [[nodiscard]] float get_market_value() const;
     [[nodiscard]] int get_experience() const;
-    void apply_race_upgrade(int value);
-    void remove_race_upgrade(int value);
+    void apply_race_upgrade(int value_);
+    void remove_race_upgrade(int value_);
 };
 
 #endif

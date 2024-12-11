@@ -62,7 +62,7 @@ void RaceWeekend::quali(const std::vector<std::pair<Driver*, int>>& drivers) {
         const double performance_factor = get_rating_multiplier(driver->get_rating());
 
         double car_rating = 0.0;
-        for (const auto& team : teams) {
+        for (const auto *team : teams) {
             if (driver == team->get_driver1()) {
                 car_rating = static_cast<double>(team->get_car1()->get_rating());
                 break;
@@ -82,6 +82,9 @@ void RaceWeekend::quali(const std::vector<std::pair<Driver*, int>>& drivers) {
 
         if (quali_weather) {
             time += quali_weather->get_lap_time_modifier();
+            for (const auto* team : teams) {
+            race_weather->apply_effects(const_cast<Team*>(team));
+        }
         }
 
         quali_results.emplace_back(driver, time);
@@ -105,7 +108,7 @@ std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
         const double performance_factor = get_rating_multiplier(driver->get_rating());
 
         double car_rating = 0.0;
-        for (const auto& team : teams) {
+        for (const auto *team : teams) {
             if (driver == team->get_driver1()) {
                 car_rating = static_cast<double>(team->get_car1()->get_rating());
                 break;
@@ -129,6 +132,9 @@ std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
 
             if (race_weather) {
             lap_time += race_weather->get_lap_time_modifier();
+            for (const auto* team : teams) {
+            race_weather->apply_effects(const_cast<Team*>(team));
+        }
         }
 
             total_time += lap_time;
@@ -232,10 +238,4 @@ bool RaceWeekend::can_rain() const {
 }
 bool RaceWeekend::night() const {
     return night_race;
-}
-WeatherCondition *RaceWeekend::get_quali_weather() const {
-    return quali_weather.get();
-}
-WeatherCondition *RaceWeekend::get_race_weather() const {
-    return race_weather.get();
 }

@@ -16,7 +16,7 @@
     }
 
     void IntermediateCondition::apply_effects(Team* team){
-        if (auto* t = dynamic_cast<Team*>(team)) {
+        if (const auto* t = dynamic_cast<Team*>(team)) {
             const int team_bonus = t->get_intermediate_bonus();
             t->get_car1()->apply_race_upgrade(team_bonus);
             t->get_car2()->apply_race_upgrade(team_bonus);
@@ -38,7 +38,7 @@
     }
 
     void IntermediateCondition::remove_effects(Team* team){
-        if (auto* t = dynamic_cast<Team*>(team)) {
+        if (const auto* t = dynamic_cast<Team*>(team)) {
             const int team_bonus = t->get_intermediate_bonus();
             t->get_car1()->remove_race_upgrade(team_bonus);
             t->get_car2()->remove_race_upgrade(team_bonus);
