@@ -1,6 +1,10 @@
 #include "Season.h"
 #include <algorithm>
 #include <iostream>
+#include "NightCondition.h"
+#include "DryCondition.h"
+#include "WetCondition.h"
+#include "IntermediateCondition.h"
 
 Season::Season(const std::vector<Team*>& team_list, const int total_races)
     : teams(team_list), races(total_races) {
@@ -49,6 +53,65 @@ int Season::calculate_combined_rating(const Team* team, const Driver* driver) {
 
 void Season::race(RaceWeekend& weekend) {
     std::vector<std::pair<Driver*, int>> combined_ratings;
+
+    std::cout << "\n=== Weather Setup for " << weekend.get_name() << " ===\n";
+    
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    if (weekend.night()) {
+    std::cout << "Night race detected!\n";
+    if (weekend.can_rain()) {
+        std::uniform_int_distribution<> dis(0, 99);
+        const auto weather_choice = dis(gen);
+        std::cout << "Rain possible - randomly choosing weather condition...\n";
+        
+        if (weather_choice < 60) {
+            std::cout << "Selected: Night (Dry)\n";
+            weekend.set_quali_weather(std::make_unique<NightCondition>());
+            weekend.set_race_weather(std::make_unique<NightCondition>());
+        } else if (weather_choice < 80) {
+            std::cout << "Selected: Night + Intermediate\n";
+            weekend.set_quali_weather(std::make_unique<IntermediateCondition>());
+            weekend.set_race_weather(std::make_unique<IntermediateCondition>());
+        } else {
+            std::cout << "Selected: Night + Wet\n";
+            weekend.set_quali_weather(std::make_unique<WetCondition>());
+            weekend.set_race_weather(std::make_unique<WetCondition>());
+        }
+    } else {
+        std::cout << "No rain possible - setting Night conditions\n";
+        weekend.set_quali_weather(std::make_unique<NightCondition>());
+        weekend.set_race_weather(std::make_unique<NightCondition>());
+    }
+} else {
+    std::cout << "Day race detected!\n";
+    if (weekend.can_rain()) {
+        std::uniform_int_distribution<> dis(0, 99);
+        const auto weather_choice = dis(gen);
+        std::cout << "Rain possible - randomly choosing weather condition...\n";
+        
+        if (weather_choice < 60) {
+            std::cout << "Selected: Dry\n";
+            weekend.set_quali_weather(std::make_unique<DryCondition>());
+            weekend.set_race_weather(std::make_unique<DryCondition>());
+        } else if (weather_choice < 80) {
+            std::cout << "Selected: Intermediate\n";
+            weekend.set_quali_weather(std::make_unique<IntermediateCondition>());
+            weekend.set_race_weather(std::make_unique<IntermediateCondition>());
+        } else {
+            std::cout << "Selected: Wet\n";
+            weekend.set_quali_weather(std::make_unique<WetCondition>());
+            weekend.set_race_weather(std::make_unique<WetCondition>());
+        }
+    } else {
+        std::cout << "No rain possible - setting Dry conditions\n";
+        weekend.set_quali_weather(std::make_unique<DryCondition>());
+        weekend.set_race_weather(std::make_unique<DryCondition>());
+    }
+}
+    std::cout << "==============================\n";
+
     for (const Team* team : teams) {
         if (auto* d1 = team->get_driver1()) {
             combined_ratings.emplace_back(d1, calculate_combined_rating(team, d1));
@@ -112,7 +175,7 @@ void Season::update_team_performance() {
     }
 }
 
-void Season::printStandings(std::ostream& os, const std::vector<std::pair<std::string, int>>& standings, const std::string& title, int lungime) {
+void Season::printStandings(std::ostream& os, const std::vector<std::pair<std::string, int>>& standings, const std::string& title, const int lungime) {
     os << title << "\n";
     os << std::string(60, '-') << "\n";
 
@@ -162,7 +225,7 @@ std::ostream& operator<<(std::ostream& os, const Season& season) {
         }
         if (!team_standings.empty()) {
             const auto& champion = team_standings[0];
-            os << "Constructors' Champion: " << champion.first 
+            os << "Constructors' Champion: " << champion.first
                << " with " << champion.second << " points\n";
         }
         os << std::string(60, '*') << "\n";

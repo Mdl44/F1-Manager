@@ -14,13 +14,17 @@ class Team {
     int position;
     int upgrade_points = 0;
     int downgrade_points = 0;
+    int dry_bonus;
+    int intermediate_bonus;
+    int wet_bonus;
+    int night_bonus;
 public:
     void apply_downgrade();
 
     void set_control(bool value);
     bool swap(const Driver* const& my_driver, const Driver* const& other_driver, Team& other_team);
     [[nodiscard]] bool is_player_controlled() const;
-    Team(std::string name, std::unique_ptr<Car> car1, std::unique_ptr<Car> car2, std::unique_ptr<Driver> driver1, std::unique_ptr<Driver> driver2, int initial_position);
+    Team(std::string name, std::unique_ptr<Car> car1, std::unique_ptr<Car> car2, std::unique_ptr<Driver> driver1, std::unique_ptr<Driver> driver2, int initial_position, int dry_bonus, int intermediate_bonus, int wet_bonus, int night_bonus);
     ~Team();
     Team(const Team& other);
     Team& operator=(const Team& other);
@@ -37,5 +41,10 @@ public:
     [[nodiscard]] Driver *get_driver2() const;
     [[nodiscard]] Car* get_car1() const;
     [[nodiscard]] Car* get_car2() const;
+    [[nodiscard]] int get_dry_bonus() const;
+    [[nodiscard]] int get_intermediate_bonus() const;
+    [[nodiscard]] int get_wet_bonus() const;
+    [[nodiscard]] int get_night_bonus() const;
+
 };
 #endif

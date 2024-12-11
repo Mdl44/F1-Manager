@@ -68,6 +68,17 @@ add_executable(${PROJECT_NAME}
         sources/Season.cpp
         headers/GameManager.h
         sources/GameManager.cpp
+        headers/DryCondition.h
+        sources/DryCondition.cpp
+        headers/IntermediateCondition.h
+        sources/IntermediateCondition.cpp
+        headers/WeatherCondition.h
+        sources/WeatherCondition.cpp
+        headers/WetCondition.h
+        sources/WetCondition.cpp
+        headers/NightCondition.h
+        sources/NightCondition.cpp
+
 
 )
 

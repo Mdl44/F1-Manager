@@ -1,0 +1,40 @@
+#include "WeatherCondition.h"
+
+WeatherCondition::WeatherCondition(std::string name, const int modifier) 
+    : name(std::move(name)), lap_time_modifier(modifier) {}
+
+WeatherCondition& WeatherCondition::operator=(const WeatherCondition& other) {
+    if (this != &other) {
+        name = other.name;
+        lap_time_modifier = other.lap_time_modifier;
+    }
+    return *this;
+}
+
+void WeatherCondition::print(std::ostream& os) const {
+    print_(os);
+}
+
+int WeatherCondition::get_lap_time_modifier() const {
+    return lap_time_modifier;
+}
+
+const std::string& WeatherCondition::get_name() const {
+    return name;
+}
+
+void WeatherCondition::print_(std::ostream& os) const {
+    os << "Weather: " << name << "\n"
+       << "Lap time modifier: " << lap_time_modifier << "ms\n";
+}
+
+std::ostream& operator<<(std::ostream& os, const WeatherCondition& obj) {
+    obj.print(os);
+    return os;
+}
+
+void WeatherCondition::swap(WeatherCondition& first, WeatherCondition& second) noexcept {
+    using std::swap;
+    swap(first.lap_time_modifier, second.lap_time_modifier);
+    swap(first.name, second.name);
+}

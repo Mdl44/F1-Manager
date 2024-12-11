@@ -5,6 +5,7 @@
 GameManager::GameManager() : my_team(nullptr) {}
 
 bool GameManager::initialize() {
+
     std::vector<std::vector<int>> car_stats;
     std::ifstream car_file("date_masini.txt");
     if (!car_file) {
@@ -12,10 +13,11 @@ bool GameManager::initialize() {
         return false;
     }
 
-    int aero, power, durability, chassis, pos;
-    while (car_file >> aero >> power >> durability >> chassis >> pos) {
+    int aero, power, durability, chassis;
+    while (car_file >> aero >> power >> durability >> chassis) {
         car_stats.push_back({aero, power, durability, chassis});
     }
+
 
     std::ifstream circuit_file("circuite.txt");
     if (!circuit_file) {
@@ -25,10 +27,11 @@ bool GameManager::initialize() {
 
     std::string name;
     int laps, reference_time;
+    bool rain, night_race;
     while (std::getline(circuit_file, name)) {
-        if (!(circuit_file >> reference_time >> laps)) break;
+        if (!(circuit_file >> reference_time >> laps >> night_race >> rain)) break;
         circuit_file.ignore();
-        circuits.emplace_back(std::make_unique<RaceWeekend>(name, laps, reference_time));
+        circuits.emplace_back(std::make_unique<RaceWeekend>(name, laps, reference_time, rain, night_race));
     }
 
     std::ifstream team_file("piloti.txt");
@@ -43,30 +46,44 @@ bool GameManager::initialize() {
 
     for (size_t i = 0; i < static_cast<size_t>(num_teams) && i < car_stats.size(); ++i) {
         std::string team_name;
+        int expected_position;
+        int dry_bonus, inter_bonus, wet_bonus, night_bonus;
+        
         std::getline(team_file, team_name);
-
-        std::string driver1_name, driver2_name;
-        int driver1_stats[4], driver2_stats[4];
-
-        std::getline(team_file, driver1_name);
-        for (int& stat : driver1_stats) {
-            team_file >> stat;
-        }
+        team_file >> expected_position;
+        team_file >> dry_bonus >> inter_bonus >> wet_bonus >> night_bonus;
         team_file.ignore();
 
+        std::string driver1_name;
+        int driver1_exp, driver1_craft, driver1_aware, driver1_pace;
+        int driver1_age, driver1_dry, driver1_inter, driver1_wet;
+        
+        std::getline(team_file, driver1_name);
+        team_file >> driver1_exp >> driver1_craft >> driver1_aware >> driver1_pace
+                  >> driver1_age >> driver1_dry >> driver1_inter >> driver1_wet;
+        team_file.ignore();
+
+        std::string driver2_name;
+        int driver2_exp, driver2_craft, driver2_aware, driver2_pace;
+        int driver2_age, driver2_dry, driver2_inter, driver2_wet;
+        
         std::getline(team_file, driver2_name);
-        for (int& stat : driver2_stats) {
-            team_file >> stat;
-        }
+        team_file >> driver2_exp >> driver2_craft >> driver2_aware >> driver2_pace
+                  >> driver2_age >> driver2_dry >> driver2_inter >> driver2_wet;
         team_file.ignore();
 
         auto car1 = std::make_unique<Car>(car_stats[i][0], car_stats[i][1], car_stats[i][2], car_stats[i][3]);
         auto car2 = std::make_unique<Car>(car_stats[i][0], car_stats[i][1], car_stats[i][2], car_stats[i][3]);
 
-        auto driver1 = std::make_unique<Driver>(driver1_name, driver1_stats[0], driver1_stats[1], driver1_stats[2], driver1_stats[3]);
-        auto driver2 = std::make_unique<Driver>(driver2_name, driver2_stats[0], driver2_stats[1], driver2_stats[2], driver2_stats[3]);
+        auto driver1 = std::make_unique<Driver>(driver1_name, driver1_exp, driver1_craft, 
+            driver1_aware, driver1_pace, driver1_age, driver1_dry, driver1_inter, driver1_wet);
+            
+        auto driver2 = std::make_unique<Driver>(driver2_name, driver2_exp, driver2_craft, 
+            driver2_aware, driver2_pace, driver2_age, driver2_dry, driver2_inter, driver2_wet);
 
-        teams.push_back(std::make_unique<Team>(team_name, std::move(car1), std::move(car2), std::move(driver1), std::move(driver2), i + 1));
+        teams.push_back(std::make_unique<Team>(team_name, std::move(car1), std::move(car2), 
+            std::move(driver1), std::move(driver2), expected_position,
+            dry_bonus, inter_bonus, wet_bonus, night_bonus));
     }
 
     std::cout << "Select your team:\n";

@@ -2,16 +2,18 @@
 #include "Team.h"
 #include <iostream>
 
-Team::Team(std::string name, std::unique_ptr<Car> car1, std::unique_ptr<Car> car2, std::unique_ptr<Driver> driver1, std::unique_ptr<Driver> driver2, const int initial_position)
-    : name(std::move(name)), car1(std::move(car1)), car2(std::move(car2)), driver1(std::move(driver1)), driver2(std::move(driver2)), position(initial_position) {
+Team::Team(std::string name, std::unique_ptr<Car> car1, std::unique_ptr<Car> car2, std::unique_ptr<Driver> driver1, std::unique_ptr<Driver> driver2, int initial_position, int dry_bonus, int intermediate_bonus, int wet_bonus, int night_bonus)
+    : name(std::move(name)), car1(std::move(car1)), car2(std::move(car2)), driver1(std::move(driver1)), driver2(std::move(driver2)), position(initial_position), dry_bonus(dry_bonus), intermediate_bonus(intermediate_bonus), wet_bonus(wet_bonus), night_bonus(night_bonus) {
 }
 
 void Team::update_performance_points(const int actual_position) {
-    int diff = actual_position - position;
+    const int diff = actual_position - position;
+    std::cout << "Team " << name << " - Initial pos: " << position 
+              << ", Current pos: " << actual_position 
+              << ", Diff: " << diff << std::endl;
+
     if (diff == 0) upgrade_points++;
-
-    else if (diff < 0) upgrade_points += 2;
-
+    else if (diff < 0) upgrade_points += 1;
     else if (diff >= 2) downgrade_points += 1;
 }
 
@@ -75,7 +77,7 @@ Team::~Team() {
 
 Team::Team(const Team& other)
     : name(other.name), player(other.player), position(other.position),
-      upgrade_points(other.upgrade_points), downgrade_points(other.downgrade_points) {
+      upgrade_points(other.upgrade_points), downgrade_points(other.downgrade_points),dry_bonus(other.dry_bonus),intermediate_bonus(other.intermediate_bonus),wet_bonus(other.wet_bonus),night_bonus(other.night_bonus) {
     if (other.car1) car1 = std::make_unique<Car>(*other.car1);
     if (other.car2) car2 = std::make_unique<Car>(*other.car2);
     if (other.driver1) driver1 = std::make_unique<Driver>(*other.driver1);
@@ -175,6 +177,18 @@ bool Team::is_player_controlled() const {
 }
 const std::string& Team::get_name() const {
     return name;
+}
+int Team::get_dry_bonus() const {
+    return dry_bonus;
+}
+int Team::get_intermediate_bonus() const {
+    return intermediate_bonus;
+}
+ int Team::get_wet_bonus() const {
+    return wet_bonus;
+}
+int Team::get_night_bonus() const {
+    return night_bonus;
 }
 
 std::ostream& operator<<(std::ostream& os, const Team& team) {

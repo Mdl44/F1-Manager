@@ -18,5 +18,7 @@ public:
     void apply_downgrade();
     void apply_upgrade();
     [[nodiscard]] int get_rating() const;
+    void apply_race_upgrade(int value);
+    void remove_race_upgrade(int value);
 };
 #endif

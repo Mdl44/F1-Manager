@@ -46,6 +46,20 @@ void Car::apply_downgrade() {
     chasis -= 1;
 }
 
+void Car::apply_race_upgrade(const int value) {
+    aerodynamics += value;
+    powertrain += value;
+    durability += value;
+    chasis += value;
+}
+
+void Car::remove_race_upgrade(const int value) {
+    aerodynamics -= value;
+    powertrain -= value;
+    durability -= value;
+    chasis -= value;
+}
+
 std::ostream& operator<<(std::ostream& os, const Car& obj) {
     os << "Car Stats:\n"
        << "Aerodynamics: " << obj.aerodynamics << "\n"

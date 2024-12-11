@@ -1,10 +1,10 @@
-
 #ifndef SEASON_H
 #define SEASON_H
 #include <map>
 #include <vector>
 #include "Team.h"
 #include "RaceWeekend.h"
+#include <random>
 
 class Season {
     std::vector<Team*> teams;
