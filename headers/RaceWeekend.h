@@ -30,8 +30,8 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const RaceWeekend& weekend);
 
 
-    void set_quali_weather(std::unique_ptr<WeatherCondition> weather);
-    void set_race_weather(std::unique_ptr<WeatherCondition> weather);
+    void set_quali_weather(const std::unique_ptr<WeatherCondition> &weather);
+    void set_race_weather(const std::unique_ptr<WeatherCondition> &weather);
     [[nodiscard]] bool can_rain() const;
     [[nodiscard]] bool night() const;
 };

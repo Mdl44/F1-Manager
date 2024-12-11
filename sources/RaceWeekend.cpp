@@ -21,12 +21,12 @@ static double get_rating_multiplier(const int rating) {
 RaceWeekend::RaceWeekend(std::string name, const int laps, const int reference_time, const bool rain, const bool night_race) 
     : name(std::move(name)), laps(laps), reference_time(reference_time), rain(rain),night_race(night_race) {}
 
-void RaceWeekend::set_quali_weather(std::unique_ptr<WeatherCondition> weather) {
-    quali_weather = std::move(weather);
+void RaceWeekend::set_quali_weather(const std::unique_ptr<WeatherCondition> &weather) {
+    quali_weather = weather ? weather->clone() : nullptr;
 }
 
-void RaceWeekend::set_race_weather(std::unique_ptr<WeatherCondition> weather) {
-    race_weather = std::move(weather);
+void RaceWeekend::set_race_weather(const std::unique_ptr<WeatherCondition> &weather) {
+    race_weather = weather ? weather->clone() : nullptr;
 }
 
 int random_time_generator(const int maxOffset = 500) { 
@@ -83,12 +83,17 @@ void RaceWeekend::quali(const std::vector<std::pair<Driver*, int>>& drivers) {
         if (quali_weather) {
             time += quali_weather->get_lap_time_modifier();
             for (const auto* team : teams) {
-            race_weather->apply_effects(const_cast<Team*>(team));
+            quali_weather->apply_effects(const_cast<Team*>(team));
         }
         }
 
         quali_results.emplace_back(driver, time);
     }
+        if(quali_weather){
+            for(const auto* team : teams){
+                quali_weather->remove_effects(const_cast<Team*>(team));
+            }
+        }
 
     std::ranges::sort(quali_results, [](const auto& lhs, const auto& rhs) {
         return lhs.second < rhs.second;
@@ -142,6 +147,11 @@ std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
 
         race_results.emplace_back(driver, total_time);
     }
+    if(race_weather){
+            for(const auto* team : teams){
+                race_weather->remove_effects(const_cast<Team*>(team));
+            }
+        }
 
     std::ranges::sort(race_results, [](const auto& lhs, const auto& rhs) {
         return lhs.second < rhs.second;
