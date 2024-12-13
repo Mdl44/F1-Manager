@@ -43,11 +43,16 @@ void NightCondition::apply_effects(Team* team) {
                  << "Infrastructure bonus: " << infra_bonus << "\n";
     } else {
         Driver_Car pair1 = team->get_driver_car(1);
-        const int infra_bonus = pair1.car->get_rating() > 80 ? 10 : -5;
+        Driver_Car pair2 = team->get_driver_car(2);
+        
+        int infra_bonus = -5;
+        if (pair1.car && pair1.car->get_rating() > 80) {
+            infra_bonus = 10;
+        }
+        
         const int total_bonus = team_bonus + temp_impact + infra_bonus;
         
         if (pair1.car) pair1.car->apply_race_upgrade(total_bonus);
-        Driver_Car pair2 = team->get_driver_car(2);
         if (pair2.car) pair2.car->apply_race_upgrade(total_bonus);
         
         std::cout << "Night race conditions:\n"
@@ -76,11 +81,16 @@ void NightCondition::remove_effects(Team* team) {
         if (pair2.car) pair2.car->remove_race_upgrade(total_bonus);
     } else {
         Driver_Car pair1 = team->get_driver_car(1);
-        const int infra_bonus = pair1.car->get_rating() > 80 ? 10 : -5;
+        Driver_Car pair2 = team->get_driver_car(2);
+        
+        int infra_bonus = -5;
+        if (pair1.car && pair1.car->get_rating() > 80) {
+            infra_bonus = 10;
+        }
+        
         const int total_bonus = team_bonus + temp_impact + infra_bonus;
         
         if (pair1.car) pair1.car->remove_race_upgrade(total_bonus);
-        Driver_Car pair2 = team->get_driver_car(2);
         if (pair2.car) pair2.car->remove_race_upgrade(total_bonus);
     }
 }
