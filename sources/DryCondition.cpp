@@ -22,30 +22,36 @@ void DryCondition::print_(std::ostream& os) const {
 
 void DryCondition::apply_effects(Team* team) {
     if (const auto* t = dynamic_cast<Team*>(team)) {
-        const int team_bonus = t->get_dry_bonus();
-        t->get_car1()->apply_race_upgrade(team_bonus);
-        t->get_car2()->apply_race_upgrade(team_bonus);
-        
-        if (t->get_driver1()) {
-            t->get_driver1()->apply_race_upgrade(t->get_driver1()->get_dry_skill());
+        const int team_bonus = t->getWeatherBonus(Weather_types::DRY);
+
+        Driver_Car pair1 = t->get_driver_car(1);
+        pair1.car->apply_race_upgrade(team_bonus);
+        if (pair1.driver) {
+            pair1.driver->apply_race_upgrade(pair1.driver->get_skill(Weather_types::DRY));
         }
-        if (t->get_driver2()) {
-            t->get_driver2()->apply_race_upgrade(t->get_driver2()->get_dry_skill());
+
+        Driver_Car pair2 = t->get_driver_car(2);
+        pair2.car->apply_race_upgrade(team_bonus);
+        if (pair2.driver) {
+            pair2.driver->apply_race_upgrade(pair2.driver->get_skill(Weather_types::DRY));
         }
     }
 }
 
 void DryCondition::remove_effects(Team* team) {
     if (const auto* t = dynamic_cast<Team*>(team)) {
-        const int team_bonus = t->get_dry_bonus();
-        t->get_car1()->remove_race_upgrade(team_bonus);
-        t->get_car2()->remove_race_upgrade(team_bonus);
-        
-        if (t->get_driver1()) {
-            t->get_driver1()->remove_race_upgrade(t->get_driver1()->get_dry_skill());
+        const int team_bonus = t->getWeatherBonus(Weather_types::DRY);
+
+        Driver_Car pair1 = t->get_driver_car(1);
+        pair1.car->remove_race_upgrade(team_bonus);
+        if (pair1.driver) {
+            pair1.driver->remove_race_upgrade(pair1.driver->get_skill(Weather_types::DRY));
         }
-        if (t->get_driver2()) {
-            t->get_driver2()->remove_race_upgrade(t->get_driver2()->get_dry_skill());
+
+        Driver_Car pair2 = t->get_driver_car(2);
+        pair2.car->remove_race_upgrade(team_bonus);
+        if (pair2.driver) {
+            pair2.driver->remove_race_upgrade(pair2.driver->get_skill(Weather_types::DRY));
         }
     }
 }

@@ -1,4 +1,3 @@
-
 #include "Team.h"
 #include <iostream>
 
@@ -108,7 +107,7 @@ Team& Team::operator=(const Team& other) {
 }
 
 bool Team::swap(const Driver* const& my_driver, const Driver* const& other_driver, Team& other_team) {
-    if (my_driver->get_market_value() < other_driver->get_market_value()) {
+    if (my_driver->get_performance().market_value < other_driver->get_performance().market_value) {
         std::cout << "Can't swap: market value mismatch" << std::endl;
         return false;
     }
@@ -150,17 +149,13 @@ bool Team::swap(const Driver* const& my_driver, const Driver* const& other_drive
     return true;
 }
 
-Car* Team::get_car1() const {
-    return car1.get();
-}
-Car* Team::get_car2() const {
-    return car2.get();
-}
-Driver* Team::get_driver1() const {
-    return driver1.get();
-}
-Driver* Team::get_driver2() const {
-    return driver2.get();
+Driver_Car Team::get_driver_car(const int index) const {
+    if (index == 1) {
+        return {driver1.get(), car1.get()};
+    } else if (index == 2) {
+        return {driver2.get(), car2.get()};
+    }
+    return {nullptr, nullptr};
 }
 
 int Team::get_downgrade_points() const {
@@ -178,17 +173,20 @@ bool Team::is_player_controlled() const {
 const std::string& Team::get_name() const {
     return name;
 }
-int Team::get_dry_bonus() const {
-    return dry_bonus;
-}
-int Team::get_intermediate_bonus() const {
-    return intermediate_bonus;
-}
- int Team::get_wet_bonus() const {
-    return wet_bonus;
-}
-int Team::get_night_bonus() const {
-    return night_bonus;
+int Team::getWeatherBonus(const Weather_types& weather) const {
+    switch (weather) {
+        case Weather_types::DRY:
+            return dry_bonus;
+        case Weather_types::INTERMEDIATE:  
+            return intermediate_bonus;
+        case Weather_types::WET:
+            return wet_bonus;
+        case Weather_types::NIGHT:
+            return night_bonus;
+        default:
+            std::cerr << "Invalid weather condition" << std::endl;
+            return 0;
+    }
 }
 
 std::ostream& operator<<(std::ostream& os, const Team& team) {

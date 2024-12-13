@@ -1,6 +1,13 @@
 #ifndef DRIVER_H
 #define DRIVER_H
 #include <string>
+#include "WeatherTypes.h"
+
+struct DriverPerformance {
+    int overall_rating;
+    float market_value;
+    int experience;
+};
 
 class Driver {
     std::string name;
@@ -22,18 +29,14 @@ public:
     Driver& operator=(const Driver& other);
     ~Driver();
     friend std::ostream& operator<<(std::ostream& os, const Driver& driver);
-    [[nodiscard]] int get_dry_skill() const;
-    [[nodiscard]] int get_wet_skill() const;
-    [[nodiscard]] int get_intermediate_skill() const;
     void apply_downgrade();
     void apply_upgrade();
-
-    std::string& get_name();
-    [[nodiscard]] int get_rating() const;
-    [[nodiscard]] float get_market_value() const;
-    [[nodiscard]] int get_experience() const;
     void apply_race_upgrade(int value_);
     void remove_race_upgrade(int value_);
+
+    std::string& get_name();
+    [[nodiscard]]DriverPerformance get_performance() const;
+    [[nodiscard]] int get_skill(const Weather_types& condition) const;
 };
 
 #endif

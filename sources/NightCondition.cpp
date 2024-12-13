@@ -1,4 +1,6 @@
 #include "NightCondition.h"
+#include "Team.h"
+#include <iostream>
 
 NightCondition::NightCondition() : WeatherCondition("Night", 0) {}
 
@@ -21,14 +23,16 @@ void NightCondition::apply_effects(Team* team) {
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> temp_effect(-15, 15);
 
-        const int team_bonus = t->get_night_bonus();
+        const int team_bonus = t->getWeatherBonus(Weather_types::NIGHT);
         const int temp_impact = temp_effect(gen);
 
-        const int infra_bonus = t->get_car1()->get_rating() > 80 ? 10 : -5;
+        Driver_Car pair1 = t->get_driver_car(1);
+        const int infra_bonus = pair1.car->get_rating() > 80 ? 10 : -5;
         const int total_bonus = team_bonus + temp_impact + infra_bonus;
         
-        t->get_car1()->apply_race_upgrade(total_bonus);
-        t->get_car2()->apply_race_upgrade(total_bonus);
+        pair1.car->apply_race_upgrade(total_bonus);
+        Driver_Car pair2 = t->get_driver_car(2);
+        pair2.car->apply_race_upgrade(total_bonus);
         
         std::cout << "Night race conditions:\n"
                  << "Temperature impact: " << (temp_impact > 0 ? "Warm" : "Cold")
@@ -39,9 +43,20 @@ void NightCondition::apply_effects(Team* team) {
 
 void NightCondition::remove_effects(Team* team) {
     if (const auto* t = dynamic_cast<Team*>(team)) {
-        const int team_bonus = t->get_night_bonus();
-        t->get_car1()->remove_race_upgrade(team_bonus);
-        t->get_car2()->remove_race_upgrade(team_bonus);
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> temp_effect(-15, 15);
+
+        const int team_bonus = t->getWeatherBonus(Weather_types::NIGHT);
+        const int temp_impact = temp_effect(gen);
+        
+        Driver_Car pair1 = t->get_driver_car(1);
+        const int infra_bonus = pair1.car->get_rating() > 80 ? 10 : -5;
+        const int total_bonus = team_bonus + temp_impact + infra_bonus;
+
+        pair1.car->remove_race_upgrade(total_bonus);
+        Driver_Car pair2 = t->get_driver_car(2);
+        pair2.car->remove_race_upgrade(total_bonus);
     }
 }
 

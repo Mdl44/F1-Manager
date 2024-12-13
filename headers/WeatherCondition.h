@@ -3,7 +3,9 @@
 
 #include <memory>
 #include <string>
-#include "Team.h"
+
+
+class Team;
 
 class WeatherCondition {
 public:

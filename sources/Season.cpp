@@ -9,10 +9,10 @@
 Season::Season(const std::vector<Team*>& team_list, const int total_races)
     : teams(team_list), races(total_races) {
     for (const Team* team : teams) {
-        if (auto* d1 = team->get_driver1()) {
+        if (auto* d1 = team->get_driver_car(1).driver) {
             driver_points[d1->get_name()] = 0;
         }
-        if (auto* d2 = team->get_driver2()) {
+        if (auto* d2 = team->get_driver_car(2).driver) {
             driver_points[d2->get_name()] = 0;
         }
         team_points[team->get_name()] = 0;
@@ -42,11 +42,11 @@ Season& Season::operator=(const Season& other) {
 }
 
 int Season::calculate_combined_rating(const Team* team, const Driver* driver) {
-    if (team->get_driver1() == driver) {
-        return (driver->get_rating() + team->get_car1()->get_rating()) / 2;
+    if (team->get_driver_car(1).driver == driver) {
+        return (driver->get_performance().overall_rating + team->get_driver_car(1).car->get_rating()) / 2;
     }
-    if (team->get_driver2() == driver) {
-        return (driver->get_rating() + team->get_car2()->get_rating()) / 2;
+    if (team->get_driver_car(2).driver == driver) {
+        return (driver->get_performance().overall_rating + team->get_driver_car(2).car->get_rating()) / 2;
     }
     return 0;
 }
@@ -63,20 +63,30 @@ void Season::race(RaceWeekend& weekend) {
     std::cout << "Night race detected!\n";
     if (weekend.can_rain()) {
         std::uniform_int_distribution<> dis(0, 99);
-        const auto weather_choice = dis(gen);
-        std::cout << "Rain possible - randomly choosing weather condition...\n";
-        
-        if (weather_choice < 60) {
-            std::cout << "Selected: Night (Dry)\n";
+
+        const auto quali_weather = dis(gen);
+        std::cout << "Qualifying - Rain possible - randomly choosing weather...\n";
+        if (quali_weather < 60) {
+            std::cout << "Qualifying: Night (Dry)\n";
             weekend.set_quali_weather(std::make_unique<NightCondition>());
-            weekend.set_race_weather(std::make_unique<NightCondition>());
-        } else if (weather_choice < 80) {
-            std::cout << "Selected: Night + Intermediate\n";
+        } else if (quali_weather < 80) {
+            std::cout << "Qualifying: Night + Intermediate\n";
             weekend.set_quali_weather(std::make_unique<IntermediateCondition>());
+        } else {
+            std::cout << "Qualifying: Night + Wet\n";
+            weekend.set_quali_weather(std::make_unique<WetCondition>());
+        }
+
+        const auto race_weather = dis(gen);
+        std::cout << "Race - Rain possible - randomly choosing weather...\n";
+        if (race_weather < 60) {
+            std::cout << "Race: Night (Dry)\n";
+            weekend.set_race_weather(std::make_unique<NightCondition>());
+        } else if (race_weather < 80) {
+            std::cout << "Race: Night + Intermediate\n";
             weekend.set_race_weather(std::make_unique<IntermediateCondition>());
         } else {
-            std::cout << "Selected: Night + Wet\n";
-            weekend.set_quali_weather(std::make_unique<WetCondition>());
+            std::cout << "Race: Night + Wet\n";
             weekend.set_race_weather(std::make_unique<WetCondition>());
         }
     } else {
@@ -88,20 +98,30 @@ void Season::race(RaceWeekend& weekend) {
     std::cout << "Day race detected!\n";
     if (weekend.can_rain()) {
         std::uniform_int_distribution<> dis(0, 99);
-        const auto weather_choice = dis(gen);
-        std::cout << "Rain possible - randomly choosing weather condition...\n";
-        
-        if (weather_choice < 60) {
-            std::cout << "Selected: Dry\n";
+
+        const auto quali_weather = dis(gen);
+        std::cout << "Qualifying - Rain possible - randomly choosing weather...\n";
+        if (quali_weather < 60) {
+            std::cout << "Qualifying: Dry\n";
             weekend.set_quali_weather(std::make_unique<DryCondition>());
-            weekend.set_race_weather(std::make_unique<DryCondition>());
-        } else if (weather_choice < 80) {
-            std::cout << "Selected: Intermediate\n";
+        } else if (quali_weather < 80) {
+            std::cout << "Qualifying: Intermediate\n";
             weekend.set_quali_weather(std::make_unique<IntermediateCondition>());
+        } else {
+            std::cout << "Qualifying: Wet\n";
+            weekend.set_quali_weather(std::make_unique<WetCondition>());
+        }
+
+        const auto race_weather = dis(gen);
+        std::cout << "Race - Rain possible - randomly choosing weather...\n";
+        if (race_weather < 60) {
+            std::cout << "Race: Dry\n";
+            weekend.set_race_weather(std::make_unique<DryCondition>());
+        } else if (race_weather < 80) {
+            std::cout << "Race: Intermediate\n";
             weekend.set_race_weather(std::make_unique<IntermediateCondition>());
         } else {
-            std::cout << "Selected: Wet\n";
-            weekend.set_quali_weather(std::make_unique<WetCondition>());
+            std::cout << "Race: Wet\n";
             weekend.set_race_weather(std::make_unique<WetCondition>());
         }
     } else {
@@ -113,10 +133,10 @@ void Season::race(RaceWeekend& weekend) {
     std::cout << "==============================\n";
 
     for (const Team* team : teams) {
-        if (auto* d1 = team->get_driver1()) {
+        if (auto* d1 = team->get_driver_car(1).driver) {
             combined_ratings.emplace_back(d1, calculate_combined_rating(team, d1));
         }
-        if (auto* d2 = team->get_driver2()) {
+        if (auto* d2 = team->get_driver_car(2).driver) {
             combined_ratings.emplace_back(d2, calculate_combined_rating(team, d2));
         }
     }
@@ -136,7 +156,7 @@ void Season::standings(const std::vector<std::pair<Driver*, long long>>& race_re
         driver_points[driver->get_name()] += points[i];
 
         for (const Team* team : teams) {
-            if (team->get_driver1() == driver || team->get_driver2() == driver) {
+            if (team->get_driver_car(1).driver == driver || team->get_driver_car(2).driver == driver) {
                 team_points[team->get_name()] += points[i];
                 break;
             }

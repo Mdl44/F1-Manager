@@ -1,5 +1,6 @@
 #include "Driver.h"
 #include <iostream>
+#include "WeatherCondition.h"
 
 Driver::Driver(std::string name, const int experience, const int race_craft, const int awareness, const int race_pace, const int age, const int dry_skill, const int intermediate_skill, const int wet_skill)
     : name(std::move(name)), experience(experience), race_craft(race_craft), awareness(awareness), race_pace(race_pace), age(age), dry_skill(dry_skill), intermediate_skill(intermediate_skill), wet_skill(wet_skill) {
@@ -14,7 +15,7 @@ float Driver::market_value() const {
     return static_cast<float>(rating() - 55);
 }
 
-Driver::Driver(const Driver& other) : 
+Driver::Driver(const Driver& other) :
     name(other.name),
     experience(other.experience),
     race_craft(other.race_craft),
@@ -51,21 +52,28 @@ std::string& Driver::get_name() {
     return name;
 }
 
-int Driver::get_rating() const {
-    return rating();
+int Driver::get_skill(const Weather_types& condition) const {
+    switch (condition) {
+        case Weather_types::DRY:
+            return dry_skill;
+        case Weather_types::INTERMEDIATE:
+            return intermediate_skill; 
+        case Weather_types::WET:
+            return wet_skill;
+        case Weather_types::NIGHT:
+            return dry_skill;
+        default:
+            std::cerr << "Invalid weather condition" << std::endl;
+            return 0;
+    }
 }
 
-float Driver::get_market_value() const {
-    return value;
-}
-int Driver::get_dry_skill() const { 
-    return dry_skill; 
-}
-int Driver::get_wet_skill() const { 
-    return wet_skill; 
-}
-int Driver::get_intermediate_skill() const { 
-    return intermediate_skill; 
+DriverPerformance Driver::get_performance() const {
+    return {
+        rating(),
+        market_value(),
+        experience
+    };
 }
 
 void Driver::apply_upgrade() {
@@ -95,10 +103,6 @@ void Driver::remove_race_upgrade(const int value_) {
     race_craft -= value_;
     awareness -= value_;
     race_pace -= value_;
-}
-
-int Driver::get_experience() const {
-    return experience;
 }
 
 std::ostream& operator<<(std::ostream& os, const Driver& driver) {

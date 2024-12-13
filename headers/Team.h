@@ -2,7 +2,13 @@
 #define TEAM_H
 #include "Car.h"
 #include "Driver.h"
+#include "WeatherTypes.h"
 #include <memory>
+
+struct Driver_Car{
+    Driver* driver;
+    Car* car; 
+};
 
 class Team {
     std::string name;
@@ -37,14 +43,8 @@ public:
     [[nodiscard]] int get_upgrade_points() const;
     [[nodiscard]] int get_downgrade_points() const;
     [[nodiscard]] const std::string& get_name() const;
-    [[nodiscard]] Driver *get_driver1() const;
-    [[nodiscard]] Driver *get_driver2() const;
-    [[nodiscard]] Car* get_car1() const;
-    [[nodiscard]] Car* get_car2() const;
-    [[nodiscard]] int get_dry_bonus() const;
-    [[nodiscard]] int get_intermediate_bonus() const;
-    [[nodiscard]] int get_wet_bonus() const;
-    [[nodiscard]] int get_night_bonus() const;
 
+    [[nodiscard]] int getWeatherBonus(const Weather_types& weather) const; 
+    [[nodiscard]] Driver_Car get_driver_car(int index) const;
 };
 #endif

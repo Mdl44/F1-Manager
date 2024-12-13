@@ -59,16 +59,18 @@ RaceWeekend& RaceWeekend::operator=(const RaceWeekend& other) {
 void RaceWeekend::quali(const std::vector<std::pair<Driver*, int>>& drivers) { 
     quali_results.clear(); 
     for (const auto& [driver, rating] : drivers) {
-        const double performance_factor = get_rating_multiplier(driver->get_rating());
-
+        const double performance_factor = get_rating_multiplier(driver->get_performance().overall_rating);
         double car_rating = 0.0;
         for (const auto *team : teams) {
-            if (driver == team->get_driver1()) {
-                car_rating = static_cast<double>(team->get_car1()->get_rating());
+            Driver_Car pair1 = team->get_driver_car(1);
+            Driver_Car pair2 = team->get_driver_car(2);
+            
+            if (driver == pair1.driver) {
+                car_rating = static_cast<double>(pair1.car->get_rating());
                 break;
             }
-            if (driver == team->get_driver2()) {
-                car_rating = static_cast<double>(team->get_car2()->get_rating());
+            if (driver == pair2.driver) {
+                car_rating = static_cast<double>(pair2.car->get_rating());
                 break;
             }
         }
@@ -110,16 +112,19 @@ std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
         auto& [driver, quali_time] = quali_results[i];
         const long long start_delay = static_cast<long long>(i) * 500;
 
-        const double performance_factor = get_rating_multiplier(driver->get_rating());
+        const double performance_factor = get_rating_multiplier(driver->get_performance().overall_rating);
 
         double car_rating = 0.0;
         for (const auto *team : teams) {
-            if (driver == team->get_driver1()) {
-                car_rating = static_cast<double>(team->get_car1()->get_rating());
+            Driver_Car pair1 = team->get_driver_car(1);
+            Driver_Car pair2 = team->get_driver_car(2);
+            
+            if (driver == pair1.driver) {
+                car_rating = static_cast<double>(pair1.car->get_rating());
                 break;
             }
-            if (driver == team->get_driver2()) {
-                car_rating = static_cast<double>(team->get_car2()->get_rating());
+            if (driver == pair2.driver) {
+                car_rating = static_cast<double>(pair2.car->get_rating());
                 break;
             }
         }

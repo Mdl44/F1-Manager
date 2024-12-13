@@ -62,8 +62,8 @@ int main() {
 
             case 4: {
                 std::cout << "\nSelect your driver to swap (1 or 2): \n";
-                std::cout << "1. " << my_team->get_driver1()->get_name() << "\n";
-                std::cout << "2. " << my_team->get_driver2()->get_name() << "\n";
+                std::cout << "1. " << my_team->get_driver_car(1).driver->get_name() << "\n";
+                std::cout << "2. " << my_team->get_driver_car(2).driver->get_name() << "\n";
 
                 int driverNum;
                 if (!isValidNumber(driverNum) || (driverNum != 1 && driverNum != 2)) {
@@ -71,7 +71,7 @@ int main() {
                     break;
                 }
 
-                const Driver* my_driver = (driverNum == 1) ? my_team->get_driver1() : my_team->get_driver2();
+                const Driver* my_driver = my_team->get_driver_car(driverNum).driver;
 
                 std::cout << "\nAvailable teams for swap:\n";
                 size_t displayedIndex = 1;
@@ -96,8 +96,8 @@ int main() {
                 Team* selectedTeam = manager.get_teams()[teamIndices[teamChoice - 1]].get();
 
                 std::cout << "\nSelect a driver from " << selectedTeam->get_name() << " to swap with:\n";
-                std::cout << "1. " << selectedTeam->get_driver1()->get_name() << "\n";
-                std::cout << "2. " << selectedTeam->get_driver2()->get_name() << "\n";
+                std::cout << "1. " << selectedTeam->get_driver_car(1).driver->get_name() << "\n";
+                std::cout << "2. " << selectedTeam->get_driver_car(2).driver->get_name() << "\n";
 
                 int targetDriverNum;
                 if (!isValidNumber(targetDriverNum) || (targetDriverNum != 1 && targetDriverNum != 2)) {
@@ -105,8 +105,7 @@ int main() {
                     break;
                 }
 
-                const Driver* other_driver = (targetDriverNum == 1) ?
-                    selectedTeam->get_driver1() : selectedTeam->get_driver2();
+                const Driver* other_driver = selectedTeam->get_driver_car(targetDriverNum).driver;
 
                 if (player.swap_try(my_driver, other_driver, *selectedTeam)) {
                     std::cout << "Swap successful!\n";

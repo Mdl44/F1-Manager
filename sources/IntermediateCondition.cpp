@@ -1,4 +1,6 @@
 #include "IntermediateCondition.h"
+#include "Team.h"
+#include <iostream>
 
     IntermediateCondition::IntermediateCondition(): WeatherCondition("Intermediate", 20000) {}
     
@@ -15,42 +17,52 @@
         return *this;
     }
 
-    void IntermediateCondition::apply_effects(Team* team){
-        if (const auto* t = dynamic_cast<Team*>(team)) {
-            const int team_bonus = t->get_intermediate_bonus();
-            t->get_car1()->apply_race_upgrade(team_bonus);
-            t->get_car2()->apply_race_upgrade(team_bonus);
-            
-            if (t->get_driver1()) {
-                const int exp_bonus = t->get_driver1()->get_experience() > 75 ? 15 : 5;
-                const int skill = t->get_driver1()->get_intermediate_skill();
-                t->get_driver1()->apply_race_upgrade(skill + exp_bonus);
-            }
-            if (t->get_driver2()) {
-                const int exp_bonus = t->get_driver2()->get_experience() > 75 ? 15 : 5;
-                const int skill = t->get_driver2()->get_intermediate_skill();
-                t->get_driver2()->apply_race_upgrade(skill + exp_bonus);
-            }
-            
-            std::cout << "Intermediate conditions:\n"
-                     << "Experienced drivers gaining advantage!\n";
-        }
-    }
+   void IntermediateCondition::apply_effects(Team* team) {
+    if (const auto* t = dynamic_cast<Team*>(team)) {
+        const int team_bonus = t->getWeatherBonus(Weather_types::INTERMEDIATE);
 
-    void IntermediateCondition::remove_effects(Team* team){
-        if (const auto* t = dynamic_cast<Team*>(team)) {
-            const int team_bonus = t->get_intermediate_bonus();
-            t->get_car1()->remove_race_upgrade(team_bonus);
-            t->get_car2()->remove_race_upgrade(team_bonus);
-            
-            if (t->get_driver1()) {
-                t->get_driver1()->remove_race_upgrade(t->get_driver1()->get_intermediate_skill());
-            }
-            if (t->get_driver2()) {
-                t->get_driver2()->remove_race_upgrade(t->get_driver2()->get_intermediate_skill());
-            }
+        Driver_Car pair1 = t->get_driver_car(1);
+        pair1.car->apply_race_upgrade(team_bonus);
+        if (pair1.driver) {
+            const int exp_bonus = pair1.driver->get_performance().experience > 75 ? 15 : 5;
+            const int skill = pair1.driver->get_skill(Weather_types::INTERMEDIATE);
+            pair1.driver->apply_race_upgrade(skill + exp_bonus);
+        }
+
+        Driver_Car pair2 = t->get_driver_car(2);
+        pair2.car->apply_race_upgrade(team_bonus);
+        if (pair2.driver) {
+            const int exp_bonus = pair2.driver->get_performance().experience > 75 ? 15 : 5;
+            const int skill = pair2.driver->get_skill(Weather_types::INTERMEDIATE);
+            pair2.driver->apply_race_upgrade(skill + exp_bonus);
+        }
+        
+        std::cout << "Intermediate conditions:\n"
+                  << "Experienced drivers gaining advantage!\n";
+    }
+}
+
+    void IntermediateCondition::remove_effects(Team* team) {
+    if (const auto* t = dynamic_cast<Team*>(team)) {
+        const int team_bonus = t->getWeatherBonus(Weather_types::INTERMEDIATE);
+
+        Driver_Car pair1 = t->get_driver_car(1);
+        pair1.car->remove_race_upgrade(team_bonus);
+        if (pair1.driver) {
+            const int exp_bonus = pair1.driver->get_performance().experience > 75 ? 15 : 5;
+            const int skill = pair1.driver->get_skill(Weather_types::INTERMEDIATE);
+            pair1.driver->remove_race_upgrade(skill + exp_bonus);
+        }
+
+        Driver_Car pair2 = t->get_driver_car(2);
+        pair2.car->remove_race_upgrade(team_bonus);
+        if (pair2.driver) {
+            const int exp_bonus = pair2.driver->get_performance().experience > 75 ? 15 : 5;
+            const int skill = pair2.driver->get_skill(Weather_types::INTERMEDIATE);
+            pair2.driver->remove_race_upgrade(skill + exp_bonus);
         }
     }
+}
 void IntermediateCondition::print_(std::ostream& os) const {
         WeatherCondition::print_(os);
         os << "Intermediate conditions - experience matters\n"

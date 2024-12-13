@@ -1,4 +1,3 @@
-// WetCondition.h
 #ifndef WETCONDITION_H
 #define WETCONDITION_H
 #include "WeatherCondition.h"
