@@ -78,6 +78,9 @@ add_executable(${PROJECT_NAME}
         sources/WetCondition.cpp
         headers/NightCondition.h
         sources/NightCondition.cpp
+        headers/TopTeam.h
+        sources/TopTeam.cpp
+        headers/WeatherTypes.h
 
 
 )

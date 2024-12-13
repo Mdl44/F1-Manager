@@ -10,16 +10,19 @@ std::unique_ptr<WeatherCondition> WetCondition::clone() const {
 
 WetCondition::WetCondition(const WetCondition& other) : WeatherCondition(other) {}
 
-WetCondition& WetCondition::operator=(const WetCondition& other) {
-    if (this != &other) {
-        WeatherCondition::operator=(other);
-    }
+void swap(WetCondition& first, WetCondition& second) noexcept {
+    using std::swap;
+    swap(first, static_cast<WeatherCondition&>(second));
+}
+
+WetCondition& WetCondition::operator=(WetCondition rhs) {
+    swap(*this, rhs);
     return *this;
 }
 
 
 void WetCondition::apply_effects(Team* team) {
-    if (const auto* t = dynamic_cast<Team*>(team)) {
+    if (const auto* t = team) {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> mistake_dist(-20, 10);
@@ -50,7 +53,7 @@ void WetCondition::apply_effects(Team* team) {
 }
 
 void WetCondition::remove_effects(Team* team) {
-    if (const auto* t = dynamic_cast<Team*>(team)) {
+    if (const auto* t = team) {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> mistake_dist(-20, 10);

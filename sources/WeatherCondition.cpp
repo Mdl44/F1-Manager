@@ -5,14 +5,6 @@
 WeatherCondition::WeatherCondition(std::string name, const int modifier) 
     : name(std::move(name)), lap_time_modifier(modifier) {}
 
-WeatherCondition& WeatherCondition::operator=(const WeatherCondition& other) {
-    if (this != &other) {
-        name = other.name;
-        lap_time_modifier = other.lap_time_modifier;
-    }
-    return *this;
-}
-
 void WeatherCondition::print(std::ostream& os) const {
     print_(os);
 }
@@ -35,7 +27,17 @@ std::ostream& operator<<(std::ostream& os, const WeatherCondition& obj) {
     return os;
 }
 
-void WeatherCondition::swap(WeatherCondition& first, WeatherCondition& second) noexcept {
+WeatherCondition::WeatherCondition(const WeatherCondition& other) 
+    : name(other.name)
+    , lap_time_modifier(other.lap_time_modifier){}
+
+WeatherCondition& WeatherCondition::operator=(const WeatherCondition& other) {
+    auto copy = other.clone();
+    swap(*this, *copy);
+    return *this;
+}
+
+void swap(WeatherCondition& first, WeatherCondition& second) noexcept {
     using std::swap;
     swap(first.lap_time_modifier, second.lap_time_modifier);
     swap(first.name, second.name);

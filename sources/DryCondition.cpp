@@ -8,10 +8,12 @@ std::unique_ptr<WeatherCondition> DryCondition::clone() const {
 
 DryCondition::DryCondition(const DryCondition& other) : WeatherCondition(other) {}
 
-DryCondition& DryCondition::operator=(const DryCondition& other) {
-    if (this != &other) {
-        WeatherCondition::operator=(other);
-    }
+void swap(DryCondition& first, DryCondition& second) noexcept {
+    using std::swap;
+    swap(first, static_cast<WeatherCondition&>(second));
+}
+DryCondition& DryCondition::operator=(DryCondition rhs) {
+    swap(*this, rhs);
     return *this;
 }
 
@@ -21,7 +23,7 @@ void DryCondition::print_(std::ostream& os) const {
 }
 
 void DryCondition::apply_effects(Team* team) {
-    if (const auto* t = dynamic_cast<Team*>(team)) {
+    if (const auto* t = team) {
         const int team_bonus = t->getWeatherBonus(Weather_types::DRY);
 
         Driver_Car pair1 = t->get_driver_car(1);
@@ -39,7 +41,7 @@ void DryCondition::apply_effects(Team* team) {
 }
 
 void DryCondition::remove_effects(Team* team) {
-    if (const auto* t = dynamic_cast<Team*>(team)) {
+    if (const auto* t = team) {
         const int team_bonus = t->getWeatherBonus(Weather_types::DRY);
 
         Driver_Car pair1 = t->get_driver_car(1);

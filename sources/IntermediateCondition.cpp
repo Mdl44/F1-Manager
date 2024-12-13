@@ -10,15 +10,17 @@
     
     IntermediateCondition::IntermediateCondition(const IntermediateCondition& other) : WeatherCondition(other) {}
 
-    IntermediateCondition& IntermediateCondition::operator=(const IntermediateCondition& other) {
-        if(this != &other) {
-            WeatherCondition::operator=(other);
-        }
+    void swap(IntermediateCondition& first, IntermediateCondition& second) noexcept {
+        using std::swap;
+        swap(first, static_cast<WeatherCondition&>(second));
+    }
+    IntermediateCondition& IntermediateCondition::operator=(IntermediateCondition rhs) {
+        swap(*this, rhs);
         return *this;
     }
 
    void IntermediateCondition::apply_effects(Team* team) {
-    if (const auto* t = dynamic_cast<Team*>(team)) {
+    if (const auto* t = team) {
         const int team_bonus = t->getWeatherBonus(Weather_types::INTERMEDIATE);
 
         Driver_Car pair1 = t->get_driver_car(1);
@@ -43,7 +45,7 @@
 }
 
     void IntermediateCondition::remove_effects(Team* team) {
-    if (const auto* t = dynamic_cast<Team*>(team)) {
+    if (const auto* t = team) {
         const int team_bonus = t->getWeatherBonus(Weather_types::INTERMEDIATE);
 
         Driver_Car pair1 = t->get_driver_car(1);

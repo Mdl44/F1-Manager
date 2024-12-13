@@ -1,6 +1,7 @@
 #include "GameManager.h"
 #include <fstream>
 #include <iostream>
+#include "TopTeam.h"
 
 GameManager::GameManager() : my_team(nullptr) {}
 
@@ -81,9 +82,17 @@ bool GameManager::initialize() {
         auto driver2 = std::make_unique<Driver>(driver2_name, driver2_exp, driver2_craft, 
             driver2_aware, driver2_pace, driver2_age, driver2_dry, driver2_inter, driver2_wet);
 
-        teams.push_back(std::make_unique<Team>(team_name, std::move(car1), std::move(car2), 
-            std::move(driver1), std::move(driver2), expected_position,
-            dry_bonus, inter_bonus, wet_bonus, night_bonus));
+            float avg_rating = static_cast<float>(car1->get_rating() + car2->get_rating()) / 2.0f;
+
+       if (avg_rating > 85) {
+            teams.push_back(std::make_unique<TopTeam>(team_name, std::move(car1), std::move(car2), 
+                std::move(driver1), std::move(driver2), expected_position,
+                dry_bonus, inter_bonus, wet_bonus, night_bonus));
+        } else {
+            teams.push_back(std::make_unique<Team>(team_name, std::move(car1), std::move(car2), 
+                std::move(driver1), std::move(driver2), expected_position,
+                dry_bonus, inter_bonus, wet_bonus, night_bonus));
+        }
     }
 
     std::cout << "Select your team:\n";

@@ -10,29 +10,45 @@ std::unique_ptr<WeatherCondition> NightCondition::clone() const {
 
 NightCondition::NightCondition(const NightCondition& other) : WeatherCondition(other) {}
 
-NightCondition& NightCondition::operator=(const NightCondition& other) {
-    if (this != &other) {
-        WeatherCondition::operator=(other);
-    }
+void swap(NightCondition& first, NightCondition& second) noexcept {
+    using std::swap;
+    swap(first, static_cast<WeatherCondition&>(second));
+}
+NightCondition& NightCondition::operator=(NightCondition rhs) {
+    swap(*this, rhs);
     return *this;
 }
 
 void NightCondition::apply_effects(Team* team) {
-    if (const auto* t = dynamic_cast<Team*>(team)) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> temp_effect(-15, 15);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> temp_effect(-15, 15);
 
-        const int team_bonus = t->getWeatherBonus(Weather_types::NIGHT);
-        const int temp_impact = temp_effect(gen);
-
-        Driver_Car pair1 = t->get_driver_car(1);
+    const int team_bonus = team->getWeatherBonus(Weather_types::NIGHT);
+    const int temp_impact = temp_effect(gen);
+    
+    if (const auto* top_team = dynamic_cast<TopTeam*>(team)) {
+        const int infra_bonus = TopTeam::getInfrastructureBonus();
+        const int total_bonus = team_bonus + temp_impact + infra_bonus;
+        
+        Driver_Car pair1 = top_team->get_driver_car(1);
+        Driver_Car pair2 = top_team->get_driver_car(2);
+        
+        if (pair1.car) pair1.car->apply_race_upgrade(total_bonus);
+        if (pair2.car) pair2.car->apply_race_upgrade(total_bonus);
+        
+        std::cout << "Night race conditions (Top Team):\n"
+                 << "Temperature impact: " << (temp_impact > 0 ? "Warm" : "Cold")
+                 << " (" << temp_impact << ")\n"
+                 << "Infrastructure bonus: " << infra_bonus << "\n";
+    } else {
+        Driver_Car pair1 = team->get_driver_car(1);
         const int infra_bonus = pair1.car->get_rating() > 80 ? 10 : -5;
         const int total_bonus = team_bonus + temp_impact + infra_bonus;
         
-        pair1.car->apply_race_upgrade(total_bonus);
-        Driver_Car pair2 = t->get_driver_car(2);
-        pair2.car->apply_race_upgrade(total_bonus);
+        if (pair1.car) pair1.car->apply_race_upgrade(total_bonus);
+        Driver_Car pair2 = team->get_driver_car(2);
+        if (pair2.car) pair2.car->apply_race_upgrade(total_bonus);
         
         std::cout << "Night race conditions:\n"
                  << "Temperature impact: " << (temp_impact > 0 ? "Warm" : "Cold")
@@ -42,21 +58,30 @@ void NightCondition::apply_effects(Team* team) {
 }
 
 void NightCondition::remove_effects(Team* team) {
-    if (const auto* t = dynamic_cast<Team*>(team)) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> temp_effect(-15, 15);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> temp_effect(-15, 15);
 
-        const int team_bonus = t->getWeatherBonus(Weather_types::NIGHT);
-        const int temp_impact = temp_effect(gen);
+    const int team_bonus = team->getWeatherBonus(Weather_types::NIGHT);
+    const int temp_impact = temp_effect(gen);
+    
+    if (const auto* top_team = dynamic_cast<TopTeam*>(team)) {
+        const int infra_bonus = TopTeam::getInfrastructureBonus();
+        const int total_bonus = team_bonus + temp_impact + infra_bonus;
         
-        Driver_Car pair1 = t->get_driver_car(1);
+        Driver_Car pair1 = top_team->get_driver_car(1);
+        Driver_Car pair2 = top_team->get_driver_car(2);
+        
+        if (pair1.car) pair1.car->remove_race_upgrade(total_bonus);
+        if (pair2.car) pair2.car->remove_race_upgrade(total_bonus);
+    } else {
+        Driver_Car pair1 = team->get_driver_car(1);
         const int infra_bonus = pair1.car->get_rating() > 80 ? 10 : -5;
         const int total_bonus = team_bonus + temp_impact + infra_bonus;
-
-        pair1.car->remove_race_upgrade(total_bonus);
-        Driver_Car pair2 = t->get_driver_car(2);
-        pair2.car->remove_race_upgrade(total_bonus);
+        
+        if (pair1.car) pair1.car->remove_race_upgrade(total_bonus);
+        Driver_Car pair2 = team->get_driver_car(2);
+        if (pair2.car) pair2.car->remove_race_upgrade(total_bonus);
     }
 }
 

@@ -4,7 +4,6 @@
 #include <memory>
 #include <string>
 
-
 class Team;
 
 class WeatherCondition {
@@ -21,18 +20,16 @@ public:
 
     WeatherCondition& operator=(const WeatherCondition& other);
     WeatherCondition(WeatherCondition&&) = default;
-    WeatherCondition& operator=(WeatherCondition&&) = default;
     WeatherCondition(std::string name, int modifier);
 
     friend std::ostream& operator<<(std::ostream& os, const WeatherCondition& obj);
     friend void swap(WeatherCondition& first, WeatherCondition& second) noexcept;
+    WeatherCondition(const WeatherCondition& other);
+    
 
 protected:
-    WeatherCondition(const WeatherCondition& other) = default;
     virtual void print_(std::ostream& os) const;
-
-    static void swap(WeatherCondition &first, WeatherCondition &second) noexcept;
-
+    
 private:
     std::string name;
     int lap_time_modifier;

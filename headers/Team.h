@@ -31,7 +31,7 @@ public:
     bool swap(const Driver* const& my_driver, const Driver* const& other_driver, Team& other_team);
     [[nodiscard]] bool is_player_controlled() const;
     Team(std::string name, std::unique_ptr<Car> car1, std::unique_ptr<Car> car2, std::unique_ptr<Driver> driver1, std::unique_ptr<Driver> driver2, int initial_position, int dry_bonus, int intermediate_bonus, int wet_bonus, int night_bonus);
-    ~Team();
+    virtual ~Team();
     Team(const Team& other);
     Team& operator=(const Team& other);
     friend std::ostream& operator<<(std::ostream& os, const Team& team);
