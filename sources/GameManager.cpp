@@ -98,7 +98,7 @@ bool GameManager::initialize() {
         std::cout << i + 1 << ". " << teams[i]->get_name() << "\n";
     }
 
-    int choice;
+    size_t choice;
     if (!(std::cin >> choice) || choice < 1 || choice > teams.size()) {
         throw InvalidTeamException("Invalid team selection: must be between 1 and " + std::to_string(teams.size()));
     }

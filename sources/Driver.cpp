@@ -63,7 +63,7 @@ Driver::~Driver() {
     std::cout << "Destructor driver: " << name << std::endl;
 }
 
-std::string Driver::get_name() const {
+const std::string& Driver::get_name() const {
     return name;
 }
 

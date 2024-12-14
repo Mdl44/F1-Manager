@@ -63,9 +63,7 @@ int Season::calculate_combined_rating(const Team* team, const Driver* driver) {
 }
 
 void Season::race(RaceWeekend& weekend) {
-    if (current_race >= races) {
-        throw RaceWeekendException("Season complete - no more races available");
-    }
+
     std::vector<std::pair<Driver*, int>> combined_ratings;
 
     std::cout << "\n=== Weather Setup for " << weekend.get_name() << " ===\n";
