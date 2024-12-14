@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include <random>
+#include "Exceptions.h"
 
 static double get_rating_multiplier(const int rating) {
     static const std::vector<std::pair<int, double>> valori = {
@@ -19,7 +20,19 @@ static double get_rating_multiplier(const int rating) {
 
 
 RaceWeekend::RaceWeekend(std::string name, const int laps, const int reference_time, const bool rain, const bool night_race) 
-    : name(std::move(name)), laps(laps), reference_time(reference_time), rain(rain),night_race(night_race) {}
+    : laps(laps), reference_time(reference_time), rain(rain), night_race(night_race) {
+    if (name.empty()) {
+        throw RaceWeekendException("Invalid race configuration: Race name cannot be empty");
+    }
+    this->name = std::move(name);
+
+    if (laps <= 0) {
+        throw RaceWeekendException("Invalid race configuration: Lap count must be positive");
+    }
+    if (reference_time <= 0) {
+        throw RaceWeekendException("Invalid race configuration: Reference time must be positive");
+    }
+}
 
 void RaceWeekend::set_quali_weather(const std::unique_ptr<WeatherCondition> &weather) {
     quali_weather = weather ? weather->clone() : nullptr;

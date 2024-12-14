@@ -1,10 +1,25 @@
 #include "Driver.h"
 #include <iostream>
 #include "WeatherCondition.h"
+#include "Exceptions.h"
 
 Driver::Driver(std::string name, const int experience, const int race_craft, const int awareness, const int race_pace, const int age, const int dry_skill, const int intermediate_skill, const int wet_skill)
-    : name(std::move(name)), experience(experience), race_craft(race_craft), awareness(awareness), race_pace(race_pace), age(age), dry_skill(dry_skill), intermediate_skill(intermediate_skill), wet_skill(wet_skill) {
+    :experience(experience), race_craft(race_craft), awareness(awareness), race_pace(race_pace), age(age), dry_skill(dry_skill), intermediate_skill(intermediate_skill), wet_skill(wet_skill) {
     this->value = market_value();
+
+    if (name.empty()) {
+        throw InvalidDriverException("Driver name cannot be empty");
+    }
+    this->name = std::move(name);
+    if (experience < 0 || experience > 100 || 
+        race_craft < 0 || race_craft > 100 ||
+        awareness < 0 || awareness > 100 ||
+        race_pace < 0 || race_pace > 100) {
+        throw InvalidDriverException("Driver stats must be between 0 and 100");
+    }
+    if (age < 16 || age > 50) {
+        throw InvalidDriverException("Invalid driver age: " + std::to_string(age));
+    }
 }
 
 int Driver::rating() const {
@@ -48,7 +63,7 @@ Driver::~Driver() {
     std::cout << "Destructor driver: " << name << std::endl;
 }
 
-std::string& Driver::get_name() {
+std::string Driver::get_name() const {
     return name;
 }
 

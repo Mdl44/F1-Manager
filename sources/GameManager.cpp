@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include "TopTeam.h"
+#include "Exceptions.h"
 
 GameManager::GameManager() : my_team(nullptr) {}
 
@@ -10,8 +11,7 @@ bool GameManager::initialize() {
     std::vector<std::vector<int>> car_stats;
     std::ifstream car_file("date_masini.txt");
     if (!car_file) {
-        std::cerr << "Failed to open car data file\n";
-        return false;
+        throw ConfigurationFileException("date_masini.txt");
     }
 
     int aero, power, durability, chassis;
@@ -22,8 +22,7 @@ bool GameManager::initialize() {
 
     std::ifstream circuit_file("circuite.txt");
     if (!circuit_file) {
-        std::cerr << "Failed to open circuit data file\n";
-        return false;
+        throw ConfigurationFileException("circuite.txt");
     }
 
     std::string name;
@@ -37,8 +36,7 @@ bool GameManager::initialize() {
 
     std::ifstream team_file("piloti.txt");
     if (!team_file) {
-        std::cerr << "Failed to open pilot data file\n";
-        return false;
+        throw ConfigurationFileException("piloti.txt");
     }
 
     int num_teams;
@@ -100,10 +98,9 @@ bool GameManager::initialize() {
         std::cout << i + 1 << ". " << teams[i]->get_name() << "\n";
     }
 
-    size_t choice;
+    int choice;
     if (!(std::cin >> choice) || choice < 1 || choice > teams.size()) {
-        std::cerr << "Invalid team selection!\n";
-        return false;
+        throw InvalidTeamException("Invalid team selection: must be between 1 and " + std::to_string(teams.size()));
     }
 
     my_team = teams[choice - 1].get();

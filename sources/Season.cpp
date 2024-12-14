@@ -5,19 +5,30 @@
 #include "DryCondition.h"
 #include "WetCondition.h"
 #include "IntermediateCondition.h"
+#include "Exceptions.h"
 
 Season::Season(const std::vector<Team*>& team_list, const int total_races)
     : teams(team_list), races(total_races) {
+    if (team_list.empty()) {
+        throw InvalidTeamException("Cannot create season: No teams provided");
+    }
+    if (total_races <= 0) {
+        throw RaceWeekendException("Cannot create season: Invalid number of races");
+    }
+    
     for (const Team* team : teams) {
-        if (auto* d1 = team->get_driver_car(1).driver) {
+        if (!team) {
+            throw InvalidTeamException("Cannot create season: Null team pointer");
+        }
+        if (const auto* d1 = team->get_driver_car(1).driver) {
             driver_points[d1->get_name()] = 0;
         }
-        if (auto* d2 = team->get_driver_car(2).driver) {
+        if (const auto* d2 = team->get_driver_car(2).driver) {
             driver_points[d2->get_name()] = 0;
         }
         team_points[team->get_name()] = 0;
     }
-}
+}  
 Season::~Season() {
     std::cout << "Destroying season." << std::endl;
 }
@@ -52,6 +63,9 @@ int Season::calculate_combined_rating(const Team* team, const Driver* driver) {
 }
 
 void Season::race(RaceWeekend& weekend) {
+    if (current_race >= races) {
+        throw RaceWeekendException("Season complete - no more races available");
+    }
     std::vector<std::pair<Driver*, int>> combined_ratings;
 
     std::cout << "\n=== Weather Setup for " << weekend.get_name() << " ===\n";
@@ -152,7 +166,7 @@ void Season::race(RaceWeekend& weekend) {
 void Season::standings(const std::vector<std::pair<Driver*, long long>>& race_results) {
     const int points[] = {25, 18, 15, 12, 10, 8, 6, 4, 2, 1};
     for (size_t i = 0; i < race_results.size() && i < 10; i++) {
-        Driver* driver = race_results[i].first;
+        const Driver* driver = race_results[i].first;
         driver_points[driver->get_name()] += points[i];
 
         for (const Team* team : teams) {

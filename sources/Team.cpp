@@ -1,7 +1,8 @@
 #include "Team.h"
 #include <iostream>
+#include "Exceptions.h"
 
-Team::Team(std::string name, std::unique_ptr<Car> car1, std::unique_ptr<Car> car2, std::unique_ptr<Driver> driver1, std::unique_ptr<Driver> driver2, int initial_position, int dry_bonus, int intermediate_bonus, int wet_bonus, int night_bonus)
+Team::Team(std::string name, std::unique_ptr<Car> car1, std::unique_ptr<Car> car2, std::unique_ptr<Driver> driver1, std::unique_ptr<Driver> driver2, const int initial_position, const int dry_bonus, const int intermediate_bonus, const int wet_bonus, const int night_bonus)
     : name(std::move(name)), car1(std::move(car1)), car2(std::move(car2)), driver1(std::move(driver1)), driver2(std::move(driver2)), position(initial_position), dry_bonus(dry_bonus), intermediate_bonus(intermediate_bonus), wet_bonus(wet_bonus), night_bonus(night_bonus) {
 }
 
@@ -107,11 +108,13 @@ Team& Team::operator=(const Team& other) {
 }
 
 bool Team::swap(const Driver* const& my_driver, const Driver* const& other_driver, Team& other_team) {
+    if (!my_driver || !other_driver) {
+        throw InvalidDriverException("Null driver reference in swap operation");
+    }
     if (my_driver->get_performance().market_value < other_driver->get_performance().market_value) {
         std::cout << "Can't swap: market value mismatch" << std::endl;
         return false;
     }
-
     const Car* my_team_car = nullptr;
     if (driver1.get() == my_driver) {
         my_team_car = car1.get();

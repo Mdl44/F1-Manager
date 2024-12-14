@@ -83,6 +83,8 @@ add_executable(${PROJECT_NAME}
         headers/WeatherTypes.h
         headers/Menu.h
         sources/Menu.cpp
+        headers/Exceptions.h
+        sources/Exceptions.cpp
 
 
 )

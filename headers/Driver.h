@@ -34,7 +34,7 @@ public:
     void apply_race_upgrade(int value_);
     void remove_race_upgrade(int value_);
 
-    std::string& get_name();
+    [[nodiscard]] std::string get_name() const;
     [[nodiscard]]DriverPerformance get_performance() const;
     [[nodiscard]] int get_skill(const Weather_types& condition) const;
 };
