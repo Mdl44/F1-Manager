@@ -1,7 +1,6 @@
 #ifndef CAR_H
 #define CAR_H
 #include <iostream>
-//`11//
 class Car {
     int aerodynamics;
     int powertrain;
