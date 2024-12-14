@@ -81,6 +81,8 @@ add_executable(${PROJECT_NAME}
         headers/TopTeam.h
         sources/TopTeam.cpp
         headers/WeatherTypes.h
+        headers/Menu.h
+        sources/Menu.cpp
 
 
 )

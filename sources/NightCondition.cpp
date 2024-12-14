@@ -26,6 +26,7 @@ void NightCondition::apply_effects(Team* team) {
 
     const int team_bonus = team->getWeatherBonus(Weather_types::NIGHT);
     const int temp_impact = temp_effect(gen);
+    team_temp_impacts[team] = temp_impact; 
     
     if (const auto* top_team = dynamic_cast<TopTeam*>(team)) {
         const int infra_bonus = TopTeam::getInfrastructureBonus();
@@ -63,12 +64,8 @@ void NightCondition::apply_effects(Team* team) {
 }
 
 void NightCondition::remove_effects(Team* team) {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> temp_effect(-15, 15);
-
     const int team_bonus = team->getWeatherBonus(Weather_types::NIGHT);
-    const int temp_impact = temp_effect(gen);
+    const int temp_impact = team_temp_impacts[team];
     
     if (const auto* top_team = dynamic_cast<TopTeam*>(team)) {
         const int infra_bonus = TopTeam::getInfrastructureBonus();
@@ -93,6 +90,7 @@ void NightCondition::remove_effects(Team* team) {
         if (pair1.car) pair1.car->remove_race_upgrade(total_bonus);
         if (pair2.car) pair2.car->remove_race_upgrade(total_bonus);
     }
+    team_temp_impacts.erase(team); 
 }
 
 void NightCondition::print_(std::ostream& os) const {

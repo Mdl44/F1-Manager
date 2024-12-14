@@ -2,6 +2,7 @@
 #define NIGHTCONDITION_H
 #include "WeatherCondition.h"
 #include <random>
+#include <unordered_map>
 #include "TopTeam.h"
 
 class NightCondition : public WeatherCondition {
@@ -16,6 +17,7 @@ public:
 
 private:
     void print_(std::ostream& os) const override;
+    std::unordered_map<Team*, int> team_temp_impacts;
 };
 
 #endif

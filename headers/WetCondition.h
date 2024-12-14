@@ -2,6 +2,8 @@
 #define WETCONDITION_H
 #include "WeatherCondition.h"
 #include <random>
+#include <unordered_map>
+#include "Driver.h"
 
 class WetCondition : public WeatherCondition {
 public:
@@ -15,6 +17,8 @@ public:
 
 private:
     void print_(std::ostream& os) const override;
+    std::unordered_map<Team*, int> team_mistake_factors;
+    std::unordered_map<Driver*, int> driver_mistakes;
 };
 
 #endif

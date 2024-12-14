@@ -3,21 +3,21 @@ Mclaren F1
 3
 10 -5 -10 -5
 Lando Norris
-81 90 90 94 25 10 -5 -10
+81 90 90 94 25 8 -5 -10
 Oscar Piastri
 80 92 88 90 23 7 5 -5
 Mercedes-AMG Petronas F1 Team
 3
--5 7 5 10
+2 7 5 10
 Sir Lewis Hamilton
-98 90 90 90 39 8 15 15
+98 92 90 91 39 8 15 15
 George Russel
 85 90 87 88 26 5 5 -5
 Scuderia Ferrari HP
 3
 8 5 -5 -10
 Charles Leclerc
-88 94 93 90 27 10 10 5
+88 94 93 90 27 8 8 5
 Carlos Sainz Jr.
 87 95 87 87 30 5 -5 -10
 Red Bull Racing

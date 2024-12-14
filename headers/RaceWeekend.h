@@ -9,8 +9,8 @@ class RaceWeekend {
     std::string name;
     int laps;
     int reference_time;
-    bool rain{};
-    bool night_race{};
+    bool rain = false;
+    bool night_race = false;
     std::vector<std::pair<Driver*, long long>> quali_results;
     std::vector<std::pair<Driver*, long long>> race_results;
     std::unique_ptr<WeatherCondition> quali_weather;
