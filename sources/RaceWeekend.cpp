@@ -55,18 +55,28 @@ RaceWeekend::~RaceWeekend() {
 RaceWeekend::RaceWeekend(const RaceWeekend& other) 
     : name(other.name), laps(other.laps), reference_time(other.reference_time), 
       rain(other.rain), night_race(other.night_race),
-       quali_results(other.quali_results), race_results(other.race_results) {
+      quali_results(other.quali_results), race_results(other.race_results),
+      quali_weather(other.quali_weather ? other.quali_weather->clone() : nullptr),
+      race_weather(other.race_weather ? other.race_weather->clone() : nullptr),
+      teams(other.teams) {}
 
+RaceWeekend& RaceWeekend::operator=(RaceWeekend other) {
+    swap(*this, other);
+    return *this;
 }
 
-RaceWeekend& RaceWeekend::operator=(const RaceWeekend& other) { 
-    if (this == &other) { return *this; } 
-    name = other.name; 
-    laps = other.laps; 
-    reference_time = other.reference_time; 
-    quali_results = other.quali_results; 
-    race_results = other.race_results;
-    return *this;
+void swap(RaceWeekend& first, RaceWeekend& second) noexcept {
+    using std::swap;
+    swap(first.name, second.name);
+    swap(first.laps, second.laps);
+    swap(first.reference_time, second.reference_time);
+    swap(first.rain, second.rain);
+    swap(first.night_race, second.night_race);
+    swap(first.quali_results, second.quali_results);
+    swap(first.race_results, second.race_results);
+    swap(first.quali_weather, second.quali_weather);
+    swap(first.race_weather, second.race_weather);
+    swap(first.teams, second.teams);
 }
 
 void RaceWeekend::quali(const std::vector<std::pair<Driver*, int>>& drivers) { 

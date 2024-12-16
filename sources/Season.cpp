@@ -1,11 +1,8 @@
 #include "Season.h"
 #include <algorithm>
 #include <iostream>
-#include "NightCondition.h"
-#include "DryCondition.h"
-#include "WetCondition.h"
-#include "IntermediateCondition.h"
 #include "Exceptions.h"
+#include "WeatherConditionFactory.h"
 
 Season::Season(const std::vector<Team*>& team_list, const int total_races)
     : teams(team_list), races(total_races) {
@@ -68,80 +65,11 @@ void Season::race(RaceWeekend& weekend) {
 
     std::cout << "\n=== Weather Setup for " << weekend.get_name() << " ===\n";
     
-    std::random_device rd;
-    std::mt19937 gen(rd());
-
-    if (weekend.night()) {
-    std::cout << "Night race detected!\n";
-    if (weekend.can_rain()) {
-        std::uniform_int_distribution<> dis(0, 99);
-
-        const auto quali_weather = dis(gen);
-        std::cout << "Qualifying - Rain possible - randomly choosing weather...\n";
-        if (quali_weather < 60) {
-            std::cout << "Qualifying: Night (Dry)\n";
-            weekend.set_quali_weather(std::make_unique<NightCondition>());
-        } else if (quali_weather < 80) {
-            std::cout << "Qualifying: Night + Intermediate\n";
-            weekend.set_quali_weather(std::make_unique<IntermediateCondition>());
-        } else {
-            std::cout << "Qualifying: Night + Wet\n";
-            weekend.set_quali_weather(std::make_unique<WetCondition>());
-        }
-
-        const auto race_weather = dis(gen);
-        std::cout << "Race - Rain possible - randomly choosing weather...\n";
-        if (race_weather < 60) {
-            std::cout << "Race: Night (Dry)\n";
-            weekend.set_race_weather(std::make_unique<NightCondition>());
-        } else if (race_weather < 80) {
-            std::cout << "Race: Night + Intermediate\n";
-            weekend.set_race_weather(std::make_unique<IntermediateCondition>());
-        } else {
-            std::cout << "Race: Night + Wet\n";
-            weekend.set_race_weather(std::make_unique<WetCondition>());
-        }
-    } else {
-        std::cout << "No rain possible - setting Night conditions\n";
-        weekend.set_quali_weather(std::make_unique<NightCondition>());
-        weekend.set_race_weather(std::make_unique<NightCondition>());
-    }
-} else {
-    std::cout << "Day race detected!\n";
-    if (weekend.can_rain()) {
-        std::uniform_int_distribution<> dis(0, 99);
-
-        const auto quali_weather = dis(gen);
-        std::cout << "Qualifying - Rain possible - randomly choosing weather...\n";
-        if (quali_weather < 60) {
-            std::cout << "Qualifying: Dry\n";
-            weekend.set_quali_weather(std::make_unique<DryCondition>());
-        } else if (quali_weather < 80) {
-            std::cout << "Qualifying: Intermediate\n";
-            weekend.set_quali_weather(std::make_unique<IntermediateCondition>());
-        } else {
-            std::cout << "Qualifying: Wet\n";
-            weekend.set_quali_weather(std::make_unique<WetCondition>());
-        }
-
-        const auto race_weather = dis(gen);
-        std::cout << "Race - Rain possible - randomly choosing weather...\n";
-        if (race_weather < 60) {
-            std::cout << "Race: Dry\n";
-            weekend.set_race_weather(std::make_unique<DryCondition>());
-        } else if (race_weather < 80) {
-            std::cout << "Race: Intermediate\n";
-            weekend.set_race_weather(std::make_unique<IntermediateCondition>());
-        } else {
-            std::cout << "Race: Wet\n";
-            weekend.set_race_weather(std::make_unique<WetCondition>());
-        }
-    } else {
-        std::cout << "No rain possible - setting Dry conditions\n";
-        weekend.set_quali_weather(std::make_unique<DryCondition>());
-        weekend.set_race_weather(std::make_unique<DryCondition>());
-    }
-}
+    weekend.set_quali_weather(WeatherConditionFactory::getWeather(
+        weekend.night(), weekend.can_rain(),true));
+        
+    weekend.set_race_weather(WeatherConditionFactory::getWeather(
+        weekend.night(), weekend.can_rain(), false));
     std::cout << "==============================\n";
 
     for (const Team* team : teams) {

@@ -9,19 +9,6 @@ std::unique_ptr<WeatherCondition> WetCondition::clone() const {
     return std::make_unique<WetCondition>(*this);
 }
 
-WetCondition::WetCondition(const WetCondition& other) : WeatherCondition(other) {}
-
-void swap(WetCondition& first, WetCondition& second) noexcept {
-    using std::swap;
-    swap(first, static_cast<WeatherCondition&>(second));
-}
-
-WetCondition& WetCondition::operator=(WetCondition rhs) {
-    swap(*this, rhs);
-    return *this;
-}
-
-
 void WetCondition::apply_effects(Team* team) {
     if (!team) {
         throw WeatherSimulationException("Wet - null team pointer");
@@ -91,7 +78,6 @@ void WetCondition::remove_effects(Team* team) {
 }
 
 void WetCondition::print_(std::ostream& os) const {
-    WeatherCondition::print_(os);
     os << "Wet racing conditions - unpredictable performance\n"
        << "Warning: High risk of mistakes!\n";
 }

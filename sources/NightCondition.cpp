@@ -8,17 +8,6 @@ std::unique_ptr<WeatherCondition> NightCondition::clone() const {
     return std::make_unique<NightCondition>(*this);
 }
 
-NightCondition::NightCondition(const NightCondition& other) : WeatherCondition(other) {}
-
-void swap(NightCondition& first, NightCondition& second) noexcept {
-    using std::swap;
-    swap(first, static_cast<WeatherCondition&>(second));
-}
-NightCondition& NightCondition::operator=(NightCondition rhs) {
-    swap(*this, rhs);
-    return *this;
-}
-
 void NightCondition::apply_effects(Team* team) {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -94,7 +83,6 @@ void NightCondition::remove_effects(Team* team) {
 }
 
 void NightCondition::print_(std::ostream& os) const {
-    WeatherCondition::print_(os);
     os << "Night racing conditions - temperature sensitive\n"
        << "Team infrastructure quality matters!\n";
 }

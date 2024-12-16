@@ -7,17 +7,6 @@
     std::unique_ptr<WeatherCondition> IntermediateCondition::clone() const{
         return std::make_unique<IntermediateCondition>(*this);
     }
-    
-    IntermediateCondition::IntermediateCondition(const IntermediateCondition& other) : WeatherCondition(other) {}
-
-    void swap(IntermediateCondition& first, IntermediateCondition& second) noexcept {
-        using std::swap;
-        swap(first, static_cast<WeatherCondition&>(second));
-    }
-    IntermediateCondition& IntermediateCondition::operator=(IntermediateCondition rhs) {
-        swap(*this, rhs);
-        return *this;
-    }
 
    void IntermediateCondition::apply_effects(Team* team) {
     if (const auto* t = team) {
@@ -66,7 +55,6 @@
     }
 }
 void IntermediateCondition::print_(std::ostream& os) const {
-        WeatherCondition::print_(os);
-        os << "Intermediate conditions - experience matters\n"
-           << "Veteran drivers have an advantage\n";
-    }
+    os << "Intermediate conditions - experience matters\n"
+       << "Veteran drivers have an advantage\n";
+}

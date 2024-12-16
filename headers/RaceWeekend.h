@@ -22,13 +22,13 @@ public:
     RaceWeekend(std::string name, int laps, int reference_time, bool rain, bool night_race);
     ~RaceWeekend();
     RaceWeekend(const RaceWeekend& other);
-    RaceWeekend& operator=(const RaceWeekend& other);
+    RaceWeekend& operator=(RaceWeekend other);
     static void printResults(std::ostream& os, const std::vector<std::pair<Driver*, long long>>& results, bool isRace) ;
     std::vector<std::pair<Driver*, long long>> race();
     void quali(const std::vector<std::pair<Driver*, int>>& drivers);
     [[nodiscard]] const std::string& get_name() const;
     friend std::ostream& operator<<(std::ostream& os, const RaceWeekend& weekend);
-
+    friend void swap(RaceWeekend& first, RaceWeekend& second) noexcept;
 
     void set_quali_weather(const std::unique_ptr<WeatherCondition> &weather);
     void set_race_weather(const std::unique_ptr<WeatherCondition> &weather);

@@ -6,19 +6,7 @@ std::unique_ptr<WeatherCondition> DryCondition::clone() const {
     return std::make_unique<DryCondition>(*this);
 }
 
-DryCondition::DryCondition(const DryCondition& other) : WeatherCondition(other) {}
-
-void swap(DryCondition& first, DryCondition& second) noexcept {
-    using std::swap;
-    swap(first, static_cast<WeatherCondition&>(second));
-}
-DryCondition& DryCondition::operator=(DryCondition rhs) {
-    swap(*this, rhs);
-    return *this;
-}
-
 void DryCondition::print_(std::ostream& os) const {
-    WeatherCondition::print_(os);
     os << "Dry racing conditions - standard performance\n";
 }
 
