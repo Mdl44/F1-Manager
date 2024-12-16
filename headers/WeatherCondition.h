@@ -8,7 +8,7 @@ class Team;
 
 class WeatherCondition {
 public:
-    WeatherCondition() = default;
+    WeatherCondition() : name(""), lap_time_modifier(0) {}
     WeatherCondition(const WeatherCondition& other) = default;
     WeatherCondition& operator=(const WeatherCondition& other) = default;
     virtual ~WeatherCondition() = default;
