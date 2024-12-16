@@ -186,6 +186,8 @@ int Team::getWeatherBonus(const Weather_types& weather) const {
             return wet_bonus;
         case Weather_types::NIGHT:
             return night_bonus;
+        case Weather_types::MIXED:
+            return (dry_bonus + intermediate_bonus)/2;
         default:
             std::cerr << "Invalid weather condition" << std::endl;
             return 0;

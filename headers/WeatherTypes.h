@@ -5,7 +5,8 @@ enum class Weather_types {
     DRY,
     INTERMEDIATE,
     WET,
-    NIGHT
+    NIGHT,
+    MIXED
 };
 
 #endif
