@@ -53,12 +53,25 @@ RaceWeekend::~RaceWeekend() {
 } 
 
 RaceWeekend::RaceWeekend(const RaceWeekend& other) 
-    : name(other.name), laps(other.laps), reference_time(other.reference_time), 
-      rain(other.rain), night_race(other.night_race),
-      quali_results(other.quali_results), race_results(other.race_results),
-      quali_weather(other.quali_weather ? other.quali_weather->clone() : nullptr),
-      race_weather(other.race_weather ? other.race_weather->clone() : nullptr),
-      teams(other.teams) {}
+    : name(other.name), 
+      laps(other.laps), 
+      reference_time(other.reference_time), 
+      rain(other.rain), 
+      night_race(other.night_race),
+      quali_results(other.quali_results), 
+      race_results(other.race_results),
+      quali_weather(nullptr),
+      race_weather(nullptr),
+      teams(other.teams) 
+{
+    if (other.quali_weather) {
+        quali_weather = other.quali_weather->clone();
+    }
+
+    if (other.race_weather) {
+        race_weather = other.race_weather->clone();
+    }
+}
 
 RaceWeekend& RaceWeekend::operator=(RaceWeekend other) {
     swap(*this, other);
