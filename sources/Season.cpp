@@ -36,6 +36,9 @@ Season::Season(const Season& other)
       team_points(other.team_points),
       races(other.races),
       current_race(other.current_race) {
+    if (teams.empty()) {
+        throw InvalidTeamException("Season must have teams");
+    }
 }
 
 Season& Season::operator=(const Season& other) {
@@ -64,6 +67,7 @@ void Season::race(RaceWeekend& weekend) {
     std::vector<std::pair<Driver*, int>> combined_ratings;
 
     std::cout << "\n=== Weather Setup for " << weekend.get_name() << " ===\n";
+    weekend.set_teams(teams);
     
     weekend.set_quali_weather(WeatherConditionFactory::getWeather(
         weekend.night(), weekend.can_rain(),true));

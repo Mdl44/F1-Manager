@@ -4,21 +4,6 @@
 #include <random>
 #include "Exceptions.h"
 
-static double get_rating_multiplier(const int rating) {
-    static const std::vector<std::pair<int, double>> valori = {
-        {20, 4.0}, {40, 3.5}, {60, 3.0}, {80, 2.7}, {100, 2.4},
-        {120, 2.1}, {140, 1.9}, {160, 1.7}, {180, 1.5}, {200, 1.35},
-        {220, 1.2}, {240, 1.1}, {250, 1.05}, {260, 1.0}
-    };
-    for (const auto& [limita, multiplier] : valori) {
-        if (rating <= limita) {
-            return multiplier;
-        }
-    }
-    return 1.0;
-}
-
-
 RaceWeekend::RaceWeekend(std::string name, const int laps, const int reference_time, const bool rain, const bool night_race) 
     : laps(laps), reference_time(reference_time), rain(rain), night_race(night_race) {
     if (name.empty()) {
@@ -92,107 +77,144 @@ void swap(RaceWeekend& first, RaceWeekend& second) noexcept {
     swap(first.teams, second.teams);
 }
 
-void RaceWeekend::quali(const std::vector<std::pair<Driver*, int>>& drivers) { 
-    quali_results.clear(); 
-    for (const auto& [driver, rating] : drivers) {
-        const double performance_factor = get_rating_multiplier(driver->get_performance().overall_rating);
-        double car_rating = 0.0;
-        for (const auto *team : teams) {
+// Add these new private helper methods to RaceWeekend class:
+
+void RaceWeekend::print_pre_weather_stats() const {
+    std::cout << "\n=== Pre-Weather Stats ===\n";
+    if (!teams.empty()) {
+        for (const auto* team : teams) {
+            std::cout << "Team: " << team->get_name() << "\n";
             Driver_Car pair1 = team->get_driver_car(1);
             Driver_Car pair2 = team->get_driver_car(2);
             
-            if (driver == pair1.driver) {
-                car_rating = static_cast<double>(pair1.car->get_rating());
-                break;
+            if (pair1.driver && pair1.car) {
+                std::cout << "Driver 1: " << pair1.driver->get_name() 
+                         << " (Rating: " << pair1.driver->get_performance().overall_rating << ")"
+                         << " Car Rating: " << pair1.car->get_rating() << "\n";
             }
-            if (driver == pair2.driver) {
-                car_rating = static_cast<double>(pair2.car->get_rating());
-                break;
+            
+            if (pair2.driver && pair2.car) {
+                std::cout << "Driver 2: " << pair2.driver->get_name()
+                         << " (Rating: " << pair2.driver->get_performance().overall_rating << ")"
+                         << " Car Rating: " << pair2.car->get_rating() << "\n";
             }
+            std::cout << "\n";
         }
-        const double car_factor = get_rating_multiplier(static_cast<int>(car_rating));
+    }
+}
 
-        const auto driver_impact = static_cast<long long>(std::round(performance_factor * 3000.0));
-        const auto car_impact = static_cast<long long>(std::round(car_factor * 4000.0));
+void RaceWeekend::print_post_weather_stats() const {
+    std::cout << "\n=== Post-Weather Stats ===\n";
+    for (const auto* team : teams) {
+        Driver_Car pair1 = team->get_driver_car(1);
+        Driver_Car pair2 = team->get_driver_car(2);
+        std::cout << "Team: " << team->get_name() << "\n";
+        std::cout << "D1: " << (pair1.driver ? pair1.driver->get_name() : "None") 
+                  << " (" << (pair1.driver ? pair1.driver->get_performance().overall_rating : 0) << ")"
+                  << " Car: " << (pair1.car ? pair1.car->get_rating() : 0) << "\n";
+        std::cout << "D2: " << (pair2.driver ? pair2.driver->get_name() : "None")
+                  << " (" << (pair2.driver ? pair2.driver->get_performance().overall_rating : 0) << ")"
+                  << " Car: " << (pair2.car ? pair2.car->get_rating() : 0) << "\n\n";
+    }
+}
 
-        long long time = reference_time + driver_impact + car_impact +
-                        random_time_generator() - 23000;
+void RaceWeekend::apply_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const {
+    if (weather) {
+        std::cout << "\n=== Applying " << weather->get_name() << " Weather Effects ===\n";
+        for (const auto* team : teams) {
+            weather->apply_effects(const_cast<Team*>(team));
+        }
+    }
+}
+
+void RaceWeekend::remove_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const {
+    if (weather) {
+        std::cout << "\n=== Removing Weather Effects ===\n";
+        for (const auto* team : teams) {
+            weather->remove_effects(const_cast<Team*>(team));
+        }
+    }
+}
+
+std::pair<double, double> RaceWeekend::calculate_performance_factors(const Driver* driver) const {
+    const double performance_factor = (driver->get_performance().overall_rating / 100.0);
+    double car_rating = 0.0;
+    
+    for (const auto *team : teams) {
+        Driver_Car pair1 = team->get_driver_car(1);
+        Driver_Car pair2 = team->get_driver_car(2);
+        
+        if (driver == pair1.driver) {
+            car_rating = static_cast<double>(pair1.car->get_rating());
+            break;
+        }
+        if (driver == pair2.driver) {
+            car_rating = static_cast<double>(pair2.car->get_rating());
+            break;
+        }
+    }
+    
+    return {performance_factor, car_rating / 100.0};
+}
+
+void RaceWeekend::quali(const std::vector<std::pair<Driver*, int>>& drivers) {
+    print_pre_weather_stats();
+    apply_weather_effects(quali_weather);
+    print_post_weather_stats();
+
+    quali_results.clear();
+    for (const auto& [driver, rating] : drivers) {
+        auto [performance_factor, car_factor] = calculate_performance_factors(driver);
+        
+        long long time = reference_time;
+        time += static_cast<long long>((1.0 - performance_factor) * 800);
+        time += static_cast<long long>((1.0 - car_factor) * 1200);
+        time += random_time_generator(200);
 
         if (quali_weather) {
             time += quali_weather->get_lap_time_modifier();
-            for (const auto* team : teams) {
-            quali_weather->apply_effects(const_cast<Team*>(team));
-        }
         }
 
         quali_results.emplace_back(driver, time);
     }
-        if(quali_weather){
-            for(const auto* team : teams){
-                quali_weather->remove_effects(const_cast<Team*>(team));
-            }
-        }
+
+    remove_weather_effects(quali_weather);
 
     std::ranges::sort(quali_results, [](const auto& lhs, const auto& rhs) {
         return lhs.second < rhs.second;
     });
 }
 
-const std::string& RaceWeekend::get_name() const { 
-    return name; 
-}
-
 std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
+    print_pre_weather_stats();
+    apply_weather_effects(race_weather);
+    print_post_weather_stats();
+
     race_results.clear();
     for (size_t i = 0; i < quali_results.size(); ++i) {
         auto& [driver, quali_time] = quali_results[i];
-        const long long start_delay = static_cast<long long>(i) * 500;
-
-        const double performance_factor = get_rating_multiplier(driver->get_performance().overall_rating);
-
-        double car_rating = 0.0;
-        for (const auto *team : teams) {
-            Driver_Car pair1 = team->get_driver_car(1);
-            Driver_Car pair2 = team->get_driver_car(2);
-            
-            if (driver == pair1.driver) {
-                car_rating = static_cast<double>(pair1.car->get_rating());
-                break;
-            }
-            if (driver == pair2.driver) {
-                car_rating = static_cast<double>(pair2.car->get_rating());
-                break;
-            }
-        }
-        const double car_factor = get_rating_multiplier(static_cast<int>(car_rating));
-
-        const auto driver_impact = static_cast<long long>(std::round(performance_factor * 3000.0));
-        const auto car_impact = static_cast<long long>(std::round(car_factor * 4000.0));
-
-        const long long base_lap_time = reference_time + driver_impact + car_impact - 23000;
-
-        long long total_time = start_delay;
+        const long long start_penalty = static_cast<long long>(i) * 500;
+        
+        auto [performance_factor, car_factor] = calculate_performance_factors(driver);
+        
+        long long total_time = start_penalty + 1200000;
         for (int lap = 0; lap < laps; lap++) {
-            long long lap_time = base_lap_time;
-            lap_time += random_time_generator() + (1020000/laps);
+            long long lap_time = reference_time;
+            lap_time += static_cast<long long>((1.0 - performance_factor) * 600);
+            lap_time += static_cast<long long>((1.0 - car_factor) * 900);
+            lap_time += random_time_generator(100);
 
             if (race_weather) {
-            lap_time += race_weather->get_lap_time_modifier();
-            for (const auto* team : teams) {
-            race_weather->apply_effects(const_cast<Team*>(team));
-        }
-        }
+                lap_time += race_weather->get_lap_time_modifier();
+            }
 
             total_time += lap_time;
         }
 
         race_results.emplace_back(driver, total_time);
     }
-    if(race_weather){
-            for(const auto* team : teams){
-                race_weather->remove_effects(const_cast<Team*>(team));
-            }
-        }
+
+    remove_weather_effects(race_weather);
 
     std::ranges::sort(race_results, [](const auto& lhs, const auto& rhs) {
         return lhs.second < rhs.second;
@@ -289,4 +311,7 @@ bool RaceWeekend::can_rain() const {
 }
 bool RaceWeekend::night() const {
     return night_race;
+}
+const std::string& RaceWeekend::get_name() const { 
+    return name; 
 }
