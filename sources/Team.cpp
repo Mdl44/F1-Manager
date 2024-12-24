@@ -7,18 +7,56 @@ Team::Team(std::string name,
            std::unique_ptr<Car> car2,
            std::unique_ptr<Driver> driver1, 
            std::unique_ptr<Driver> driver2,
-           int initial_position,
+           std::unique_ptr<Driver> reserve1,
+           std::unique_ptr<Driver> reserve2,
+           const int initial_position,
            std::unordered_map<Weather_types, std::unique_ptr<WeatherDetails>> weather)
     : name(std::move(name)),
       car1(std::move(car1)),
       car2(std::move(car2)),
       driver1(std::move(driver1)),
       driver2(std::move(driver2)),
+      reserve1(std::move(reserve1)),
+      reserve2(std::move(reserve2)),
       position(initial_position),
-      upgrade_points(0),
-      downgrade_points(0),
-      budget(0.0f),
       weatherDetails(std::move(weather)) {}
+
+Driver* Team::get_reserve_driver(const int index) const {
+    if (index == 1) return reserve1.get();
+    if (index == 2) return reserve2.get();
+    return nullptr;
+}
+
+void Team::promote_reserve_driver(const int reserve_index, const int driver_index) {
+    if (reserve_index < 1 || reserve_index > 2 || driver_index < 1 || driver_index > 2) {
+        throw InvalidDriverException("Invalid driver indices for promotion");
+    }
+
+    auto& reserve_driver = (reserve_index == 1) ? reserve1 : reserve2;
+    auto& main_driver = (driver_index == 1) ? driver1 : driver2;
+
+    if (!reserve_driver) {
+        throw InvalidDriverException("No reserve driver available");
+    }
+
+    main_driver = std::move(reserve_driver);
+}
+
+bool Team::swap_with_reserve(const Driver* const& main_driver, const Driver* const& reserve_driver) {
+    std::unique_ptr<Driver>* main_ptr = nullptr;
+    std::unique_ptr<Driver>* reserve_ptr = nullptr;
+
+    if (driver1.get() == main_driver) main_ptr = &driver1;
+    else if (driver2.get() == main_driver) main_ptr = &driver2;
+
+    if (reserve1.get() == reserve_driver) reserve_ptr = &reserve1;
+    else if (reserve2.get() == reserve_driver) reserve_ptr = &reserve2;
+
+    if (!main_ptr || !reserve_ptr) return false;
+
+    *main_ptr = std::move(*reserve_ptr);
+    return true;
+}
 
 void Team::update_performance_points(const int actual_position) {
     const int diff = actual_position - position;
@@ -100,6 +138,8 @@ Team::Team(const Team& other)
     if (other.car2) car2 = std::make_unique<Car>(*other.car2);
     if (other.driver1) driver1 = std::make_unique<Driver>(*other.driver1);
     if (other.driver2) driver2 = std::make_unique<Driver>(*other.driver2);
+    if (other.reserve1) reserve1 = std::make_unique<Driver>(*other.reserve1);
+    if (other.reserve2) reserve2 = std::make_unique<Driver>(*other.reserve2);
     for (const auto& [key, value] : other.weatherDetails) {
         weatherDetails[key] = value->clone();
     }
@@ -126,6 +166,12 @@ Team& Team::operator=(const Team& other) {
         if (other.driver2) driver2 = std::make_unique<Driver>(*other.driver2);
         else driver2.reset();
 
+        if (other.reserve1) reserve1 = std::make_unique<Driver>(*other.reserve1);
+        else reserve1.reset();
+
+        if (other.reserve2) reserve2 = std::make_unique<Driver>(*other.reserve2);
+        else reserve2.reset();
+
         weatherDetails.clear();
         for (const auto& [key, value] : other.weatherDetails) {
             weatherDetails[key] = value->clone();
@@ -150,7 +196,7 @@ bool Team::swap(const Driver* const& my_driver, const Driver* const& other_drive
     }
 
     if (my_driver->get_performance().market_value < other_driver->get_performance().market_value) {
-        float difference = other_driver->get_performance().market_value - 
+        const float difference = other_driver->get_performance().market_value -
                           my_driver->get_performance().market_value;
         budget -= difference;
         std::cout << "Used " << difference << " from budget for swap.\n";
@@ -227,12 +273,12 @@ std::ostream& operator<<(std::ostream& os, const Team& team) {
        << "\nSecond Driver's Car:\n" << *team.car2;
     return os;
 }
-int Team::getWeatherBonus(const Weather_types& weatherCondition) const {
+int Team::getWeatherBonus(const Weather_types& weather) const {
     if (weatherDetails.empty()) {
         return 0;
     }
 
-    const auto& weatherEntry = weatherDetails.find(weatherCondition);
+    const auto& weatherEntry = weatherDetails.find(weather);
     if (weatherEntry == weatherDetails.end()) {
         return 0;
     }

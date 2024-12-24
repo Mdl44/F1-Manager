@@ -79,6 +79,30 @@ bool GameManager::initialize() {
         auto driver2 = std::make_unique<Driver>(driver2_name, driver2_exp, driver2_craft, 
             driver2_aware, driver2_pace, driver2_age, driver2_dry, driver2_inter, driver2_wet);
 
+        std::string reserve1_name;
+        int reserve1_exp, reserve1_craft, reserve1_aware, reserve1_pace;
+        int reserve1_age, reserve1_dry, reserve1_inter, reserve1_wet;
+        
+        std::getline(team_file, reserve1_name);
+        team_file >> reserve1_exp >> reserve1_craft >> reserve1_aware >> reserve1_pace
+                  >> reserve1_age >> reserve1_dry >> reserve1_inter >> reserve1_wet;
+        team_file.ignore();
+
+        std::string reserve2_name;
+        int reserve2_exp, reserve2_craft, reserve2_aware, reserve2_pace;
+        int reserve2_age, reserve2_dry, reserve2_inter, reserve2_wet;
+        
+        std::getline(team_file, reserve2_name);
+        team_file >> reserve2_exp >> reserve2_craft >> reserve2_aware >> reserve2_pace
+                  >> reserve2_age >> reserve2_dry >> reserve2_inter >> reserve2_wet;
+        team_file.ignore();
+
+        auto reserve1 = std::make_unique<Driver>(reserve1_name, reserve1_exp, reserve1_craft,
+            reserve1_aware, reserve1_pace, reserve1_age, reserve1_dry, reserve1_inter, reserve1_wet);
+            
+        auto reserve2 = std::make_unique<Driver>(reserve2_name, reserve2_exp, reserve2_craft,
+            reserve2_aware, reserve2_pace, reserve2_age, reserve2_dry, reserve2_inter, reserve2_wet);
+
          auto weatherDetails = WeatherDetailsFactory::createAll();
 
         float avg_rating = static_cast<float>(car1->get_rating() + car2->get_rating()) / 2.0f;
@@ -86,12 +110,14 @@ bool GameManager::initialize() {
             teams.push_back(std::make_unique<TopTeam>(
                 team_name, std::move(car1), std::move(car2),
                 std::move(driver1), std::move(driver2),
+                std::move(reserve1), std::move(reserve2),
                 expected_position, std::move(weatherDetails)
             ));
         } else {
             teams.push_back(std::make_unique<Team>(
                 team_name, std::move(car1), std::move(car2),
                 std::move(driver1), std::move(driver2),
+                std::move(reserve1), std::move(reserve2),
                 expected_position, std::move(weatherDetails)
             ));
         }

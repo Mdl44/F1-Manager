@@ -19,6 +19,8 @@ class Team {
     std::unique_ptr<Car> car2;
     std::unique_ptr<Driver> driver1;
     std::unique_ptr<Driver> driver2;
+    std::unique_ptr<Driver> reserve1;
+    std::unique_ptr<Driver> reserve2;
     int position;
     int upgrade_points = 0;
     int downgrade_points = 0;
@@ -35,7 +37,9 @@ public:
          std::unique_ptr<Car> car2,
          std::unique_ptr<Driver> driver1, 
          std::unique_ptr<Driver> driver2,
-         int initial_position, 
+         std::unique_ptr<Driver> reserve1,
+         std::unique_ptr<Driver> reserve2,
+         int initial_position,
          std::unordered_map<Weather_types, std::unique_ptr<WeatherDetails>> weather);
     virtual ~Team();
     Team(const Team& other);
@@ -52,5 +56,9 @@ public:
     [[nodiscard]] const std::string& get_name() const;
     [[nodiscard]] int getWeatherBonus(const Weather_types& weather) const;
     [[nodiscard]] Driver_Car get_driver_car(int index) const;
+
+    [[nodiscard]] Driver* get_reserve_driver(int index) const;
+    void promote_reserve_driver(int reserve_index, int driver_index);
+    bool swap_with_reserve(const Driver* const& main_driver, const Driver* const& reserve_driver);
 };
 #endif

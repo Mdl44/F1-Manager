@@ -37,47 +37,97 @@ bool Menu::handleDriver_swap() const {
 
     const Driver* my_driver = my_team->get_driver_car(driverNum).driver;
 
-    std::cout << "\nAvailable teams for swap:\n";
-    size_t displayedIndex = 1;
-    std::vector<size_t> teamIndices;
+    std::cout << "\nAvailable drivers for swap:\n";
+    std::cout << "1. Drivers from other teams\n";
+    std::cout << "2. Reserve drivers\n";
+    
+    int swapChoice;
+    if (!isValidNumber(swapChoice) || (swapChoice != 1 && swapChoice != 2)) {
+        std::cout << "Invalid choice!\n";
+        return false;
+    }
 
-    for (size_t i = 0; i < manager.get_teams().size(); ++i) {
-        if (manager.get_teams()[i].get() != my_team) {
-            std::cout << displayedIndex << ". " << manager.get_teams()[i]->get_name() << "\n";
-            teamIndices.push_back(i);
-            ++displayedIndex;
+    if (swapChoice == 1) {
+        std::cout << "\nAvailable teams for swap:\n";
+        size_t displayedIndex = 1;
+        std::vector<size_t> teamIndices;
+
+        for (size_t i = 0; i < manager.get_teams().size(); ++i) {
+            if (manager.get_teams()[i].get() != my_team) {
+                std::cout << displayedIndex << ". " << manager.get_teams()[i]->get_name() << "\n";
+                teamIndices.push_back(i);
+                ++displayedIndex;
+            }
         }
-    }
 
-    std::cout << "\nSelect a team to swap with: ";
-    int teamChoice;
-    if (!isValidNumber(teamChoice) || teamChoice < 1 ||
-        teamChoice > static_cast<int>(teamIndices.size())) {
-        std::cout << "Invalid team selection!\n";
+        std::cout << "\nSelect a team to swap with: ";
+        int teamChoice;
+        if (!isValidNumber(teamChoice) || teamChoice < 1 ||
+            teamChoice > static_cast<int>(teamIndices.size())) {
+            std::cout << "Invalid team selection!\n";
+            return false;
+        }
+
+        Team* selectedTeam = manager.get_teams()[teamIndices[teamChoice - 1]].get();
+
+        std::cout << "\nSelect a driver from " << selectedTeam->get_name() << " to swap with:\n";
+        std::cout << "1. " << selectedTeam->get_driver_car(1).driver->get_name() << "\n";
+        std::cout << "2. " << selectedTeam->get_driver_car(2).driver->get_name() << "\n";
+
+        int targetDriverNum;
+        if (!isValidNumber(targetDriverNum) || (targetDriverNum != 1 && targetDriverNum != 2)) {
+            std::cout << "Invalid driver selection!\n";
+            return false;
+        }
+
+        const Driver* other_driver = selectedTeam->get_driver_car(targetDriverNum).driver;
+
+        if (player.swap_try(my_driver, other_driver, *selectedTeam)) {
+            std::cout << "Swap successful!\n";
+            return true;
+        }
+
+        std::cout << "Swap failed - insufficient market value.\n";
+        return false;
+
+    } else {
+        std::cout << "\nAvailable reserve drivers:\n";
+        size_t displayedIndex = 1;
+        std::vector<std::pair<Team*, int>> reserveIndices;
+
+        for (const auto& team : manager.get_teams()) {
+            if (auto* reserve1 = team->get_reserve_driver(1)) {
+                std::cout << displayedIndex << ". " << team->get_name() << " - " 
+                         << reserve1->get_name() << "\n";
+                reserveIndices.emplace_back(team.get(), 1);
+                ++displayedIndex;
+            }
+            if (auto* reserve2 = team->get_reserve_driver(2)) {
+                std::cout << displayedIndex << ". " << team->get_name() << " - " 
+                         << reserve2->get_name() << "\n";
+                reserveIndices.emplace_back(team.get(), 2);
+                ++displayedIndex;
+            }
+        }
+
+        int reserveChoice;
+        if (!isValidNumber(reserveChoice) || reserveChoice < 1 || 
+            reserveChoice > static_cast<int>(reserveIndices.size())) {
+            std::cout << "Invalid reserve driver selection!\n";
+            return false;
+        }
+
+        auto [selectedTeam, reserveIndex] = reserveIndices[reserveChoice - 1];
+        const Driver* reserve_driver = selectedTeam->get_reserve_driver(reserveIndex);
+
+        if (selectedTeam->swap_with_reserve(my_driver, reserve_driver)) {
+            std::cout << "Swap with reserve driver successful!\n";
+            return true;
+        }
+        
+        std::cout << "Swap with reserve driver failed.\n";
         return false;
     }
-
-    Team* selectedTeam = manager.get_teams()[teamIndices[teamChoice - 1]].get();
-
-    std::cout << "\nSelect a driver from " << selectedTeam->get_name() << " to swap with:\n";
-    std::cout << "1. " << selectedTeam->get_driver_car(1).driver->get_name() << "\n";
-    std::cout << "2. " << selectedTeam->get_driver_car(2).driver->get_name() << "\n";
-
-    int targetDriverNum;
-    if (!isValidNumber(targetDriverNum) || (targetDriverNum != 1 && targetDriverNum != 2)) {
-        std::cout << "Invalid driver selection!\n";
-        return false;
-    }
-
-    const Driver* other_driver = selectedTeam->get_driver_car(targetDriverNum).driver;
-
-    if (player.swap_try(my_driver, other_driver, *selectedTeam)) {
-        std::cout << "Swap successful!\n";
-        return true;
-    }
-
-    std::cout << "Swap failed - insufficient market value.\n";
-    return false;
 }
 
 bool Menu::handleChoice(size_t& current_race) const {
