@@ -24,7 +24,7 @@ int main() {
             if (current_season > 1 && (current_season - 1) % 3 == 0) {
                 RegulationChanges::apply_regulation_changes(game_manager.get_teams());
             }
-            
+    
             std::vector<Team*> team_ptr;
             team_ptr.reserve(game_manager.get_teams().size());
             for (const auto& team : game_manager.get_teams()) {
@@ -37,14 +37,19 @@ int main() {
                 const Menu menu(game_manager, const_cast<Player&>(player), season);
                 menu.run();
 
-            } catch (const RaceWeekendException& e) {
-                std::cerr << "Race Weekend Error: " << e.what() << "\n";
-                return 1;
-            } catch (const InvalidTeamException& e) {
-                std::cerr << "Team Error: " << e.what() << "\n";
-                return 1;
+        
+            for (auto& team : game_manager.get_teams()) {
+                team->convert_points_to_budget();
             }
-        }
+
+                } catch (const RaceWeekendException& e) {
+                    std::cerr << "Race Weekend Error: " << e.what() << "\n";
+                    return 1;
+                } catch (const InvalidTeamException& e) {
+                    std::cerr << "Team Error: " << e.what() << "\n";
+                    return 1;
+                }
+            }
     } catch (const ConfigurationFileException& e) {
         std::cerr << "Configuration Error: " << e.what() << "\n";
         return 1;

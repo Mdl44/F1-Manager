@@ -128,10 +128,25 @@ bool Team::swap(const Driver* const& my_driver, const Driver* const& other_drive
     if (!my_driver || !other_driver) {
         throw InvalidDriverException("Null driver reference in swap operation");
     }
-    if (my_driver->get_performance().market_value < other_driver->get_performance().market_value) {
-        std::cout << "Can't swap: market value mismatch" << std::endl;
+
+    float total_value = my_driver->get_performance().market_value + budget;
+    if (total_value < other_driver->get_performance().market_value) {
+        std::cout << "Can't swap: insufficient combined value (driver + budget)\n";
+        std::cout << "Your value: " << total_value << " (driver: " 
+                 << my_driver->get_performance().market_value 
+                 << " + budget: " << budget << ")\n";
+        std::cout << "Target driver value: " << other_driver->get_performance().market_value << "\n";
         return false;
     }
+
+    if (my_driver->get_performance().market_value < other_driver->get_performance().market_value) {
+        float difference = other_driver->get_performance().market_value - 
+                          my_driver->get_performance().market_value;
+        budget -= difference;
+        std::cout << "Used " << difference << " from budget for swap.\n";
+        std::cout << "Remaining budget: " << budget << "\n";
+    }
+
     const Car* my_team_car = nullptr;
     if (driver1.get() == my_driver) {
         my_team_car = car1.get();
@@ -165,7 +180,7 @@ bool Team::swap(const Driver* const& my_driver, const Driver* const& other_drive
         }
     }
 
-    std::cout << "Swap completed" << std::endl;
+    std::cout << "Swap completed successfully\n";
     return true;
 }
 
@@ -216,4 +231,19 @@ int Team::getWeatherBonus(const Weather_types& weatherCondition) const {
     return weatherModifier->getBonus();
 }
 return 0;
+}
+float Team::get_budget() const {
+    return budget;
+}
+void Team::add_to_budget(const float value) {
+    budget += value;
+}
+void Team::convert_points_to_budget() {
+    if (upgrade_points > 0) {
+        float conversion = upgrade_points * 0.5f;
+        budget += conversion;
+        std::cout << name << " converted " << upgrade_points 
+                 << " upgrade points to " << conversion << " budget.\n";
+        upgrade_points = 0;
+    }
 }

@@ -22,6 +22,7 @@ class Team {
     int position;
     int upgrade_points = 0;
     int downgrade_points = 0;
+    float budget = 0.0f;
     std::unordered_map<Weather_types, std::unique_ptr<WeatherDetails>> weatherDetails;
 public:
     void apply_downgrade();
@@ -44,12 +45,14 @@ public:
     void update_performance_points(int actual_position);
     void apply_upgrade_for_ai_team();
     void apply_upgrade_for_player_team(int points);
+    void convert_points_to_budget();
+    void add_to_budget(float value);
 
     [[nodiscard]] int get_upgrade_points() const;
     [[nodiscard]] int get_downgrade_points() const;
     [[nodiscard]] const std::string& get_name() const;
-
     [[nodiscard]] int getWeatherBonus(const Weather_types& weather) const;
     [[nodiscard]] Driver_Car get_driver_car(int index) const;
+    [[nodiscard]] float get_budget() const;
 };
 #endif
