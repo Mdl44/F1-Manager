@@ -1,6 +1,7 @@
 #include "GameManager.h"
 #include "Menu.h"
 #include "Exceptions.h"
+#include "RegulationChanges.h"
 
 int main() {
     try {
@@ -20,6 +21,9 @@ int main() {
 
         for (int current_season = 1; current_season <= num_seasons; current_season++) {
             std::cout << "\n=== Starting Season " << current_season << " ===\n";
+            if (current_season > 1 && (current_season - 1) % 3 == 0) {
+                RegulationChanges::apply_regulation_changes(game_manager.get_teams());
+            }
             
             std::vector<Team*> team_ptr;
             team_ptr.reserve(game_manager.get_teams().size());
@@ -41,7 +45,6 @@ int main() {
                 return 1;
             }
         }
-
     } catch (const ConfigurationFileException& e) {
         std::cerr << "Configuration Error: " << e.what() << "\n";
         return 1;

@@ -91,6 +91,8 @@ add_executable(${PROJECT_NAME}
         sources/WeatherDetails.cpp
         headers/WeatherDetailsFactory.h
         sources/WeatherDetailsFactory.cpp
+        headers/RegulationChanges.h
+        sources/RegulationChanges.cpp
 
 
 )
