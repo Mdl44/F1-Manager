@@ -46,13 +46,11 @@ public:
     void apply_upgrade_for_ai_team();
     void apply_upgrade_for_player_team(int points);
     void convert_points_to_budget();
-    void add_to_budget(float value);
 
     [[nodiscard]] int get_upgrade_points() const;
     [[nodiscard]] int get_downgrade_points() const;
     [[nodiscard]] const std::string& get_name() const;
     [[nodiscard]] int getWeatherBonus(const Weather_types& weather) const;
     [[nodiscard]] Driver_Car get_driver_car(int index) const;
-    [[nodiscard]] float get_budget() const;
 };
 #endif

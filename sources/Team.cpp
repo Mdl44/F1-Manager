@@ -15,6 +15,9 @@ Team::Team(std::string name,
       driver1(std::move(driver1)),
       driver2(std::move(driver2)),
       position(initial_position),
+      upgrade_points(0),
+      downgrade_points(0),
+      budget(0.0f),
       weatherDetails(std::move(weather)) {}
 
 void Team::update_performance_points(const int actual_position) {
@@ -91,7 +94,8 @@ Team::Team(const Team& other)
       player(other.player),
       position(other.position),
       upgrade_points(other.upgrade_points),
-      downgrade_points(other.downgrade_points) {
+      downgrade_points(other.downgrade_points),
+      budget(other.budget) {
     if (other.car1) car1 = std::make_unique<Car>(*other.car1);
     if (other.car2) car2 = std::make_unique<Car>(*other.car2);
     if (other.driver1) driver1 = std::make_unique<Driver>(*other.driver1);
@@ -108,6 +112,7 @@ Team& Team::operator=(const Team& other) {
         position = other.position;
         upgrade_points = other.upgrade_points;
         downgrade_points = other.downgrade_points;
+        budget = other.budget;
 
         if (other.car1) car1 = std::make_unique<Car>(*other.car1);
         else car1.reset();
@@ -120,6 +125,11 @@ Team& Team::operator=(const Team& other) {
 
         if (other.driver2) driver2 = std::make_unique<Driver>(*other.driver2);
         else driver2.reset();
+
+        weatherDetails.clear();
+        for (const auto& [key, value] : other.weatherDetails) {
+            weatherDetails[key] = value->clone();
+        }
     }
     return *this;
 }
@@ -232,15 +242,9 @@ int Team::getWeatherBonus(const Weather_types& weatherCondition) const {
 }
 return 0;
 }
-float Team::get_budget() const {
-    return budget;
-}
-void Team::add_to_budget(const float value) {
-    budget += value;
-}
 void Team::convert_points_to_budget() {
     if (upgrade_points > 0) {
-        float conversion = upgrade_points * 0.5f;
+        const float conversion = static_cast<float>(upgrade_points) * 0.5f;
         budget += conversion;
         std::cout << name << " converted " << upgrade_points 
                  << " upgrade points to " << conversion << " budget.\n";
