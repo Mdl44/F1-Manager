@@ -35,5 +35,9 @@ class NightWeatherDetails : public WeatherDetails {
 public:
     [[nodiscard]] std::unique_ptr<WeatherDetails> clone() const override;
 };
+class MixedWeatherDetails : public WeatherDetails {
+public:
+    [[nodiscard]] std::unique_ptr<WeatherDetails> clone() const override;
+};
 
 #endif

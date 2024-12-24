@@ -65,5 +65,6 @@ void MixedCondition::remove_effects(Team* team) {
     }
 }
 void MixedCondition::print_(std::ostream& os) const {
-  os << "MixedConditions\n";
+    os << "Mixed conditions - challenging track\n"
+       << "Requires balanced performance in dry and intermediate conditions\n";
 }

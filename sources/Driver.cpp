@@ -84,6 +84,8 @@ int Driver::get_skill(const Weather_types& condition) const {
             return wet_skill;
         case Weather_types::NIGHT:
             return dry_skill;
+        case Weather_types::MIXED:
+            return (dry_skill + intermediate_skill) / 2;
         default:
             std::cerr << "Invalid weather condition" << std::endl;
             return 0;

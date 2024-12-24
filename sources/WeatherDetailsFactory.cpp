@@ -42,6 +42,7 @@ void WeatherDetailsFactory::initialize() {
             case Weather_types::INTERMEDIATE: std::cout << "INTERMEDIATE"; break;
             case Weather_types::WET: std::cout << "WET"; break;
             case Weather_types::NIGHT: std::cout << "NIGHT"; break;
+            case Weather_types::MIXED: std::cout << "MIXED"; break;
         }
         std::cout << "\nBonuses: ";
         for (int b : bonuses) {

@@ -93,6 +93,8 @@ add_executable(${PROJECT_NAME}
         sources/WeatherDetailsFactory.cpp
         headers/RegulationChanges.h
         sources/RegulationChanges.cpp
+        headers/MixedCondition.h
+        sources/MixedCondition.cpp
 
 
 )

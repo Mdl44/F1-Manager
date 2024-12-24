@@ -5,6 +5,7 @@
 #include "NightCondition.h"
 #include <iostream>
 #include <random>
+#include "MixedCondition.h"
 
 std::unique_ptr<WeatherCondition> WeatherConditionFactory::getWeather(const bool isNight, const bool canRain, const bool quali) {
     static std::random_device rd;
@@ -24,9 +25,13 @@ std::unique_ptr<WeatherCondition> WeatherConditionFactory::getWeather(const bool
     std::cout << (quali ? "Qualifying" : "Race") << " - Rain possible - randomly choosing weather...\n";
 
     if (isNight) {
-        if (weather < 50) {
+        if (weather < 40) {
             std::cout << (quali ? "Qualifying" : "Race") << ": Night (Dry)\n";
             return std::make_unique<NightCondition>();
+        }
+        if (weather < 60) {
+            std::cout << (quali ? "Qualifying" : "Race") << ": Night + Mixed\n";
+            return std::make_unique<MixedCondition>();
         }
         if (weather < 85) {
             std::cout << (quali ? "Qualifying" : "Race") << ": Night + Intermediate\n";
@@ -35,9 +40,14 @@ std::unique_ptr<WeatherCondition> WeatherConditionFactory::getWeather(const bool
         std::cout << (quali ? "Qualifying" : "Race") << ": Night + Wet\n";
         return std::make_unique<WetCondition>();
     }
-    if (weather < 50) {
+
+    if (weather < 40) {
         std::cout << (quali ? "Qualifying" : "Race") << ": Dry\n";
         return std::make_unique<DryCondition>();
+    }
+    if (weather < 60) {
+        std::cout << (quali ? "Qualifying" : "Race") << ": Mixed\n";
+        return std::make_unique<MixedCondition>();
     }
     if (weather < 85) {
         std::cout << (quali ? "Qualifying" : "Race") << ": Intermediate\n";

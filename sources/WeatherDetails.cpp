@@ -37,3 +37,8 @@ std::unique_ptr<WeatherDetails> NightWeatherDetails::clone() const {
     copy->bonuses = bonuses;
     return copy;
 }
+std::unique_ptr<WeatherDetails> MixedWeatherDetails::clone() const {
+    auto copy = std::make_unique<MixedWeatherDetails>();
+    copy->bonuses = bonuses;
+    return copy;
+}
