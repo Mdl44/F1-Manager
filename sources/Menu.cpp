@@ -96,13 +96,13 @@ bool Menu::handleDriver_swap() const {
         std::vector<std::pair<Team*, int>> reserveIndices;
 
         for (const auto& team : manager.get_teams()) {
-            if (auto* reserve1 = team->get_reserve_driver(1)) {
+            if (const auto* reserve1 = team->get_reserve_driver(1)) {
                 std::cout << displayedIndex << ". " << team->get_name() << " - " 
                          << reserve1->get_name() << "\n";
                 reserveIndices.emplace_back(team.get(), 1);
                 ++displayedIndex;
             }
-            if (auto* reserve2 = team->get_reserve_driver(2)) {
+            if (const auto* reserve2 = team->get_reserve_driver(2)) {
                 std::cout << displayedIndex << ". " << team->get_name() << " - " 
                          << reserve2->get_name() << "\n";
                 reserveIndices.emplace_back(team.get(), 2);
