@@ -31,10 +31,12 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Driver& driver);
     void apply_upgrades(int value_);
     void apply_downgrades(int value_);
+    void increase_age();
 
     [[nodiscard]] const std::string& get_name() const;
     [[nodiscard]]DriverPerformance get_performance() const;
     [[nodiscard]] int get_skill(const Weather_types& condition) const;
+    [[nodiscard]] int get_age() const;
 };
 
 #endif

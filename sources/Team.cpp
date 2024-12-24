@@ -297,3 +297,34 @@ void Team::convert_points_to_budget() {
         upgrade_points = 0;
     }
 }
+void Team::check_retirements() {
+    if (driver1 && driver1->get_age() >= 45) {
+        std::cout << "\n=== DRIVER RETIREMENT ===" << std::endl;
+        std::cout << driver1->get_name() << " has retired at age " << driver1->get_age() << std::endl;
+        
+        if (reserve1) {
+            std::cout << "Promoting reserve driver " << reserve1->get_name() << std::endl;
+            promote_reserve_driver(1, 1);
+        } else if (reserve2) {
+            std::cout << "Promoting reserve driver " << reserve2->get_name() << std::endl;
+            promote_reserve_driver(2, 1);
+        } else {
+            std::cout << "No reserve drivers available for promotion!" << std::endl;
+        }
+    }
+
+    if (driver2 && driver2->get_age() >= 45) {
+        std::cout << "\n=== DRIVER RETIREMENT ===" << std::endl;
+        std::cout << driver2->get_name() << " has retired at age " << driver2->get_age() << std::endl;
+        
+        if (reserve1) {
+            std::cout << "Promoting reserve driver " << reserve1->get_name() << std::endl;
+            promote_reserve_driver(1, 2);
+        } else if (reserve2) {
+            std::cout << "Promoting reserve driver " << reserve2->get_name() << std::endl;
+            promote_reserve_driver(2, 2);
+        } else {
+            std::cout << "No reserve drivers available for promotion!" << std::endl;
+        }
+    }
+}

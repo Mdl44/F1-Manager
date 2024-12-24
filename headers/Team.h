@@ -50,6 +50,7 @@ public:
     void apply_upgrade_for_ai_team();
     void apply_upgrade_for_player_team(int points);
     void convert_points_to_budget();
+    void check_retirements();
 
     [[nodiscard]] int get_upgrade_points() const;
     [[nodiscard]] int get_downgrade_points() const;

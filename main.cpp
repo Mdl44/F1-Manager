@@ -37,19 +37,34 @@ int main() {
                 const Menu menu(game_manager, const_cast<Player&>(player), season);
                 menu.run();
 
-        
-            for (auto& team : game_manager.get_teams()) {
-                team->convert_points_to_budget();
-            }
+                for (const auto& team : game_manager.get_teams()) {
+                    team->convert_points_to_budget();
+                    
+                    if (auto d1 = team->get_driver_car(1).driver) {
+                        d1->increase_age();
+                    }
+                    if (auto d2 = team->get_driver_car(2).driver) {
+                        d2->increase_age();
+                    }
+                    if (auto r1 = team->get_reserve_driver(1)) {
+                        r1->increase_age();
+                    }
+                    if (auto r2 = team->get_reserve_driver(2)) {
+                        r2->increase_age();
+                    }
 
-                } catch (const RaceWeekendException& e) {
-                    std::cerr << "Race Weekend Error: " << e.what() << "\n";
-                    return 1;
-                } catch (const InvalidTeamException& e) {
-                    std::cerr << "Team Error: " << e.what() << "\n";
-                    return 1;
+                    team->check_retirements();
                 }
+
+            } catch (const RaceWeekendException& e) {
+                std::cerr << "Race Weekend Error: " << e.what() << "\n";
+                return 1;
+            } catch (const InvalidTeamException& e) {
+                std::cerr << "Team Error: " << e.what() << "\n";
+                return 1;
             }
+        }
+
     } catch (const ConfigurationFileException& e) {
         std::cerr << "Configuration Error: " << e.what() << "\n";
         return 1;

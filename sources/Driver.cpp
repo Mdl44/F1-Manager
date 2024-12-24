@@ -120,3 +120,12 @@ std::ostream& operator<<(std::ostream& os, const Driver& driver) {
        << "\nValue: " << driver.value;
     return os;
 }
+void Driver::increase_age() {
+    age++;
+    if (age > 50) {
+        throw InvalidDriverException("Driver is too old");
+    }
+}
+int Driver::get_age() const {
+    return age;
+}
