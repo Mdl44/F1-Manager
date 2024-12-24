@@ -62,6 +62,5 @@ public:
     [[nodiscard]] Driver* get_reserve_driver(int index) const;
     void promote_reserve_driver(int reserve_index, int driver_index);
     bool swap_with_reserve(const Driver* const& main_driver, const Driver* const& reserve_driver);
-    [[nodiscard]] int getId() const;
 };
 #endif

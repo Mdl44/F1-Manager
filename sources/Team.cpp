@@ -347,6 +347,3 @@ void Team::check_retirements() {
         }
     }
 }
-int Team::getId() const {
-    return team_id;
-}

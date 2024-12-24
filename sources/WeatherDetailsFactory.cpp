@@ -62,13 +62,15 @@ WeatherDetailsFactory::createForTeam(int teamId) {
 
     dry->setBonuses(weather_bonuses[Weather_types::DRY]);
     intermediate->setBonuses(weather_bonuses[Weather_types::INTERMEDIATE]);
-    wet->setBonuses(weather_bonuses[Weather_types::WET]);
+    wet->setBonuses(weather_bonuses[Weather_types::WET]); 
     night->setBonuses(weather_bonuses[Weather_types::NIGHT]);
 
-    details[Weather_types::DRY] = std::move(dry);
-    details[Weather_types::INTERMEDIATE] = std::move(intermediate);
-    details[Weather_types::WET] = std::move(wet);
-    details[Weather_types::NIGHT] = std::move(night);
+    if (teamId >= 0 && static_cast<size_t>(teamId) < weather_bonuses[Weather_types::DRY].size()) {
+        details[Weather_types::DRY] = std::move(dry);
+        details[Weather_types::INTERMEDIATE] = std::move(intermediate);
+        details[Weather_types::WET] = std::move(wet);
+        details[Weather_types::NIGHT] = std::move(night);
+    }
 
     return details;
 }
