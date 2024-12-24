@@ -300,6 +300,7 @@ int Team::getWeatherBonus(const Weather_types& weather) const {
             case Weather_types::WET: std::cout << "WET"; break;
             case Weather_types::NIGHT: std::cout << "NIGHT"; break;
             case Weather_types::MIXED: std::cout << "MIXED"; break;
+            case Weather_types::WINDY: std::cout << "WINDY"; break;
         }
         std::cout << "\nBonus value: " << bonus << "\n";
         return bonus;

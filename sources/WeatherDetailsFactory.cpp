@@ -31,7 +31,10 @@ void WeatherDetailsFactory::initialize() {
                 weather_bonuses[Weather_types::WET] = bonuses;
             } else if (weather_type == "NIGHT") {
                 weather_bonuses[Weather_types::NIGHT] = bonuses;
-            }
+            } else if (weather_type == "WINDY") {
+                weather_bonuses[Weather_types::WINDY] = bonuses;
+    }
+            
         }
     }
     std::cout << "\nWeather bonuses loaded:\n";
@@ -43,6 +46,7 @@ void WeatherDetailsFactory::initialize() {
             case Weather_types::WET: std::cout << "WET"; break;
             case Weather_types::NIGHT: std::cout << "NIGHT"; break;
             case Weather_types::MIXED: std::cout << "MIXED"; break;
+            case Weather_types::WINDY: std::cout << "WINDY"; break;
         }
         std::cout << "\nBonuses: ";
         for (int b : bonuses) {
@@ -60,17 +64,20 @@ WeatherDetailsFactory::createForTeam(int teamId) {
     auto intermediate = std::make_unique<IntermediateWeatherDetails>();
     auto wet = std::make_unique<WetWeatherDetails>();
     auto night = std::make_unique<NightWeatherDetails>();
+    auto windy = std::make_unique<WindyWeatherDetails>();
 
     dry->setBonuses(weather_bonuses[Weather_types::DRY]);
     intermediate->setBonuses(weather_bonuses[Weather_types::INTERMEDIATE]);
     wet->setBonuses(weather_bonuses[Weather_types::WET]); 
     night->setBonuses(weather_bonuses[Weather_types::NIGHT]);
+    windy->setBonuses(weather_bonuses[Weather_types::WINDY]);
 
     if (teamId >= 0 && static_cast<size_t>(teamId) < weather_bonuses[Weather_types::DRY].size()) {
         details[Weather_types::DRY] = std::move(dry);
         details[Weather_types::INTERMEDIATE] = std::move(intermediate);
         details[Weather_types::WET] = std::move(wet);
         details[Weather_types::NIGHT] = std::move(night);
+        details[Weather_types::WINDY] = std::move(windy);
     }
 
     return details;
