@@ -8,7 +8,7 @@
 GameManager::GameManager() : my_team(nullptr) {}
 
 bool GameManager::initialize() {
-
+    WeatherDetailsFactory::initialize();
     std::vector<std::vector<int>> car_stats;
     std::ifstream car_file("date_masini.txt");
     if (!car_file) {
@@ -19,7 +19,6 @@ bool GameManager::initialize() {
     while (car_file >> aero >> power >> durability >> chassis) {
         car_stats.push_back({aero, power, durability, chassis});
     }
-
 
     std::ifstream circuit_file("circuite.txt");
     if (!circuit_file) {
@@ -103,11 +102,12 @@ bool GameManager::initialize() {
         auto reserve2 = std::make_unique<Driver>(reserve2_name, reserve2_exp, reserve2_craft,
             reserve2_aware, reserve2_pace, reserve2_age, reserve2_dry, reserve2_inter, reserve2_wet);
 
-         auto weatherDetails = WeatherDetailsFactory::createAll();
+        auto weatherDetails = WeatherDetailsFactory::createForTeam(static_cast<int>(i));
 
         float avg_rating = static_cast<float>(car1->get_rating() + car2->get_rating()) / 2.0f;
         if (avg_rating > 85) {
             teams.push_back(std::make_unique<TopTeam>(
+                i,
                 team_name, std::move(car1), std::move(car2),
                 std::move(driver1), std::move(driver2),
                 std::move(reserve1), std::move(reserve2),
@@ -115,6 +115,7 @@ bool GameManager::initialize() {
             ));
         } else {
             teams.push_back(std::make_unique<Team>(
+                i,
                 team_name, std::move(car1), std::move(car2),
                 std::move(driver1), std::move(driver2),
                 std::move(reserve1), std::move(reserve2),
@@ -123,17 +124,111 @@ bool GameManager::initialize() {
         }
     }
 
-    std::cout << "Select your team:\n";
-    for (size_t i = 0; i < teams.size(); ++i) {
-        std::cout << i + 1 << ". " << teams[i]->get_name() << "\n";
+    std::cout << "Choose your option:\n";
+    std::cout << "1. Select existing team\n";
+    std::cout << "2. Create custom team\n";
+    
+    int option;
+    std::cin >> option;
+    std::cin.ignore();
+
+    if (option == 1) {
+        std::cout << "\nSelect your team:\n";
+        for (size_t i = 0; i < teams.size(); ++i) {
+            std::cout << i + 1 << ". " << teams[i]->get_name() << "\n";
+        }
+
+        size_t choice;
+        if (!(std::cin >> choice) || choice < 1 || choice > teams.size()) {
+            throw InvalidTeamException("Invalid team selection");
+        }
+        my_team = teams[choice - 1].get();
+    }
+    else if (option == 2) {
+        constexpr float initial_budget = 50.0f;
+        
+        std::cout << "Enter your team name: ";
+        std::string custom_team_name;
+        std::getline(std::cin, custom_team_name);
+
+        auto custom_car1 = std::make_unique<Car>(50, 50, 50, 50);
+        auto custom_car2 = std::make_unique<Car>(50, 50, 50, 50);
+
+        std::vector<std::unique_ptr<Driver>> available_drivers;
+        std::ifstream pool_file("driver_pool.txt");
+        if (!pool_file) {
+            throw ConfigurationFileException("driver_pool.txt");
+        }
+
+        std::string driver_name;
+    int exp, craft, aware, pace, age, dry, inter, wet;
+    while (std::getline(pool_file, driver_name)) {
+        if (!(pool_file >> exp >> craft >> aware >> pace >> age >> dry >> inter >> wet)) {
+            break;
+        }
+        pool_file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        
+        available_drivers.push_back(std::make_unique<Driver>(
+            driver_name, exp, craft, aware, pace, age, dry, inter, wet
+        ));
     }
 
-    size_t choice;
-    if (!(std::cin >> choice) || choice < 1 || choice > teams.size()) {
-        throw InvalidTeamException("Invalid team selection: must be between 1 and " + std::to_string(teams.size()));
+        std::vector<std::unique_ptr<Driver>> selected_drivers;
+        float remaining_budget = initial_budget;
+
+        std::cout << "\nSelect 4 drivers (2 main, 2 reserve) within budget of " << initial_budget << ":\n";
+        
+        for (int i = 1; i <= 4; i++) {
+            std::cout << "\nSelecting " << (i <= 2 ? "main" : "reserve") << " driver " 
+                     << (i <= 2 ? i : i-2) << "\n";
+            std::cout << "Remaining budget: " << remaining_budget << "\n\n";
+            
+            for (size_t j = 0; j < available_drivers.size(); j++) {
+                const auto& driver = available_drivers[j];
+                float driver_value = driver->get_performance().market_value;
+                if (driver_value <= remaining_budget) {
+                    std::cout << j + 1 << ". " << driver->get_name() 
+                             << " (Value: " << driver_value << ")\n";
+                }
+            }
+
+            size_t choice;
+            std::cin >> choice;
+            if (choice < 1 || choice > available_drivers.size()) {
+                throw InvalidDriverException("Invalid driver selection");
+            }
+
+            float selected_value = available_drivers[choice-1]->get_performance().market_value;
+            if (selected_value > remaining_budget) {
+                throw InvalidDriverException("Insufficient budget for selected driver");
+            }
+
+            remaining_budget -= selected_value;
+            selected_drivers.push_back(std::move(available_drivers[choice-1]));
+            available_drivers.erase(available_drivers.begin() + static_cast<std::ptrdiff_t>(choice - 1));
+        }
+
+        auto weatherDetails = WeatherDetailsFactory::createForTeam(static_cast<int>(teams.size()));
+
+        teams.push_back(std::make_unique<Team>(
+            teams.size(),
+            custom_team_name,
+            std::move(custom_car1),
+            std::move(custom_car2),
+            std::move(selected_drivers[0]),
+            std::move(selected_drivers[1]),
+            std::move(selected_drivers[2]),
+            std::move(selected_drivers[3]),
+            teams.size() + 1,
+            std::move(weatherDetails)
+        ));
+
+        my_team = teams.back().get();
+    }
+    else {
+        throw InvalidTeamException("Invalid option selection");
     }
 
-    my_team = teams[choice - 1].get();
     return true;
 }
 

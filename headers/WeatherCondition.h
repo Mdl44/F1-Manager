@@ -8,7 +8,7 @@ class Team;
 
 class WeatherCondition {
 public:
-    WeatherCondition() : name(""), lap_time_modifier(0) {}
+    WeatherCondition() :  lap_time_modifier(0) {}
     WeatherCondition(const WeatherCondition& other) = default;
     WeatherCondition& operator=(const WeatherCondition& other) = default;
     virtual ~WeatherCondition() = default;
@@ -27,7 +27,7 @@ private:
     int lap_time_modifier;
     virtual void print_(std::ostream& os) const = 0;
 protected:
-    WeatherCondition(std::string name_, int modifier) : name(std::move(name_)), lap_time_modifier(modifier) {}
+    WeatherCondition(std::string name_, const int modifier) : name(std::move(name_)), lap_time_modifier(modifier) {}
 
 };
 

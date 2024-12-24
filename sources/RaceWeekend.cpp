@@ -313,3 +313,6 @@ bool RaceWeekend::night() const {
 const std::string& RaceWeekend::get_name() const { 
     return name; 
 }
+void RaceWeekend::set_teams(const std::vector<Team *> &race_teams) {
+    teams = race_teams;
+}

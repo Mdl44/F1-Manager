@@ -2,7 +2,8 @@
 #include <iostream>
 #include "Exceptions.h"
 
-Team::Team(std::string name, 
+Team::Team(const int id,
+           std::string name, 
            std::unique_ptr<Car> car1, 
            std::unique_ptr<Car> car2,
            std::unique_ptr<Driver> driver1, 
@@ -11,7 +12,8 @@ Team::Team(std::string name,
            std::unique_ptr<Driver> reserve2,
            const int initial_position,
            std::unordered_map<Weather_types, std::unique_ptr<WeatherDetails>> weather)
-    : name(std::move(name)),
+    : team_id(id),
+      name(std::move(name)),
       car1(std::move(car1)),
       car2(std::move(car2)),
       driver1(std::move(driver1)),
@@ -128,7 +130,8 @@ Team::~Team() {
 }
 
 Team::Team(const Team& other)
-    : name(other.name),
+    : team_id(other.team_id),
+      name(other.name),
       player(other.player),
       position(other.position),
       upgrade_points(other.upgrade_points),
@@ -147,6 +150,7 @@ Team::Team(const Team& other)
 
 Team& Team::operator=(const Team& other) {
     if (this != &other) {
+        team_id = other.team_id;
         name = other.name;
         player = other.player;
         position = other.position;
@@ -274,19 +278,34 @@ std::ostream& operator<<(std::ostream& os, const Team& team) {
     return os;
 }
 int Team::getWeatherBonus(const Weather_types& weather) const {
+    std::cout << "\n=== Weather Bonus Debug for " << name << " ===\n";
+    
     if (weatherDetails.empty()) {
+        std::cout << "No weather details available!\n";
         return 0;
     }
 
     const auto& weatherEntry = weatherDetails.find(weather);
     if (weatherEntry == weatherDetails.end()) {
+        std::cout << "No bonus found for this weather type\n";
         return 0;
     }
 
     if (const auto& weatherModifier = weatherEntry->second) {
-    return weatherModifier->getBonus();
-}
-return 0;
+        const int bonus = weatherModifier->getBonus(team_id);
+        std::cout << "Weather type: ";
+        switch(weather) {
+            case Weather_types::DRY: std::cout << "DRY"; break;
+            case Weather_types::INTERMEDIATE: std::cout << "INTERMEDIATE"; break;
+            case Weather_types::WET: std::cout << "WET"; break;
+            case Weather_types::NIGHT: std::cout << "NIGHT"; break;
+        }
+        std::cout << "\nBonus value: " << bonus << "\n";
+        return bonus;
+    }
+    
+    std::cout << "Weather modifier is null\n";
+    return 0;
 }
 void Team::convert_points_to_budget() {
     if (upgrade_points > 0) {
@@ -327,4 +346,7 @@ void Team::check_retirements() {
             std::cout << "No reserve drivers available for promotion!" << std::endl;
         }
     }
+}
+int Team::getId() const {
+    return team_id;
 }

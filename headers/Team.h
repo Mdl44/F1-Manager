@@ -13,6 +13,7 @@ struct Driver_Car{
 };
 
 class Team {
+    int team_id;
     std::string name;
     bool player = false;
     std::unique_ptr<Car> car1;
@@ -32,7 +33,7 @@ public:
     void set_control(bool value);
     bool swap(const Driver* const& my_driver, const Driver* const& other_driver, Team& other_team);
     [[nodiscard]] bool is_player_controlled() const;
-     Team(std::string name, 
+     Team(int id, std::string name, 
          std::unique_ptr<Car> car1, 
          std::unique_ptr<Car> car2,
          std::unique_ptr<Driver> driver1, 
@@ -61,5 +62,6 @@ public:
     [[nodiscard]] Driver* get_reserve_driver(int index) const;
     void promote_reserve_driver(int reserve_index, int driver_index);
     bool swap_with_reserve(const Driver* const& main_driver, const Driver* const& reserve_driver);
+    [[nodiscard]] int getId() const;
 };
 #endif

@@ -39,9 +39,7 @@ public:
     void set_race_weather(const std::unique_ptr<WeatherCondition> &weather);
     [[nodiscard]] bool can_rain() const;
     [[nodiscard]] bool night() const;
-    void set_teams(const std::vector<Team*>& race_teams) {
-        teams = race_teams;
-    }
+    void set_teams(const std::vector<Team*>& race_teams);
     
 };
 #endif

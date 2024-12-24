@@ -1,71 +1,52 @@
 #include "WeatherDetails.h"
-#include "Exceptions.h"
-#include <fstream>
 
-void WeatherDetails::readFromFile(const std::string& filepath) {
-    std::ifstream file(filepath);
-    if (!file) {
-        throw ConfigurationFileException(filepath);
+int WeatherDetails::getBonus(int teamId) const {
+    if (teamId >= 0 && teamId < bonuses.size()) {
+        return bonuses[teamId];
     }
-
-    std::string line;
-    bool found_section = false;
-    while (std::getline(file, line)) {
-        if (line == getWeatherTypeString()) {
-            found_section = true;
-            continue;
-        }
-        if (found_section) {
-        int current_bonus = 0;
-        for (const char c : line) {
-        if (c >= '0' && c <= '9') {
-            current_bonus = current_bonus * 10 + (c - '0');
-        } else if (current_bonus > 0) {
-            break;
-        }
-    }
-    setBonus(current_bonus);
-    break;
+    return 0;
 }
-    }
+
+void WeatherDetails::setBonuses(std::vector<int> team_bonuses) {
+    bonuses = std::move(team_bonuses);
+}
+
+Weather_types DryWeatherDetails::getType() const {
+    return Weather_types::DRY;
 }
 
 std::unique_ptr<WeatherDetails> DryWeatherDetails::clone() const {
     auto copy = std::make_unique<DryWeatherDetails>();
-    copy->bonus = bonus;
+    copy->bonuses = bonuses;
     return copy;
 }
 
-std::string DryWeatherDetails::getWeatherTypeString() const { 
-    return "DRY"; 
+Weather_types IntermediateWeatherDetails::getType() const {
+    return Weather_types::INTERMEDIATE;
 }
 
 std::unique_ptr<WeatherDetails> IntermediateWeatherDetails::clone() const {
     auto copy = std::make_unique<IntermediateWeatherDetails>();
-    copy->bonus = bonus;
+    copy->bonuses = bonuses;
     return copy;
 }
 
-std::string IntermediateWeatherDetails::getWeatherTypeString() const { 
-    return "INTERMEDIATE"; 
+Weather_types WetWeatherDetails::getType() const {
+    return Weather_types::WET;
 }
 
 std::unique_ptr<WeatherDetails> WetWeatherDetails::clone() const {
     auto copy = std::make_unique<WetWeatherDetails>();
-    copy->bonus = bonus;
+    copy->bonuses = bonuses;
     return copy;
 }
 
-std::string WetWeatherDetails::getWeatherTypeString() const { 
-    return "WET"; 
+Weather_types NightWeatherDetails::getType() const {
+    return Weather_types::NIGHT;
 }
 
 std::unique_ptr<WeatherDetails> NightWeatherDetails::clone() const {
     auto copy = std::make_unique<NightWeatherDetails>();
-    copy->bonus = bonus;
+    copy->bonuses = bonuses;
     return copy;
-}
-
-std::string NightWeatherDetails::getWeatherTypeString() const { 
-    return "NIGHT"; 
 }

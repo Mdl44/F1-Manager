@@ -1,0 +1,40 @@
+Michael Schumacher 
+96 93 92 93 35 2 2 0
+Ayrton Senna 
+77 97 96 94 34 -1 1 1
+Mika Hakkinen 
+79 91 89 91 31 0 -1 -1
+Nigel Mansell 
+81 91 90 90 32 0 1 1
+Jacques Villeneuve 
+90 90 91 90 35 0 -1 -2
+Jenson Button 
+91 92 90 80 31 1 -1 -2
+Felipe Massa 
+90 86 86 82 29 0 -1 -1
+Mark Webber 
+85 80 77 82 35 1 -1 -2
+Pastor Maldonado 
+54 83 65 85 34 0 -1 -2
+Daniel Ricciardo
+71 80 82 80 34 1 0 -1
+Nyck De Vries
+74 76 77 75 28 1 2 0
+Antonio Giovinazzi
+76 75 78 74 29 0 1 -1
+Robert Shwartzman
+73 77 75 78 23 1 0 0 
+Jamie Chadwick 
+39 64 66 74 19 1 1 1
+Jehan Daruvala 
+45 57 63 74 23 -1 -1 -1
+Arthur Leclerc 
+35 76 63 72 19 1 1 1
+Clement Novalak 
+40 53 65 70 21 0 -1 -2
+Kush Maini 
+60 54 62 69 20 -1 -1 1
+Brad Benavides 
+65 60 63 69 21 -1 -1 1
+Jarno Opmeer 
+36 66 69 65 24 1 1 1
