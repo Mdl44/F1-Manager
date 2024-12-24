@@ -87,6 +87,10 @@ add_executable(${PROJECT_NAME}
         sources/Exceptions.cpp
         headers/WeatherConditionFactory.h
         sources/WeatherConditionFactory.cpp
+        headers/WeatherDetails.h
+        sources/WeatherDetails.cpp
+        headers/WeatherDetailsFactory.h
+        sources/WeatherDetailsFactory.cpp
 
 
 )

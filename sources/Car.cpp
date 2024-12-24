@@ -46,28 +46,14 @@ int Car::get_rating() const {
     return rating();
 }
 
-void Car::apply_upgrade() {
-    aerodynamics += 1;
-    powertrain += 1;
-    durability += 1;
-    chasis += 1;
-}
-
-void Car::apply_downgrade() {
-    aerodynamics -= 1;
-    powertrain -= 1;
-    durability -= 1;
-    chasis -= 1;
-}
-
-void Car::apply_race_upgrade(const int value) {
+void Car::apply_upgrades(const int value) {
     aerodynamics += value;
     powertrain += value;
     durability += value;
     chasis += value;
 }
 
-void Car::remove_race_upgrade(const int value) {
+void Car::apply_downgrades(const int value) {
     aerodynamics -= value;
     powertrain -= value;
     durability -= value;

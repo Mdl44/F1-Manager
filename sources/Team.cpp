@@ -2,9 +2,20 @@
 #include <iostream>
 #include "Exceptions.h"
 
-Team::Team(std::string name, std::unique_ptr<Car> car1, std::unique_ptr<Car> car2, std::unique_ptr<Driver> driver1, std::unique_ptr<Driver> driver2, const int initial_position, const int dry_bonus, const int intermediate_bonus, const int wet_bonus, const int night_bonus)
-    : name(std::move(name)), car1(std::move(car1)), car2(std::move(car2)), driver1(std::move(driver1)), driver2(std::move(driver2)), position(initial_position), dry_bonus(dry_bonus), intermediate_bonus(intermediate_bonus), wet_bonus(wet_bonus), night_bonus(night_bonus) {
-}
+Team::Team(std::string name, 
+           std::unique_ptr<Car> car1, 
+           std::unique_ptr<Car> car2,
+           std::unique_ptr<Driver> driver1, 
+           std::unique_ptr<Driver> driver2,
+           int initial_position,
+           std::unordered_map<Weather_types, std::unique_ptr<WeatherDetails>> weather)
+    : name(std::move(name)),
+      car1(std::move(car1)),
+      car2(std::move(car2)),
+      driver1(std::move(driver1)),
+      driver2(std::move(driver2)),
+      position(initial_position),
+      weatherDetails(std::move(weather)) {}
 
 void Team::update_performance_points(const int actual_position) {
     const int diff = actual_position - position;
@@ -26,10 +37,10 @@ void Team::apply_upgrade_for_ai_team() {
     std::cout << "\nAI team " << name << " is applying upgrades...\n";
 
     for (int i = 0; i < upgrade_points; i++) {
-        if (car1) car1->apply_upgrade();
-        if (car2) car2->apply_upgrade();
-        if (driver1) driver1->apply_upgrade();
-        if (driver2) driver2->apply_upgrade();
+        if (car1) car1->apply_upgrades(1);
+        if (car2) car2->apply_upgrades(1);
+        if (driver1) driver1->apply_upgrades(1);
+        if (driver2) driver2->apply_upgrades(1);
     }
 
     const int points_used = upgrade_points;
@@ -46,10 +57,10 @@ void Team::apply_upgrade_for_player_team(const int points) {
     std::cout << "\nPlayer team " << name << " is applying upgrades...\n";
 
     for (int i = 0; i < points; i++) {
-        if (car1) car1->apply_upgrade();
-        if (car2) car2->apply_upgrade();
-        if (driver1) driver1->apply_upgrade();
-        if (driver2) driver2->apply_upgrade();
+        if (car1) car1->apply_upgrades(1);
+        if (car2) car2->apply_upgrades(1);
+        if (driver1) driver1->apply_upgrades(1);
+        if (driver2) driver2->apply_upgrades(1);
     }
 
     upgrade_points -= points;
@@ -62,10 +73,10 @@ void Team::apply_downgrade() {
     std::cout << "\nApplying performance loss for " << name << "...\n";
 
     for (int i = 0; i < downgrade_points; i++) {
-        if (car1) car1->apply_downgrade();
-        if (car2) car2->apply_downgrade();
-        if (driver1) driver1->apply_downgrade();
-        if (driver2) driver2->apply_downgrade();
+        if (car1) car1->apply_downgrades(1);
+        if (car2) car2->apply_downgrades(1);
+        if (driver1) driver1->apply_downgrades(1);
+        if (driver2) driver2->apply_downgrades(1);
     }
 
     downgrade_points = 0;
@@ -76,12 +87,18 @@ Team::~Team() {
 }
 
 Team::Team(const Team& other)
-    : name(other.name), player(other.player), position(other.position),
-      upgrade_points(other.upgrade_points), downgrade_points(other.downgrade_points),dry_bonus(other.dry_bonus),intermediate_bonus(other.intermediate_bonus),wet_bonus(other.wet_bonus),night_bonus(other.night_bonus) {
+    : name(other.name),
+      player(other.player),
+      position(other.position),
+      upgrade_points(other.upgrade_points),
+      downgrade_points(other.downgrade_points) {
     if (other.car1) car1 = std::make_unique<Car>(*other.car1);
     if (other.car2) car2 = std::make_unique<Car>(*other.car2);
     if (other.driver1) driver1 = std::make_unique<Driver>(*other.driver1);
     if (other.driver2) driver2 = std::make_unique<Driver>(*other.driver2);
+    for (const auto& [key, value] : other.weatherDetails) {
+        weatherDetails[key] = value->clone();
+    }
 }
 
 Team& Team::operator=(const Team& other) {
@@ -176,22 +193,6 @@ bool Team::is_player_controlled() const {
 const std::string& Team::get_name() const {
     return name;
 }
-int Team::getWeatherBonus(const Weather_types& weather) const {
-    switch (weather) {
-        case Weather_types::DRY:
-            return dry_bonus;
-        case Weather_types::INTERMEDIATE:  
-            return intermediate_bonus;
-        case Weather_types::WET:
-            return wet_bonus;
-        case Weather_types::NIGHT:
-            return night_bonus;
-        default:
-            std::cerr << "Invalid weather condition" << std::endl;
-            return 0;
-    }
-}
-
 std::ostream& operator<<(std::ostream& os, const Team& team) {
     os << "Team: " << team.name << "\n"
        << "Position: " << team.position << "\n"
@@ -200,4 +201,19 @@ std::ostream& operator<<(std::ostream& os, const Team& team) {
        << "Second Driver Details:\n" << *team.driver2 << "\n"
        << "\nSecond Driver's Car:\n" << *team.car2;
     return os;
+}
+int Team::getWeatherBonus(const Weather_types& weatherCondition) const {
+    if (weatherDetails.empty()) {
+        return 0;
+    }
+
+    const auto& weatherEntry = weatherDetails.find(weatherCondition);
+    if (weatherEntry == weatherDetails.end()) {
+        return 0;
+    }
+
+    if (const auto& weatherModifier = weatherEntry->second) {
+    return weatherModifier->getBonus();
+}
+return 0;
 }

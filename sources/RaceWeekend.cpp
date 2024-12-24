@@ -77,7 +77,7 @@ void swap(RaceWeekend& first, RaceWeekend& second) noexcept {
     swap(first.teams, second.teams);
 }
 
-// Add these new private helper methods to RaceWeekend class:
+
 
 void RaceWeekend::print_pre_weather_stats() const {
     std::cout << "\n=== Pre-Weather Stats ===\n";
@@ -86,13 +86,13 @@ void RaceWeekend::print_pre_weather_stats() const {
             std::cout << "Team: " << team->get_name() << "\n";
             Driver_Car pair1 = team->get_driver_car(1);
             Driver_Car pair2 = team->get_driver_car(2);
-            
+
             if (pair1.driver && pair1.car) {
-                std::cout << "Driver 1: " << pair1.driver->get_name() 
+                std::cout << "Driver 1: " << pair1.driver->get_name()
                          << " (Rating: " << pair1.driver->get_performance().overall_rating << ")"
                          << " Car Rating: " << pair1.car->get_rating() << "\n";
             }
-            
+
             if (pair2.driver && pair2.car) {
                 std::cout << "Driver 2: " << pair2.driver->get_name()
                          << " (Rating: " << pair2.driver->get_performance().overall_rating << ")"
@@ -109,7 +109,7 @@ void RaceWeekend::print_post_weather_stats() const {
         Driver_Car pair1 = team->get_driver_car(1);
         Driver_Car pair2 = team->get_driver_car(2);
         std::cout << "Team: " << team->get_name() << "\n";
-        std::cout << "D1: " << (pair1.driver ? pair1.driver->get_name() : "None") 
+        std::cout << "D1: " << (pair1.driver ? pair1.driver->get_name() : "None")
                   << " (" << (pair1.driver ? pair1.driver->get_performance().overall_rating : 0) << ")"
                   << " Car: " << (pair1.car ? pair1.car->get_rating() : 0) << "\n";
         std::cout << "D2: " << (pair2.driver ? pair2.driver->get_name() : "None")
@@ -120,7 +120,6 @@ void RaceWeekend::print_post_weather_stats() const {
 
 void RaceWeekend::apply_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const {
     if (weather) {
-        std::cout << "\n=== Applying " << weather->get_name() << " Weather Effects ===\n";
         for (const auto* team : teams) {
             weather->apply_effects(const_cast<Team*>(team));
         }
@@ -129,7 +128,6 @@ void RaceWeekend::apply_weather_effects(const std::unique_ptr<WeatherCondition>&
 
 void RaceWeekend::remove_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const {
     if (weather) {
-        std::cout << "\n=== Removing Weather Effects ===\n";
         for (const auto* team : teams) {
             weather->remove_effects(const_cast<Team*>(team));
         }

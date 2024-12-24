@@ -13,11 +13,8 @@ public:
     Car& operator=(const Car& other);
     ~Car();
     friend std::ostream& operator<<(std::ostream& os, const Car& obj);
-
-    void apply_downgrade();
-    void apply_upgrade();
     [[nodiscard]] int get_rating() const;
-    void apply_race_upgrade(int value);
-    void remove_race_upgrade(int value);
+    void apply_upgrades(int value);
+    void apply_downgrades(int value);
 };
 #endif

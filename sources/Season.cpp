@@ -65,8 +65,6 @@ int Season::calculate_combined_rating(const Team* team, const Driver* driver) {
 void Season::race(RaceWeekend& weekend) {
 
     std::vector<std::pair<Driver*, int>> combined_ratings;
-
-    std::cout << "\n=== Weather Setup for " << weekend.get_name() << " ===\n";
     weekend.set_teams(teams);
     
     weekend.set_quali_weather(WeatherConditionFactory::getWeather(
@@ -74,7 +72,6 @@ void Season::race(RaceWeekend& weekend) {
         
     weekend.set_race_weather(WeatherConditionFactory::getWeather(
         weekend.night(), weekend.can_rain(), false));
-    std::cout << "==============================\n";
 
     for (const Team* team : teams) {
         if (auto* d1 = team->get_driver_car(1).driver) {

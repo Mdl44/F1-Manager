@@ -29,10 +29,8 @@ public:
     Driver& operator=(const Driver& other);
     ~Driver();
     friend std::ostream& operator<<(std::ostream& os, const Driver& driver);
-    void apply_downgrade();
-    void apply_upgrade();
-    void apply_race_upgrade(int value_);
-    void remove_race_upgrade(int value_);
+    void apply_upgrades(int value_);
+    void apply_downgrades(int value_);
 
     [[nodiscard]] const std::string& get_name() const;
     [[nodiscard]]DriverPerformance get_performance() const;

@@ -24,13 +24,9 @@ void NightCondition::apply_effects(Team* team) {
         Driver_Car pair1 = top_team->get_driver_car(1);
         Driver_Car pair2 = top_team->get_driver_car(2);
         
-        if (pair1.car) pair1.car->apply_race_upgrade(total_bonus);
-        if (pair2.car) pair2.car->apply_race_upgrade(total_bonus);
-        
-        std::cout << "Night race conditions (Top Team):\n"
-                 << "Temperature impact: " << (temp_impact > 0 ? "Warm" : "Cold")
-                 << " (" << temp_impact << ")\n"
-                 << "Infrastructure bonus: " << infra_bonus << "\n";
+        if (pair1.car) pair1.car->apply_upgrades(total_bonus);
+        if (pair2.car) pair2.car->apply_upgrades(total_bonus);
+
     } else {
         Driver_Car pair1 = team->get_driver_car(1);
         Driver_Car pair2 = team->get_driver_car(2);
@@ -42,13 +38,9 @@ void NightCondition::apply_effects(Team* team) {
         
         const int total_bonus = team_bonus + temp_impact + infra_bonus;
         
-        if (pair1.car) pair1.car->apply_race_upgrade(total_bonus);
-        if (pair2.car) pair2.car->apply_race_upgrade(total_bonus);
-        
-        std::cout << "Night race conditions:\n"
-                 << "Temperature impact: " << (temp_impact > 0 ? "Warm" : "Cold")
-                 << " (" << temp_impact << ")\n"
-                 << "Infrastructure bonus: " << infra_bonus << "\n";
+        if (pair1.car) pair1.car->apply_upgrades(total_bonus);
+        if (pair2.car) pair2.car->apply_upgrades(total_bonus);
+
     }
 }
 
@@ -63,8 +55,8 @@ void NightCondition::remove_effects(Team* team) {
         Driver_Car pair1 = top_team->get_driver_car(1);
         Driver_Car pair2 = top_team->get_driver_car(2);
         
-        if (pair1.car) pair1.car->remove_race_upgrade(total_bonus);
-        if (pair2.car) pair2.car->remove_race_upgrade(total_bonus);
+        if (pair1.car) pair1.car->apply_downgrades(total_bonus);
+        if (pair2.car) pair2.car->apply_downgrades(total_bonus);
     } else {
         Driver_Car pair1 = team->get_driver_car(1);
         Driver_Car pair2 = team->get_driver_car(2);
@@ -76,8 +68,8 @@ void NightCondition::remove_effects(Team* team) {
         
         const int total_bonus = team_bonus + temp_impact + infra_bonus;
         
-        if (pair1.car) pair1.car->remove_race_upgrade(total_bonus);
-        if (pair2.car) pair2.car->remove_race_upgrade(total_bonus);
+        if (pair1.car) pair1.car->apply_downgrades(total_bonus);
+        if (pair2.car) pair2.car->apply_downgrades(total_bonus);
     }
     team_temp_impacts.erase(team); 
 }

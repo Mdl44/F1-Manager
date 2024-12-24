@@ -15,15 +15,15 @@ void DryCondition::apply_effects(Team* team) {
         const int team_bonus = t->getWeatherBonus(Weather_types::DRY);
 
         Driver_Car pair1 = t->get_driver_car(1);
-        pair1.car->apply_race_upgrade(team_bonus);
+        pair1.car->apply_upgrades(team_bonus);
         if (pair1.driver) {
-            pair1.driver->apply_race_upgrade(pair1.driver->get_skill(Weather_types::DRY));
+            pair1.driver->apply_upgrades(pair1.driver->get_skill(Weather_types::DRY));
         }
 
         Driver_Car pair2 = t->get_driver_car(2);
-        pair2.car->apply_race_upgrade(team_bonus);
+        pair2.car->apply_upgrades(team_bonus);
         if (pair2.driver) {
-            pair2.driver->apply_race_upgrade(pair2.driver->get_skill(Weather_types::DRY));
+            pair2.driver->apply_upgrades(pair2.driver->get_skill(Weather_types::DRY));
         }
     }
 }
@@ -33,15 +33,15 @@ void DryCondition::remove_effects(Team* team) {
         const int team_bonus = t->getWeatherBonus(Weather_types::DRY);
 
         Driver_Car pair1 = t->get_driver_car(1);
-        pair1.car->remove_race_upgrade(team_bonus);
+        pair1.car->apply_downgrades(team_bonus);
         if (pair1.driver) {
-            pair1.driver->remove_race_upgrade(pair1.driver->get_skill(Weather_types::DRY));
+            pair1.driver->apply_downgrades(pair1.driver->get_skill(Weather_types::DRY));
         }
 
         Driver_Car pair2 = t->get_driver_car(2);
-        pair2.car->remove_race_upgrade(team_bonus);
+        pair2.car->apply_downgrades(team_bonus);
         if (pair2.driver) {
-            pair2.driver->remove_race_upgrade(pair2.driver->get_skill(Weather_types::DRY));
+            pair2.driver->apply_downgrades(pair2.driver->get_skill(Weather_types::DRY));
         }
     }
 }

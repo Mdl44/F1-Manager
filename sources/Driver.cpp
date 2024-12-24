@@ -97,34 +97,20 @@ DriverPerformance Driver::get_performance() const {
         experience
     };
 }
-
-void Driver::apply_upgrade() {
-    experience += 1;
-    race_craft += 1;
-    awareness += 1;
-    race_pace += 1;
-    value = market_value();
-}
-
-void Driver::apply_downgrade() {
-    experience -= 1;
-    race_craft -= 1;
-    awareness -= 1;
-    race_pace -= 1;
-    value = market_value();
-}
-void Driver::apply_race_upgrade(const int value_) {
+void Driver::apply_upgrades(const int value_) {
     experience += value_;
     race_craft += value_;
     awareness += value_;
     race_pace += value_;
+    value = market_value();
 }
 
-void Driver::remove_race_upgrade(const int value_) {
+void Driver::apply_downgrades(const int value_) {
     experience -= value_;
     race_craft -= value_;
     awareness -= value_;
     race_pace -= value_;
+    value = market_value();
 }
 
 std::ostream& operator<<(std::ostream& os, const Driver& driver) {

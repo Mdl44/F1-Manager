@@ -18,7 +18,7 @@ std::unique_ptr<WeatherCondition> WeatherConditionFactory::getWeather(const bool
         return std::make_unique<DryCondition>();
     }
 
-    std::uniform_int_distribution<> dis(0, 99);
+    std::uniform_int_distribution dis(0, 99);
     const auto weather = dis(gen);
 
     std::cout << (quali ? "Qualifying" : "Race") << " - Rain possible - randomly choosing weather...\n";
@@ -27,23 +27,22 @@ std::unique_ptr<WeatherCondition> WeatherConditionFactory::getWeather(const bool
         if (weather < 50) {
             std::cout << (quali ? "Qualifying" : "Race") << ": Night (Dry)\n";
             return std::make_unique<NightCondition>();
-        } else if (weather < 85) {
+        }
+        if (weather < 85) {
             std::cout << (quali ? "Qualifying" : "Race") << ": Night + Intermediate\n";
             return std::make_unique<IntermediateCondition>();
-        } else {
-            std::cout << (quali ? "Qualifying" : "Race") << ": Night + Wet\n";
-            return std::make_unique<WetCondition>();
         }
-    } else {
-        if (weather < 50) {
-            std::cout << (quali ? "Qualifying" : "Race") << ": Dry\n";
-            return std::make_unique<DryCondition>();
-        } else if (weather < 85) {
-            std::cout << (quali ? "Qualifying" : "Race") << ": Intermediate\n";
-            return std::make_unique<IntermediateCondition>();
-        } else {
-            std::cout << (quali ? "Qualifying" : "Race") << ": Wet\n";
-            return std::make_unique<WetCondition>();
-        }
+        std::cout << (quali ? "Qualifying" : "Race") << ": Night + Wet\n";
+        return std::make_unique<WetCondition>();
     }
+    if (weather < 50) {
+        std::cout << (quali ? "Qualifying" : "Race") << ": Dry\n";
+        return std::make_unique<DryCondition>();
+    }
+    if (weather < 85) {
+        std::cout << (quali ? "Qualifying" : "Race") << ": Intermediate\n";
+        return std::make_unique<IntermediateCondition>();
+    }
+    std::cout << (quali ? "Qualifying" : "Race") << ": Wet\n";
+    return std::make_unique<WetCondition>();
 }
