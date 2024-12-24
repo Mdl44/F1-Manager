@@ -11,6 +11,7 @@ void Menu::displayMenu() {
     std::cout << "3. Continue to Next Race\n";
     std::cout << "4. Driver Swap\n";
     std::cout << "5. Exit Season\n";
+    std::cout << "6. Exit Game\n";
     std::cout << "Enter your choice: ";
 }
 
@@ -105,6 +106,9 @@ bool Menu::handleChoice(size_t& current_race) const {
         case 5:
             std::cout << "Exiting the season.\n";
             return false;
+        case 6:
+            std::cout << "Exiting the game.\n";
+            exit(0);
         default:
             std::cout << "Invalid choice! Please try again.\n";
             break;
