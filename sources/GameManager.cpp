@@ -148,8 +148,8 @@ bool GameManager::initialize() {
         std::string custom_team_name;
         std::getline(std::cin, custom_team_name);
 
-        auto custom_car1 = std::make_unique<Car>(50, 50, 50, 50);
-        auto custom_car2 = std::make_unique<Car>(50, 50, 50, 50);
+        auto custom_car1 = std::make_unique<Car>(55, 55, 55, 55);
+        auto custom_car2 = std::make_unique<Car>(55, 55, 55, 55);
 
         std::vector<std::unique_ptr<Driver>> available_drivers;
         std::ifstream pool_file("driver_pool.txt");
@@ -215,7 +215,7 @@ bool GameManager::initialize() {
             std::move(selected_drivers[1]),
             std::move(selected_drivers[2]),
             std::move(selected_drivers[3]),
-            8
+            9
         ));
 
         my_team = teams.back().get();
