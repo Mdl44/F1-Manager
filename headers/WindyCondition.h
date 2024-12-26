@@ -3,6 +3,7 @@
 #include "WeatherCondition.h"
 #include <random>
 #include <unordered_map>
+#include "TopTeam.h"
 
 class WindyCondition : public WeatherCondition {
 public:

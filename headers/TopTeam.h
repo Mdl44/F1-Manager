@@ -18,7 +18,7 @@ public:
     TopTeam& operator=(const TopTeam& other);
     ~TopTeam() override = default;
 
-    [[nodiscard]] static int getInfrastructureBonus();
+    [[nodiscard]] int getInfrastructureBonus() const;
 };
 
 #endif

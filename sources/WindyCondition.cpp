@@ -12,7 +12,10 @@ void WindyCondition::apply_effects(Team* team) {
     Driver_Car pair1 = team->get_driver_car(1);
     Driver_Car pair2 = team->get_driver_car(2);
 
-    const int car_bonus = team_bonus(pair1.car);
+    const int base_car_bonus = team_bonus(pair1.car);
+    const auto* top_team = dynamic_cast<TopTeam*>(team);
+    const int car_bonus = base_car_bonus + (top_team ? top_team->getInfrastructureBonus() : 0);
+    
     team_wind_bonuses[team] = car_bonus;
 
     if (pair1.driver) {

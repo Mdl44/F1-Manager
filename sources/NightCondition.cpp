@@ -12,7 +12,10 @@ void NightCondition::apply_effects(Team* team) {
     Driver_Car pair1 = team->get_driver_car(1);
     Driver_Car pair2 = team->get_driver_car(2);
 
-    const int car_bonus = team_bonus(pair1.car);
+    const int base_car_bonus = team_bonus(pair1.car);
+    const auto* top_team = dynamic_cast<TopTeam*>(team);
+    const int car_bonus = base_car_bonus + (top_team ? top_team->getInfrastructureBonus() : 0);
+    
     team_temp_impacts[team] = car_bonus;
     
     if (pair1.driver) {
@@ -66,6 +69,7 @@ int NightCondition::team_bonus(const Car* car) const {
     const int temp_variation = temp_effect(gen);
 
     const int infra_bonus = (perf.overall_rating > 80) ? 2 : 0;
+    
 
     const float total = (temp_management + power_efficiency + durability) * 0.12f;
     return std::min(5, static_cast<int>(total) + temp_variation + infra_bonus);
