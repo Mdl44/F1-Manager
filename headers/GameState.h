@@ -21,7 +21,6 @@ class GameState {
     GameState() = default;
     std::unordered_map<std::string, TeamStats> teamStats;
     std::unordered_map<std::string, DriverStats> driverStats;
-    int currentSeason = 1;
 
 public:
     GameState(const GameState&) = delete;
