@@ -5,7 +5,7 @@
 #include "Team.h"
 #include "RaceWeekend.h"
 #include <random>
-#include "Gamestate.h"
+#include "GameState.h"
 
 class Season {
     std::vector<Team*> teams;

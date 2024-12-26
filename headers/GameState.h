@@ -33,8 +33,6 @@ public:
     void recordDriverChampion(const std::string& driverName);
     TeamStats getTeamStats(const std::string& teamName) const;
     DriverStats getDriverStats(const std::string& driverName) const;
-    void incrementSeason();
-    int getCurrentSeason() const;
 };
 
 #endif

@@ -33,11 +33,3 @@ DriverStats GameState::getDriverStats(const std::string& driverName) const {
     const auto it = driverStats.find(driverName);
     return it != driverStats.end() ? it->second : DriverStats{};
 }
-
-void GameState::incrementSeason() {
-    currentSeason++;
-}
-
-int GameState::getCurrentSeason() const {
-    return currentSeason;
-}
