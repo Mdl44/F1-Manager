@@ -10,8 +10,7 @@ Team::Team(const int id,
            std::unique_ptr<Driver> driver2,
            std::unique_ptr<Driver> reserve1,
            std::unique_ptr<Driver> reserve2,
-           const int initial_position,
-           std::unordered_map<Weather_types, std::unique_ptr<WeatherDetails>> weather)
+           const int initial_position)
     : team_id(id),
       name(std::move(name)),
       car1(std::move(car1)),
@@ -20,8 +19,7 @@ Team::Team(const int id,
       driver2(std::move(driver2)),
       reserve1(std::move(reserve1)),
       reserve2(std::move(reserve2)),
-      position(initial_position),
-      weatherDetails(std::move(weather)) {}
+      position(initial_position) {}
 
 Driver* Team::get_reserve_driver(const int index) const {
     if (index == 1) return reserve1.get();
@@ -143,9 +141,6 @@ Team::Team(const Team& other)
     if (other.driver2) driver2 = std::make_unique<Driver>(*other.driver2);
     if (other.reserve1) reserve1 = std::make_unique<Driver>(*other.reserve1);
     if (other.reserve2) reserve2 = std::make_unique<Driver>(*other.reserve2);
-    for (const auto& [key, value] : other.weatherDetails) {
-        weatherDetails[key] = value->clone();
-    }
 }
 
 Team& Team::operator=(const Team& other) {
@@ -175,11 +170,6 @@ Team& Team::operator=(const Team& other) {
 
         if (other.reserve2) reserve2 = std::make_unique<Driver>(*other.reserve2);
         else reserve2.reset();
-
-        weatherDetails.clear();
-        for (const auto& [key, value] : other.weatherDetails) {
-            weatherDetails[key] = value->clone();
-        }
     }
     return *this;
 }
@@ -276,38 +266,6 @@ std::ostream& operator<<(std::ostream& os, const Team& team) {
        << "Second Driver Details:\n" << *team.driver2 << "\n"
        << "\nSecond Driver's Car:\n" << *team.car2;
     return os;
-}
-int Team::getWeatherBonus(const Weather_types& weather) const {
-    std::cout << "\n=== Weather Bonus Debug for " << name << " ===\n";
-    
-    if (weatherDetails.empty()) {
-        std::cout << "No weather details available!\n";
-        return 0;
-    }
-
-    const auto& weatherEntry = weatherDetails.find(weather);
-    if (weatherEntry == weatherDetails.end()) {
-        std::cout << "No bonus found for this weather type\n";
-        return 0;
-    }
-
-    if (const auto& weatherModifier = weatherEntry->second) {
-        const int bonus = weatherModifier->getBonus(team_id);
-        std::cout << "Weather type: ";
-        switch(weather) {
-            case Weather_types::DRY: std::cout << "DRY"; break;
-            case Weather_types::INTERMEDIATE: std::cout << "INTERMEDIATE"; break;
-            case Weather_types::WET: std::cout << "WET"; break;
-            case Weather_types::NIGHT: std::cout << "NIGHT"; break;
-            case Weather_types::MIXED: std::cout << "MIXED"; break;
-            case Weather_types::WINDY: std::cout << "WINDY"; break;
-        }
-        std::cout << "\nBonus value: " << bonus << "\n";
-        return bonus;
-    }
-    
-    std::cout << "Weather modifier is null\n";
-    return 0;
 }
 void Team::convert_points_to_budget() {
     if (upgrade_points > 0) {

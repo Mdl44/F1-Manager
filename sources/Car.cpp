@@ -42,8 +42,8 @@ Car::~Car() {
     std::cout << "destructor car" << std::endl;
 }
 
-int Car::get_rating() const {
-    return rating();
+CarPerformance Car::get_performance() const {
+    return {rating(), aerodynamics, powertrain, durability, chasis};
 }
 
 void Car::apply_upgrades(const int value) {

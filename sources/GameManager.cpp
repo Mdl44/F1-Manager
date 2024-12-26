@@ -3,12 +3,10 @@
 #include <iostream>
 #include "TopTeam.h"
 #include "Exceptions.h"
-#include "WeatherDetailsFactory.h"
 
 GameManager::GameManager() : my_team(nullptr) {}
 
 bool GameManager::initialize() {
-    WeatherDetailsFactory::initialize();
     std::vector<std::vector<int>> car_stats;
     std::ifstream car_file("date_masini.txt");
     if (!car_file) {
@@ -53,65 +51,64 @@ bool GameManager::initialize() {
 
         std::string driver1_name;
         int driver1_exp, driver1_craft, driver1_aware, driver1_pace;
-        int driver1_age, driver1_dry, driver1_inter, driver1_wet;
+        int driver1_age;
         
         std::getline(team_file, driver1_name);
         team_file >> driver1_exp >> driver1_craft >> driver1_aware >> driver1_pace
-                  >> driver1_age >> driver1_dry >> driver1_inter >> driver1_wet;
+                  >> driver1_age;
         team_file.ignore();
 
         std::string driver2_name;
         int driver2_exp, driver2_craft, driver2_aware, driver2_pace;
-        int driver2_age, driver2_dry, driver2_inter, driver2_wet;
+        int driver2_age;
         
         std::getline(team_file, driver2_name);
         team_file >> driver2_exp >> driver2_craft >> driver2_aware >> driver2_pace
-                  >> driver2_age >> driver2_dry >> driver2_inter >> driver2_wet;
+                  >> driver2_age;
         team_file.ignore();
 
         auto car1 = std::make_unique<Car>(car_stats[i][0], car_stats[i][1], car_stats[i][2], car_stats[i][3]);
         auto car2 = std::make_unique<Car>(car_stats[i][0], car_stats[i][1], car_stats[i][2], car_stats[i][3]);
 
         auto driver1 = std::make_unique<Driver>(driver1_name, driver1_exp, driver1_craft, 
-            driver1_aware, driver1_pace, driver1_age, driver1_dry, driver1_inter, driver1_wet);
+            driver1_aware, driver1_pace, driver1_age);
             
         auto driver2 = std::make_unique<Driver>(driver2_name, driver2_exp, driver2_craft, 
-            driver2_aware, driver2_pace, driver2_age, driver2_dry, driver2_inter, driver2_wet);
+            driver2_aware, driver2_pace, driver2_age);
 
         std::string reserve1_name;
         int reserve1_exp, reserve1_craft, reserve1_aware, reserve1_pace;
-        int reserve1_age, reserve1_dry, reserve1_inter, reserve1_wet;
+        int reserve1_age;
         
         std::getline(team_file, reserve1_name);
         team_file >> reserve1_exp >> reserve1_craft >> reserve1_aware >> reserve1_pace
-                  >> reserve1_age >> reserve1_dry >> reserve1_inter >> reserve1_wet;
+                  >> reserve1_age;
         team_file.ignore();
 
         std::string reserve2_name;
         int reserve2_exp, reserve2_craft, reserve2_aware, reserve2_pace;
-        int reserve2_age, reserve2_dry, reserve2_inter, reserve2_wet;
+        int reserve2_age;
         
         std::getline(team_file, reserve2_name);
         team_file >> reserve2_exp >> reserve2_craft >> reserve2_aware >> reserve2_pace
-                  >> reserve2_age >> reserve2_dry >> reserve2_inter >> reserve2_wet;
+                  >> reserve2_age;
         team_file.ignore();
 
         auto reserve1 = std::make_unique<Driver>(reserve1_name, reserve1_exp, reserve1_craft,
-            reserve1_aware, reserve1_pace, reserve1_age, reserve1_dry, reserve1_inter, reserve1_wet);
+            reserve1_aware, reserve1_pace, reserve1_age);
             
         auto reserve2 = std::make_unique<Driver>(reserve2_name, reserve2_exp, reserve2_craft,
-            reserve2_aware, reserve2_pace, reserve2_age, reserve2_dry, reserve2_inter, reserve2_wet);
+            reserve2_aware, reserve2_pace, reserve2_age);
 
-        auto weatherDetails = WeatherDetailsFactory::createForTeam(static_cast<int>(i));
 
-        float avg_rating = static_cast<float>(car1->get_rating() + car2->get_rating()) / 2.0f;
+        float avg_rating = static_cast<float>(car1->get_performance().overall_rating + car2->get_performance().overall_rating) / 2.0f;
         if (avg_rating > 85) {
             teams.push_back(std::make_unique<TopTeam>(
                 i,
                 team_name, std::move(car1), std::move(car2),
                 std::move(driver1), std::move(driver2),
                 std::move(reserve1), std::move(reserve2),
-                expected_position, std::move(weatherDetails)
+                expected_position
             ));
         } else {
             teams.push_back(std::make_unique<Team>(
@@ -119,7 +116,7 @@ bool GameManager::initialize() {
                 team_name, std::move(car1), std::move(car2),
                 std::move(driver1), std::move(driver2),
                 std::move(reserve1), std::move(reserve2),
-                expected_position, std::move(weatherDetails)
+                expected_position
             ));
         }
     }
@@ -161,15 +158,15 @@ bool GameManager::initialize() {
         }
 
         std::string driver_name;
-    int exp, craft, aware, pace, age, dry, inter, wet;
-    while (std::getline(pool_file, driver_name)) {
-        if (!(pool_file >> exp >> craft >> aware >> pace >> age >> dry >> inter >> wet)) {
+        int exp, craft, aware, pace, age;
+        while (std::getline(pool_file, driver_name)) {
+            if (!(pool_file >> exp >> craft >> aware >> pace >> age)) {
             break;
-        }
+            }
         pool_file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         
         available_drivers.push_back(std::make_unique<Driver>(
-            driver_name, exp, craft, aware, pace, age, dry, inter, wet
+            driver_name, exp, craft, aware, pace, age
         ));
     }
 
@@ -208,7 +205,6 @@ bool GameManager::initialize() {
             available_drivers.erase(available_drivers.begin() + static_cast<std::ptrdiff_t>(choice - 1));
         }
 
-        auto weatherDetails = WeatherDetailsFactory::createForTeam(static_cast<int>(teams.size()));
 
         teams.push_back(std::make_unique<Team>(
             teams.size(),
@@ -219,8 +215,7 @@ bool GameManager::initialize() {
             std::move(selected_drivers[1]),
             std::move(selected_drivers[2]),
             std::move(selected_drivers[3]),
-            teams.size() + 1,
-            std::move(weatherDetails)
+            8
         ));
 
         my_team = teams.back().get();

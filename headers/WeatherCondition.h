@@ -1,10 +1,8 @@
 #ifndef WEATHERCONDITION_H
 #define WEATHERCONDITION_H
-
 #include <memory>
 #include <string>
-
-class Team;
+#include "Team.h"
 
 class WeatherCondition {
 public:
@@ -28,6 +26,8 @@ private:
     virtual void print_(std::ostream& os) const = 0;
 protected:
     WeatherCondition(std::string name_, const int modifier) : name(std::move(name_)), lap_time_modifier(modifier) {}
+    [[nodiscard]] virtual int team_bonus(const Car* car) const = 0;
+    [[nodiscard]] virtual int driver_bonus(const Driver* driver) const = 0;
 
 };
 

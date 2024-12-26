@@ -54,10 +54,10 @@ Season& Season::operator=(const Season& other) {
 
 int Season::calculate_combined_rating(const Team* team, const Driver* driver) {
     if (team->get_driver_car(1).driver == driver) {
-        return (driver->get_performance().overall_rating + team->get_driver_car(1).car->get_rating()) / 2;
+        return (driver->get_performance().overall_rating + team->get_driver_car(1).car->get_performance().overall_rating) / 2;
     }
     if (team->get_driver_car(2).driver == driver) {
-        return (driver->get_performance().overall_rating + team->get_driver_car(2).car->get_rating()) / 2;
+        return (driver->get_performance().overall_rating + team->get_driver_car(2).car->get_performance().overall_rating) / 2;
     }
     return 0;
 }

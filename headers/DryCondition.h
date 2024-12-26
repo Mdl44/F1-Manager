@@ -1,7 +1,7 @@
 #ifndef DRYCONDITION_H
 #define DRYCONDITION_H
 #include "WeatherCondition.h"
-#include "Team.h"
+#include <unordered_map>
 
 class DryCondition : public WeatherCondition {
 public:
@@ -12,6 +12,11 @@ public:
 
 private:
     void print_(std::ostream& os) const override;
+    std::unordered_map<Team*, int> team_dry_bonuses{};
+    std::unordered_map<Driver*, int> driver_dry_bonuses{};
+protected:
+    [[nodiscard]] int team_bonus(const Car* car) const override;
+    [[nodiscard]] int driver_bonus(const Driver* driver) const override;
 };
 
 #endif

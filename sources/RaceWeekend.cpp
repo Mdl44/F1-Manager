@@ -90,13 +90,13 @@ void RaceWeekend::print_pre_weather_stats() const {
             if (pair1.driver && pair1.car) {
                 std::cout << "Driver 1: " << pair1.driver->get_name()
                          << " (Rating: " << pair1.driver->get_performance().overall_rating << ")"
-                         << " Car Rating: " << pair1.car->get_rating() << "\n";
+                         << " Car Rating: " << pair1.car->get_performance().overall_rating << "\n";
             }
 
             if (pair2.driver && pair2.car) {
                 std::cout << "Driver 2: " << pair2.driver->get_name()
                          << " (Rating: " << pair2.driver->get_performance().overall_rating << ")"
-                         << " Car Rating: " << pair2.car->get_rating() << "\n";
+                         << " Car Rating: " << pair2.car->get_performance().overall_rating << "\n";
             }
             std::cout << "\n";
         }
@@ -111,10 +111,10 @@ void RaceWeekend::print_post_weather_stats() const {
         std::cout << "Team: " << team->get_name() << "\n";
         std::cout << "D1: " << (pair1.driver ? pair1.driver->get_name() : "None")
                   << " (" << (pair1.driver ? pair1.driver->get_performance().overall_rating : 0) << ")"
-                  << " Car: " << (pair1.car ? pair1.car->get_rating() : 0) << "\n";
+                  << " Car: " << (pair1.car ? pair1.car->get_performance().overall_rating : 0) << "\n";
         std::cout << "D2: " << (pair2.driver ? pair2.driver->get_name() : "None")
                   << " (" << (pair2.driver ? pair2.driver->get_performance().overall_rating : 0) << ")"
-                  << " Car: " << (pair2.car ? pair2.car->get_rating() : 0) << "\n\n";
+                  << " Car: " << (pair2.car ? pair2.car->get_performance().overall_rating : 0) << "\n\n";
     }
 }
 
@@ -143,11 +143,11 @@ std::pair<double, double> RaceWeekend::calculate_performance_factors(const Drive
         Driver_Car pair2 = team->get_driver_car(2);
         
         if (driver == pair1.driver) {
-            car_rating = static_cast<double>(pair1.car->get_rating());
+            car_rating = static_cast<double>(pair1.car->get_performance().overall_rating);
             break;
         }
         if (driver == pair2.driver) {
-            car_rating = static_cast<double>(pair2.car->get_rating());
+            car_rating = static_cast<double>(pair2.car->get_performance().overall_rating);
             break;
         }
     }

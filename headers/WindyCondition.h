@@ -1,7 +1,8 @@
 #ifndef WINDYCONDITION_H
 #define WINDYCONDITION_H
 #include "WeatherCondition.h"
-#include "Team.h"
+#include <random>
+#include <unordered_map>
 
 class WindyCondition : public WeatherCondition {
 public:
@@ -12,6 +13,11 @@ public:
 
 private:
     void print_(std::ostream& os) const override;
-};
+    std::unordered_map<Team*, int> team_wind_bonuses;
+    std::unordered_map<Driver*, int> driver_wind_bonuses;
 
+protected:
+    [[nodiscard]] int team_bonus(const Car* car) const override;
+    [[nodiscard]] int driver_bonus(const Driver* driver) const override;
+};
 #endif

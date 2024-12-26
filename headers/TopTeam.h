@@ -12,8 +12,7 @@ public:
             std::unique_ptr<Driver> driver2,
             std::unique_ptr<Driver> reserve1,
             std::unique_ptr<Driver> reserve2,
-            int initial_position,
-            std::unordered_map<Weather_types, std::unique_ptr<WeatherDetails>> weather);
+            int initial_position);
 
     TopTeam(const TopTeam& other) = default;
     TopTeam& operator=(const TopTeam& other);

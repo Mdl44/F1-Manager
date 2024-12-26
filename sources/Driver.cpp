@@ -3,8 +3,8 @@
 #include "WeatherCondition.h"
 #include "Exceptions.h"
 
-Driver::Driver(std::string name, const int experience, const int race_craft, const int awareness, const int race_pace, const int age, const int dry_skill, const int intermediate_skill, const int wet_skill)
-    :experience(experience), race_craft(race_craft), awareness(awareness), race_pace(race_pace), age(age), dry_skill(dry_skill), intermediate_skill(intermediate_skill), wet_skill(wet_skill) {
+Driver::Driver(std::string name, const int experience, const int race_craft, const int awareness, const int race_pace, const int age)
+    :experience(experience), race_craft(race_craft), awareness(awareness), race_pace(race_pace), age(age) {
     this->value = market_value();
 
     if (name.empty()) {
@@ -37,10 +37,7 @@ Driver::Driver(const Driver& other) :
     awareness(other.awareness),
     race_pace(other.race_pace),
     value(other.value),
-    age(other.age),
-    dry_skill(other.dry_skill),
-    intermediate_skill(other.intermediate_skill),
-    wet_skill(other.wet_skill) {
+    age(other.age) {
     if (experience < 0 || experience > 100 ||
         race_craft < 0 || race_craft > 100 ||
         awareness < 0 || awareness > 100 ||
@@ -59,9 +56,6 @@ Driver& Driver::operator=(const Driver& other) {
         race_pace = other.race_pace;
         value = other.value;
         age = other.age;
-        dry_skill = other.dry_skill;
-        intermediate_skill = other.intermediate_skill;
-        wet_skill = other.wet_skill;
     }
     return *this;
 }
@@ -74,32 +68,9 @@ const std::string& Driver::get_name() const {
     return name;
 }
 
-int Driver::get_skill(const Weather_types& condition) const {
-    switch (condition) {
-        case Weather_types::DRY:
-            return dry_skill;
-        case Weather_types::INTERMEDIATE:
-            return intermediate_skill; 
-        case Weather_types::WET:
-            return wet_skill;
-        case Weather_types::NIGHT:
-            return dry_skill;
-        case Weather_types::MIXED:
-            return (dry_skill + intermediate_skill) / 2;
-        case Weather_types::WINDY:
-            return 0;
-        default:
-            std::cerr << "Invalid weather condition" << std::endl;
-            return 0;
-    }
-}
-
 DriverPerformance Driver::get_performance() const {
     return {
-        rating(),
-        market_value(),
-        experience
-    };
+        rating(),market_value(),experience,race_craft,awareness,race_pace};
 }
 void Driver::apply_upgrades(const int value_) {
     experience += value_;

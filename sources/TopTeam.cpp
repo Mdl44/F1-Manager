@@ -8,8 +8,7 @@ TopTeam::TopTeam(const int id,
                  std::unique_ptr<Driver> driver2,
                  std::unique_ptr<Driver> reserve1,
                  std::unique_ptr<Driver> reserve2,
-                 const int initial_position,
-                 std::unordered_map<Weather_types, std::unique_ptr<WeatherDetails>> weather)
+                 const int initial_position)
     : Team(id,
            std::move(name),
            std::move(car1),
@@ -18,8 +17,7 @@ TopTeam::TopTeam(const int id,
            std::move(driver2),
            std::move(reserve1),
            std::move(reserve2),
-           initial_position,
-           std::move(weather)) {}
+           initial_position) {}
 
 TopTeam& TopTeam::operator=(const TopTeam& other) {
     if (this != &other) {

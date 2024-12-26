@@ -87,10 +87,6 @@ add_executable(${PROJECT_NAME}
         sources/Exceptions.cpp
         headers/WeatherConditionFactory.h
         sources/WeatherConditionFactory.cpp
-        headers/WeatherDetails.h
-        sources/WeatherDetails.cpp
-        headers/WeatherDetailsFactory.h
-        sources/WeatherDetailsFactory.cpp
         headers/RegulationChanges.h
         sources/RegulationChanges.cpp
         headers/MixedCondition.h
@@ -145,6 +141,5 @@ copy_files(FILES date_masini.txt)
 copy_files(FILES piloti.txt)
 copy_files(FILES circuite.txt)
 copy_files(FILES driver_pool.txt)
-copy_files(FILES weather_details.txt)
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds)
 # copy_files(DIRECTORY images sounds)

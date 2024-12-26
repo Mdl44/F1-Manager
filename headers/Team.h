@@ -2,10 +2,7 @@
 #define TEAM_H
 #include "Car.h"
 #include "Driver.h"
-#include "WeatherTypes.h"
 #include <memory>
-#include <unordered_map>
-#include "WeatherDetails.h"
 
 struct Driver_Car{
     Driver* driver;
@@ -26,7 +23,6 @@ class Team {
     int upgrade_points = 0;
     int downgrade_points = 0;
     float budget = 0.0f;
-    std::unordered_map<Weather_types, std::unique_ptr<WeatherDetails>> weatherDetails;
 public:
     void apply_downgrade();
 
@@ -40,8 +36,7 @@ public:
          std::unique_ptr<Driver> driver2,
          std::unique_ptr<Driver> reserve1,
          std::unique_ptr<Driver> reserve2,
-         int initial_position,
-         std::unordered_map<Weather_types, std::unique_ptr<WeatherDetails>> weather);
+         int initial_position);
     virtual ~Team();
     Team(const Team& other);
     Team& operator=(const Team& other);
@@ -56,7 +51,6 @@ public:
     [[nodiscard]] int get_upgrade_points() const;
     [[nodiscard]] int get_downgrade_points() const;
     [[nodiscard]] const std::string& get_name() const;
-    [[nodiscard]] int getWeatherBonus(const Weather_types& weather) const;
     [[nodiscard]] Driver_Car get_driver_car(int index) const;
 
     [[nodiscard]] Driver* get_reserve_driver(int index) const;

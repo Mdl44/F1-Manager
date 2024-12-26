@@ -16,13 +16,13 @@ void RegulationChanges::apply_regulation_changes(const std::vector<std::unique_p
 
         for (int i = 1; i <= 2; i++) {
             if (auto driver_car = team->get_driver_car(i); driver_car.car) {
-                const int initial_rating = driver_car.car->get_rating();
+                const int initial_rating = driver_car.car->get_performance().overall_rating;
                 const int downgrades = calculate_reduction(initial_rating);
 
                     driver_car.car->apply_downgrades(downgrades);
                 
                 std::cout << "Car " << i << " Rating: " << initial_rating 
-                         << " -> " << driver_car.car->get_rating() << "\n";
+                         << " -> " << driver_car.car->get_performance().overall_rating << "\n";
             }
         }
 
