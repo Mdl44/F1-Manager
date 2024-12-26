@@ -5,6 +5,7 @@
 #include "Team.h"
 #include "RaceWeekend.h"
 #include <random>
+#include "Gamestate.h"
 
 class Season {
     std::vector<Team*> teams;
@@ -26,5 +27,6 @@ public:
     void update_team_performance();
     static int calculate_combined_rating(const Team* team, const Driver* driver);
     friend std::ostream& operator<<(std::ostream& os, const Season& season);
+    void recordSeasonChampions();
 };
 #endif

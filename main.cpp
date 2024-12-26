@@ -40,16 +40,16 @@ int main() {
                 for (const auto& team : game_manager.get_teams()) {
                     team->convert_points_to_budget();
                     
-                    if (auto d1 = team->get_driver_car(1).driver) {
+                    if (const auto d1 = team->get_driver_car(1).driver) {
                         d1->increase_age();
                     }
-                    if (auto d2 = team->get_driver_car(2).driver) {
+                    if (const auto d2 = team->get_driver_car(2).driver) {
                         d2->increase_age();
                     }
-                    if (auto r1 = team->get_reserve_driver(1)) {
+                    if (const auto r1 = team->get_reserve_driver(1)) {
                         r1->increase_age();
                     }
-                    if (auto r2 = team->get_reserve_driver(2)) {
+                    if (const auto r2 = team->get_reserve_driver(2)) {
                         r2->increase_age();
                     }
 

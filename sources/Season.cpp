@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Exceptions.h"
 #include "WeatherConditionFactory.h"
+#include "GameState.h"
 
 Season::Season(const std::vector<Team*>& team_list, const int total_races)
     : teams(team_list), races(total_races) {
@@ -12,7 +13,7 @@ Season::Season(const std::vector<Team*>& team_list, const int total_races)
     if (total_races <= 0) {
         throw RaceWeekendException("Cannot create season: Invalid number of races");
     }
-    
+
     for (const Team* team : teams) {
         if (!team) {
             throw InvalidTeamException("Cannot create season: Null team pointer");
@@ -86,19 +87,26 @@ void Season::race(RaceWeekend& weekend) {
     const auto results = weekend.race();
     std::cout << weekend;
     standings(results);
+    if (current_race == races) {
+        recordSeasonChampions();
+    }
     std::cout << *this;
     current_race++;
 }
 
 void Season::standings(const std::vector<std::pair<Driver*, long long>>& race_results) {
+    auto& gameState = GameState::getInstance();
     const int points[] = {25, 18, 15, 12, 10, 8, 6, 4, 2, 1};
+    
     for (size_t i = 0; i < race_results.size() && i < 10; i++) {
         const Driver* driver = race_results[i].first;
         driver_points[driver->get_name()] += points[i];
-
+        
         for (const Team* team : teams) {
-            if (team->get_driver_car(1).driver == driver || team->get_driver_car(2).driver == driver) {
+            if (team->get_driver_car(1).driver == driver || 
+                team->get_driver_car(2).driver == driver) {
                 team_points[team->get_name()] += points[i];
+                gameState.recordRaceResult(team->get_name(), driver->get_name(), static_cast<int>(i) + 1);
                 break;
             }
         }
@@ -177,20 +185,63 @@ std::ostream& operator<<(std::ostream& os, const Season& season) {
     Season::printStandings(os, team_standings, "\nConstructor Championship", 35);
 
     if (season.current_race == season.races) {
-        os << "\nFINAL RESULTS\n";
+        const auto& gameState = GameState::getInstance();
+        os << "\nFINAL SEASON RESULTS\n";
         os << std::string(60, '*') << "\n";
-        if (!driver_standings.empty()) {
-            const auto& champion = driver_standings[0];
-            os << "World Drivers' Champion: " << champion.first 
-               << " with " << champion.second << " points\n";
+        
+        os << "\nDRIVER STANDINGS AND STATISTICS\n";
+        os << std::string(60, '-') << "\n";
+        int pos = 1;
+        for (const auto& [driver_name, points] : driver_standings) {
+            auto dStats = gameState.getDriverStats(driver_name);
+            os << pos << ". " << driver_name << " - " << points << " points\n";
+            os << "   Career Stats: "
+               << dStats.driverChampionships << " Championships, "
+               << dStats.raceWins << " Wins, "
+               << dStats.podiums << " Podiums\n\n";
+            pos++;
         }
-        if (!team_standings.empty()) {
-            const auto& champion = team_standings[0];
-            os << "Constructors' Champion: " << champion.first
-               << " with " << champion.second << " points\n";
+
+        os << "\nTEAM STANDINGS AND STATISTICS\n";
+        os << std::string(60, '-') << "\n";
+        pos = 1;
+        for (const auto& [team_name, points] : team_standings) {
+            auto tStats = gameState.getTeamStats(team_name);
+            os << pos << ". " << team_name << " - " << points << " points\n";
+            os << "   History: "
+               << tStats.constructorChampionships << " Championships, "
+               << tStats.championshipWins << " Wins, "
+               << tStats.podiums << " Podiums\n\n";
+            pos++;
         }
+
         os << std::string(60, '*') << "\n";
     }
     
     return os;
+}
+void Season::recordSeasonChampions() {
+    auto& gameState = GameState::getInstance();
+    
+    std::vector<std::pair<std::string, int>> driver_standings(
+        driver_points.begin(),
+        driver_points.end()
+    );
+    std::ranges::sort(driver_standings, [](const auto& a, const auto& b) {
+        return a.second > b.second;
+    });
+    if (!driver_standings.empty()) {
+        gameState.recordDriverChampion(driver_standings[0].first);
+    }
+
+    std::vector<std::pair<std::string, int>> team_standings(
+        team_points.begin(),
+        team_points.end()
+    );
+    std::ranges::sort(team_standings, [](const auto& a, const auto& b) {
+        return a.second > b.second;
+    });
+    if (!team_standings.empty()) {
+        gameState.recordConstructorChampion(team_standings[0].first);
+    }
 }

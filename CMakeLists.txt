@@ -80,7 +80,6 @@ add_executable(${PROJECT_NAME}
         sources/NightCondition.cpp
         headers/TopTeam.h
         sources/TopTeam.cpp
-        headers/WeatherTypes.h
         headers/Menu.h
         sources/Menu.cpp
         headers/Exceptions.h
@@ -95,7 +94,8 @@ add_executable(${PROJECT_NAME}
         sources/WindyCondition.cpp
         headers/HotCondition.h
         sources/HotCondition.cpp
-
+        headers/GameState.h
+        sources/GameState.cpp
 
 )
 
