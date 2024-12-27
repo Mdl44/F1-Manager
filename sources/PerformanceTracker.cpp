@@ -24,9 +24,9 @@ std::vector<std::pair<std::string, T>> PerformanceTracker<T>::get_all_highest() 
         [](const auto& a, const auto& b) { return a.second < b.second; })->second;
         
     std::vector<std::pair<std::string, T>> result;
-    for (const auto& [name, value] : best_values) {
+    for (const auto& [entity_name, value] : best_values) {
         if (value == max_value) {
-            result.emplace_back(name, value);
+            result.emplace_back(entity_name, value);
         }
     }
     return result;
@@ -40,9 +40,9 @@ std::vector<std::pair<std::string, int>> PerformanceTracker<T>::get_all_most_win
         [](const auto& a, const auto& b) { return a.second < b.second; })->second;
         
     std::vector<std::pair<std::string, int>> result;
-    for (const auto& [name, count] : wins) {
+    for (const auto& [entity_name, count] : wins) {
         if (count == max_wins) {
-            result.emplace_back(name, count);
+            result.emplace_back(entity_name, count);
         }
     }
     return result;
