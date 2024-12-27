@@ -75,20 +75,83 @@ void Season::race(RaceWeekend& weekend) {
         weekend.night(), weekend.can_rain(), false));
 
     for (const Team* team : teams) {
+        if (const auto* car1 = team->get_driver_car(1).car) {
+            car_ratings.add_value(team->get_name(), car1->get_performance().overall_rating);
+        }
+        if (const auto* car2 = team->get_driver_car(2).car) {
+            car_ratings.add_value(team->get_name(), car2->get_performance().overall_rating);
+        }
+
         if (auto* d1 = team->get_driver_car(1).driver) {
+            driver_ratings.add_value(d1->get_name(), d1->get_performance().overall_rating);
             combined_ratings.emplace_back(d1, calculate_combined_rating(team, d1));
         }
         if (auto* d2 = team->get_driver_car(2).driver) {
+            driver_ratings.add_value(d2->get_name(), d2->get_performance().overall_rating);
             combined_ratings.emplace_back(d2, calculate_combined_rating(team, d2));
         }
     }
 
     weekend.quali(combined_ratings);
+    const auto& quali_results = weekend.get_quali_results();
+    if (!quali_results.empty()) {
+        quali_performances.add_value(quali_results[0].first->get_name(), 
+                                   quali_results[0].second, true);
+    }
     const auto results = weekend.race();
+    if (!results.empty()) {
+        race_performances.add_value(results[0].first->get_name(), 
+                                  results[0].second, true);
+    }
     std::cout << weekend;
+
+    const auto race_laps = weekend.get_lap_times();
+    auto [fastest_driver, fastest_time, lap_number] = find_fastest_lap<Driver*>(race_laps);
+    
+    const int minutes = static_cast<int>((fastest_time % (1000 * 60 * 60)) / (1000 * 60));
+    const int seconds = static_cast<int>((fastest_time % (1000 * 60)) / 1000);
+    const int milliseconds = static_cast<int>(fastest_time % 1000);
+    
+    std::cout << "\nFastest Lap:\n";
+    std::cout << fastest_driver->get_name() << " - " 
+              << minutes << ":"
+              << (seconds < 10 ? "0" : "") << seconds << "."
+              << (milliseconds < 100 ? "0" : "")
+              << (milliseconds < 10 ? "0" : "")
+              << milliseconds
+              << " (Lap " << lap_number << ")\n";
+
     standings(results);
     if (current_race == races) {
         recordSeasonChampions();
+        std::cout << "\nSEASON PERFORMANCE ANALYSIS\n";
+        std::cout << std::string(60, '-') << "\n";
+        
+        auto best_cars = car_ratings.get_all_highest();
+        std::cout << "Best Car" << (best_cars.size() > 1 ? "s" : "") << ":\n";
+        for (const auto& [car, rating] : best_cars) {
+            std::cout << "  " << car << " (Rating: " << rating << ")\n";
+        }
+        
+        auto best_drivers = driver_ratings.get_all_highest();
+        std::cout << "\nTop Driver Rating" << (best_drivers.size() > 1 ? "s" : "") << ":\n";
+        for (const auto& [driver, rating] : best_drivers) {
+            std::cout << "  " << driver << " (Rating: " << rating << ")\n";
+        }
+        
+        auto pole_leaders = quali_performances.get_all_most_wins();
+        std::cout << "\nMost Pole Position" << (pole_leaders.size() > 1 ? "s shared" : "") << ":\n";
+        for (const auto& [driver, poles] : pole_leaders) {
+            std::cout << "  " << driver << " (" << poles << " poles)\n";
+        }
+        
+        auto win_leaders = race_performances.get_all_most_wins();
+        std::cout << "\nMost Race Win" << (win_leaders.size() > 1 ? "s shared" : "") << ":\n";
+        for (const auto& [driver, wins] : win_leaders) {
+            std::cout << "  " << driver << " (" << wins << " wins)\n";
+        }
+        
+        std::cout << std::string(60, '-') << "\n";
     }
     std::cout << *this;
     current_race++;

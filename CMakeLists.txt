@@ -96,6 +96,7 @@ add_executable(${PROJECT_NAME}
         sources/HotCondition.cpp
         headers/GameState.h
         sources/GameState.cpp
+        headers/PerformanceTracker.h
 
 )
 

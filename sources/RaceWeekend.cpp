@@ -196,7 +196,7 @@ std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
         auto [performance_factor, car_factor] = calculate_performance_factors(driver);
         
         long long total_time = start_penalty + 1200000;
-        for (int lap = 0; lap < laps; lap++) {
+        for (int lap = 1; lap <= laps; lap++) {
             long long lap_time = reference_time;
             lap_time += static_cast<long long>((1.0 - performance_factor) * 600);
             lap_time += static_cast<long long>((1.0 - car_factor) * 900);
@@ -206,6 +206,7 @@ std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
                 lap_time += race_weather->get_lap_time_modifier();
             }
 
+            record_lap_time(driver, lap_time, lap);
             total_time += lap_time;
         }
 
@@ -315,4 +316,15 @@ const std::string& RaceWeekend::get_name() const {
 }
 void RaceWeekend::set_teams(const std::vector<Team *> &race_teams) {
     teams = race_teams;
+}
+const std::vector<std::pair<Driver*, long long>>& RaceWeekend::get_quali_results() const {
+        return quali_results;
+}
+
+void RaceWeekend::record_lap_time(Driver* driver, long long time, int lap) {
+    lap_times.emplace_back(driver, time, lap);
+}
+
+const std::vector<std::tuple<Driver*, long long, int>>& RaceWeekend::get_lap_times() const {
+    return lap_times;
 }

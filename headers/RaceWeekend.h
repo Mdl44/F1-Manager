@@ -16,6 +16,7 @@ class RaceWeekend {
     std::unique_ptr<WeatherCondition> quali_weather;
     std::unique_ptr<WeatherCondition> race_weather;
     std::vector<Team*> teams;
+    std::vector<std::tuple<Driver*, long long, int>> lap_times;
 
 
 public:
@@ -34,12 +35,16 @@ public:
     void apply_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const;
     void remove_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const;
     std::pair<double, double> calculate_performance_factors(const Driver* driver) const;
+    const std::vector<std::pair<Driver*, long long>>& get_quali_results() const;
 
     void set_quali_weather(const std::unique_ptr<WeatherCondition> &weather);
     void set_race_weather(const std::unique_ptr<WeatherCondition> &weather);
     [[nodiscard]] bool can_rain() const;
     [[nodiscard]] bool night() const;
     void set_teams(const std::vector<Team*>& race_teams);
+
+    void record_lap_time(Driver* driver, long long time, int lap);
+    [[nodiscard]] const std::vector<std::tuple<Driver*, long long, int>>& get_lap_times() const;
     
 };
 #endif
