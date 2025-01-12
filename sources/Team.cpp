@@ -152,24 +152,12 @@ Team& Team::operator=(const Team& other) {
         upgrade_points = other.upgrade_points;
         downgrade_points = other.downgrade_points;
         budget = other.budget;
-
-        if (other.car1) car1 = std::make_unique<Car>(*other.car1);
-        else car1.reset();
-
-        if (other.car2) car2 = std::make_unique<Car>(*other.car2);
-        else car2.reset();
-
-        if (other.driver1) driver1 = std::make_unique<Driver>(*other.driver1);
-        else driver1.reset();
-
-        if (other.driver2) driver2 = std::make_unique<Driver>(*other.driver2);
-        else driver2.reset();
-
-        if (other.reserve1) reserve1 = std::make_unique<Driver>(*other.reserve1);
-        else reserve1.reset();
-
-        if (other.reserve2) reserve2 = std::make_unique<Driver>(*other.reserve2);
-        else reserve2.reset();
+        car1 = other.car1 ? std::make_unique<Car>(*other.car1) : nullptr;
+        car2 = other.car2 ? std::make_unique<Car>(*other.car2) : nullptr;
+        driver1 = other.driver1 ? std::make_unique<Driver>(*other.driver1) : nullptr;
+        driver2 = other.driver2 ? std::make_unique<Driver>(*other.driver2) : nullptr;
+        reserve1 = other.reserve1 ? std::make_unique<Driver>(*other.reserve1) : nullptr;
+        reserve2 = other.reserve2 ? std::make_unique<Driver>(*other.reserve2) : nullptr;
     }
     return *this;
 }

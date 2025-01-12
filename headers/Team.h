@@ -23,6 +23,7 @@ class Team {
     int upgrade_points = 0;
     int downgrade_points = 0;
     float budget = 0.0f;
+    
 public:
     void apply_downgrade();
 

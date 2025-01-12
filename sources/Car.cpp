@@ -20,12 +20,6 @@ Car::Car(const Car& other) :
     powertrain(other.powertrain),
     durability(other.durability),
     chasis(other.chasis) {
-    if (aerodynamics < 0 || aerodynamics > 100 ||
-        powertrain < 0 || powertrain > 100 ||
-        durability < 0 || durability > 100 ||
-        chasis < 0 || chasis > 100) {
-        throw InvalidTeamException("Car stats must be between 0 and 100");
-        }
 }
 
 Car& Car::operator=(const Car& other) {
