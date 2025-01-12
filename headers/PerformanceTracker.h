@@ -14,7 +14,7 @@ public:
     void add_value(const std::string& entity_name, T value, bool isWin = false);
     [[nodiscard]] std::vector<std::pair<std::string, T>> get_all_highest() const;
     [[nodiscard]] std::vector<std::pair<std::string, int>> get_all_most_wins() const;
-    void reset();
+    //void reset();
 };
 
 #include "../sources/PerformanceTracker.cpp"
