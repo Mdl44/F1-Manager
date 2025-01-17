@@ -297,8 +297,8 @@ void Season::recordSeasonChampions() {
          for (size_t i = 0; i < 3 && i < driver_standings.size(); i++) {
             const std::string& driverName = driver_standings[i].first;
             for (Team* team : teams) {
-                const auto d1 = team->get_driver_car(1).driver;
-                auto d2 = team->get_driver_car(2).driver;
+                const auto *d1 = team->get_driver_car(1).driver;
+                const auto *d2 = team->get_driver_car(2).driver;
                 if ((d1 && d1->get_name() == driverName) || 
                     (d2 && d2->get_name() == driverName)) {
                     team->update_performance_points(-(3-static_cast<int>(i)));
