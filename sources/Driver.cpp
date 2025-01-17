@@ -37,7 +37,15 @@ Driver::Driver(const Driver& other) :
     awareness(other.awareness),
     race_pace(other.race_pace),
     value(other.value),
-    age(other.age) {
+    age(other.age) 
+{
+    if (experience < 0 || experience > 100 || 
+        race_craft < 0 || race_craft > 100 ||
+        awareness < 0 || awareness > 100 ||
+        race_pace < 0 || race_pace > 100 ||
+        age < 16 || age > 50) {
+        throw InvalidDriverException("Invalid driver stats in copy constructor");
+    }
 }
 
 Driver& Driver::operator=(const Driver& other) {

@@ -46,6 +46,7 @@ Season& Season::operator=(const Season& other) {
         team_points = other.team_points;
         races = other.races;
         current_race = other.current_race;
+        fastest_lap_driver = other.fastest_lap_driver;
     }
     return *this;
 }

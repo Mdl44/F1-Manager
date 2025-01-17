@@ -35,7 +35,7 @@ public:
     void apply_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const;
     void remove_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const;
     std::pair<double, double> calculate_performance_factors(const Driver* driver) const;
-    const std::vector<std::pair<Driver*, long long>>& get_quali_results() const;
+    [[nodiscard]] const std::vector<std::pair<Driver*, long long>>& get_quali_results() const;
 
     void set_quali_weather(const std::unique_ptr<WeatherCondition> &weather);
     void set_race_weather(const std::unique_ptr<WeatherCondition> &weather);

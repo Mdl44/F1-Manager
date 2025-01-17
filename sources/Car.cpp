@@ -19,7 +19,14 @@ Car::Car(const Car& other) :
     aerodynamics(other.aerodynamics),
     powertrain(other.powertrain),
     durability(other.durability),
-    chasis(other.chasis) {
+    chasis(other.chasis) 
+{
+    if (aerodynamics < 0 || aerodynamics > 100 ||
+        powertrain < 0 || powertrain > 100 ||
+        durability < 0 || durability > 100 ||
+        chasis < 0 || chasis > 100) {
+        throw InvalidTeamException("Invalid car stats in copy constructor");
+    }
 }
 
 Car& Car::operator=(const Car& other) {

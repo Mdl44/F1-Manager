@@ -195,12 +195,13 @@ std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
         
         auto [performance_factor, car_factor] = calculate_performance_factors(driver);
         
-        long long total_time = start_penalty + 1200000;
+        long long total_time = start_penalty + 1000000;
         for (int lap = 1; lap <= laps; lap++) {
             long long lap_time = reference_time;
             lap_time += static_cast<long long>((1.0 - performance_factor) * 600);
             lap_time += static_cast<long long>((1.0 - car_factor) * 900);
             lap_time += random_time_generator(100);
+            lap_time += 2000;
 
             if (race_weather) {
                 lap_time += race_weather->get_lap_time_modifier();

@@ -47,10 +47,3 @@ std::vector<std::pair<std::string, int>> PerformanceTracker<T>::get_all_most_win
     }
     return result;
 }
-/*
-template<typename T>
-void PerformanceTracker<T>::reset() {
-    wins.clear();
-    best_values.clear();
-}
-*/
