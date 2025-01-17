@@ -63,3 +63,4 @@ std::ostream& operator<<(std::ostream& os, const Car& obj) {
        << "Overall Rating: " << obj.rating() << "\n";
     return os;
 }
+

@@ -3,7 +3,7 @@
 #include <iostream>
 #include "Exceptions.h"
 #include "WeatherConditionFactory.h"
-#include "GameState.h"
+#include "Stats.h"
 
 Season::Season(const std::vector<Team*>& team_list, const int total_races)
     : teams(team_list), races(total_races) {
@@ -155,7 +155,7 @@ void Season::race(RaceWeekend& weekend) {
 }
 
 void Season::standings(const std::vector<std::pair<Driver*, long long>>& race_results) {
-    auto& gameState = GameState::getInstance();
+    auto& stats = Stats::getInstance();
     const int points[] = {25, 18, 15, 12, 10, 8, 6, 4, 2, 1};
     
     for (size_t i = 0; i < race_results.size() && i < 10; i++) {
@@ -166,7 +166,7 @@ void Season::standings(const std::vector<std::pair<Driver*, long long>>& race_re
             if (team->get_driver_car(1).driver == driver || 
                 team->get_driver_car(2).driver == driver) {
                 team_points[team->get_name()] += points[i];
-                gameState.recordRaceResult(team->get_name(), driver->get_name(), static_cast<int>(i) + 1);
+                stats.recordRaceResult(team->get_name(), driver->get_name(), static_cast<int>(i) + 1);
                 break;
             }
         }
@@ -245,7 +245,7 @@ std::ostream& operator<<(std::ostream& os, const Season& season) {
     Season::printStandings(os, team_standings, "\nConstructor Championship", 35);
 
     if (season.current_race == season.races) {
-        const auto& gameState = GameState::getInstance();
+        const auto& stats = Stats::getInstance();
         os << "\nFINAL SEASON RESULTS\n";
         os << std::string(60, '*') << "\n";
         
@@ -253,7 +253,7 @@ std::ostream& operator<<(std::ostream& os, const Season& season) {
         os << std::string(60, '-') << "\n";
         int pos = 1;
         for (const auto& [driver_name, points] : driver_standings) {
-            auto dStats = gameState.getDriverStats(driver_name);
+            auto dStats = stats.getDriverStats(driver_name);
             os << pos << ". " << driver_name << " - " << points << " points\n";
             os << "   Career Stats: "
                << dStats.driverChampionships << " Championships, "
@@ -266,7 +266,7 @@ std::ostream& operator<<(std::ostream& os, const Season& season) {
         os << std::string(60, '-') << "\n";
         pos = 1;
         for (const auto& [team_name, points] : team_standings) {
-            auto tStats = gameState.getTeamStats(team_name);
+            auto tStats = stats.getTeamStats(team_name);
             os << pos << ". " << team_name << " - " << points << " points\n";
             os << "   History: "
                << tStats.constructorChampionships << " Championships, "
@@ -281,7 +281,7 @@ std::ostream& operator<<(std::ostream& os, const Season& season) {
     return os;
 }
 void Season::recordSeasonChampions() {
-    auto& gameState = GameState::getInstance();
+    auto& stats = Stats::getInstance();
     
     std::vector<std::pair<std::string, int>> driver_standings(
         driver_points.begin(),
@@ -290,8 +290,24 @@ void Season::recordSeasonChampions() {
     std::ranges::sort(driver_standings, [](const auto& a, const auto& b) {
         return a.second > b.second;
     });
+
     if (!driver_standings.empty()) {
-        gameState.recordDriverChampion(driver_standings[0].first);
+        stats.recordDriverChampion(driver_standings[0].first);
+
+         for (size_t i = 0; i < 3 && i < driver_standings.size(); i++) {
+            const std::string& driverName = driver_standings[i].first;
+            for (Team* team : teams) {
+                const auto d1 = team->get_driver_car(1).driver;
+                auto d2 = team->get_driver_car(2).driver;
+                if ((d1 && d1->get_name() == driverName) || 
+                    (d2 && d2->get_name() == driverName)) {
+                    team->update_performance_points(-(3-static_cast<int>(i)));
+                    std::cout << team->get_name() << " received " << (3-i) 
+                             << " upgrade points for driver position " << (i+1) << "\n";
+                    break;
+                }
+            }
+        }
     }
 
     std::vector<std::pair<std::string, int>> team_standings(
@@ -301,7 +317,19 @@ void Season::recordSeasonChampions() {
     std::ranges::sort(team_standings, [](const auto& a, const auto& b) {
         return a.second > b.second;
     });
+
     if (!team_standings.empty()) {
-        gameState.recordConstructorChampion(team_standings[0].first);
+        stats.recordConstructorChampion(team_standings[0].first);
+        for (size_t i = 0; i < 3 && i < team_standings.size(); i++) {
+            const std::string& teamName = team_standings[i].first;
+            for (Team* team : teams) {
+                if (team->get_name() == teamName) {
+                    team->update_performance_points(-(3-static_cast<int>(i)));
+                    std::cout << team->get_name() << " received " << (3-i) 
+                             << " upgrade points for constructor position " << (i+1) << "\n";
+                    break;
+                }
+            }
+        }
     }
 }

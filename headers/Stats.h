@@ -17,16 +17,16 @@ struct DriverStats {
 };
 
 
-class GameState {
-    GameState() = default;
+class Stats {
+    Stats() = default;
     std::unordered_map<std::string, TeamStats> teamStats;
     std::unordered_map<std::string, DriverStats> driverStats;
 
 public:
-    GameState(const GameState&) = delete;
-    GameState& operator=(const GameState&) = delete;
+    Stats(const Stats&) = delete;
+    Stats& operator=(const Stats&) = delete;
 
-    static GameState& getInstance();
+    static Stats& getInstance();
     void recordRaceResult(const std::string& teamName, const std::string& driverName, int position);
     void recordConstructorChampion(const std::string& teamName);
     void recordDriverChampion(const std::string& driverName);

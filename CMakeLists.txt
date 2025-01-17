@@ -94,8 +94,8 @@ add_executable(${PROJECT_NAME}
         sources/WindyCondition.cpp
         headers/HotCondition.h
         sources/HotCondition.cpp
-        headers/GameState.h
-        sources/GameState.cpp
+        headers/Stats.h
+        sources/Stats.cpp
         headers/PerformanceTracker.h
 
 )

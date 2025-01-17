@@ -7,7 +7,7 @@
 #include <random>
 
 #include "Exceptions.h"
-#include "GameState.h"
+#include "Stats.h"
 #include "PerformanceTracker.h"
 
 class Season {
