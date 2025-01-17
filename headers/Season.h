@@ -23,6 +23,7 @@ class Season {
     PerformanceTracker<long long> race_performances{"Race"};
 
     std::vector<std::tuple<Driver*, long long, int>> lap_times;
+    Driver* fastest_lap_driver = nullptr;
 
 public:
     explicit Season(const std::vector<Team*>& team_list, int total_races = 24);

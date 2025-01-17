@@ -104,6 +104,7 @@ void Season::race(RaceWeekend& weekend) {
 
     const auto race_laps = weekend.get_lap_times();
     auto [fastest_driver, fastest_time, lap_number] = find_fastest_lap<Driver*>(race_laps);
+    fastest_lap_driver = fastest_driver;
     
     const int minutes = static_cast<int>((fastest_time % (1000 * 60 * 60)) / (1000 * 60));
     const int seconds = static_cast<int>((fastest_time % (1000 * 60)) / 1000);
@@ -160,12 +161,17 @@ void Season::standings(const std::vector<std::pair<Driver*, long long>>& race_re
     
     for (size_t i = 0; i < race_results.size() && i < 10; i++) {
         const Driver* driver = race_results[i].first;
-        driver_points[driver->get_name()] += points[i];
+        int position_points = points[i];
+        if (fastest_lap_driver == driver) {
+            position_points += 1;
+        }
+
+        driver_points[driver->get_name()] += position_points;
         
         for (const Team* team : teams) {
             if (team->get_driver_car(1).driver == driver || 
                 team->get_driver_car(2).driver == driver) {
-                team_points[team->get_name()] += points[i];
+                team_points[team->get_name()] += position_points;
                 stats.recordRaceResult(team->get_name(), driver->get_name(), static_cast<int>(i) + 1);
                 break;
             }
