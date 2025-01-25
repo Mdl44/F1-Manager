@@ -28,6 +28,8 @@ int random_time_generator(const int maxOffset = 500) {
 }
 
 RaceWeekend::~RaceWeekend() { 
+    quali_weather.reset();
+    race_weather.reset();
     std::cout << "Deleting RaceWeekend " << name << std::endl; 
 } 
 
