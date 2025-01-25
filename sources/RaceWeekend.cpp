@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <random>
 #include "Exceptions.h"
+#include "WeatherConditionFactory.h"
 
 RaceWeekend::RaceWeekend(std::string name, const int laps, const int reference_time, const bool rain, const bool night_race) 
     : laps(laps), reference_time(reference_time), rain(rain), night_race(night_race) {
@@ -17,6 +18,7 @@ RaceWeekend::RaceWeekend(std::string name, const int laps, const int reference_t
     if (reference_time <= 0) {
         throw RaceWeekendException("Invalid race configuration: Reference time must be positive");
     }
+    setup_weather();
 }
 
 void RaceWeekend::set_quali_weather(const std::unique_ptr<WeatherCondition> &weather) {
@@ -118,6 +120,12 @@ void RaceWeekend::print_post_weather_stats() const {
     }
 }
 */
+
+void RaceWeekend::setup_weather() {
+    quali_weather = WeatherConditionFactory::getWeather(night_race, rain, true);
+    race_weather = WeatherConditionFactory::getWeather(night_race, rain, false);
+}
+
 void RaceWeekend::apply_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const {
     if (weather) {
         for (const auto* team : teams) {
@@ -305,12 +313,6 @@ std::ostream& operator<<(std::ostream& os, const RaceWeekend& weekend) {
         RaceWeekend::printResults(os, weekend.race_results, true);
     }
     return os;
-}
-bool RaceWeekend::can_rain() const {
-    return rain;
-}
-bool RaceWeekend::night() const {
-    return night_race;
 }
 const std::string& RaceWeekend::get_name() const { 
     return name; 

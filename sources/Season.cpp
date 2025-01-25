@@ -66,11 +66,6 @@ void Season::race(RaceWeekend& weekend) {
     std::vector<std::pair<Driver*, int>> combined_ratings;
     weekend.set_teams(teams);
     
-    weekend.set_quali_weather(WeatherConditionFactory::getWeather(
-        weekend.night(), weekend.can_rain(),true));
-        
-    weekend.set_race_weather(WeatherConditionFactory::getWeather(
-        weekend.night(), weekend.can_rain(), false));
 
     for (const Team* team : teams) {
         if (const auto* car1 = team->get_driver_car(1).car) {

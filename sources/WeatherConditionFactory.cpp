@@ -17,65 +17,65 @@ std::unique_ptr<WeatherCondition> WeatherConditionFactory::getWeather(const bool
         std::uniform_int_distribution dis(0, 99);
         const auto weather = dis(gen);
         
-        std::cout << (quali ? "Qualifying: " : "Race: ");
+        //std::cout << (quali ? "Qualifying: " : "Race: ");
         if (isNight) {
-            std::cout << "Night conditions\n";
+            //std::cout << "Night conditions\n";
             return std::make_unique<NightCondition>();
         }
         if (weather < 30) {
-            std::cout << "Hot conditions\n";
+            //std::cout << "Hot conditions\n";
             return std::make_unique<HotCondition>();
         }
-        std::cout << "Dry conditions\n";
+        //std::cout << "Dry conditions\n";
         return std::make_unique<DryCondition>();
     }
 
     std::uniform_int_distribution dis(0, 99);
     const auto weather = dis(gen);
 
-    std::cout << (quali ? "Qualifying" : "Race") << " - Rain possible - randomly choosing weather...\n";
+    //std::cout << (quali ? "Qualifying" : "Race") << " - Rain possible - randomly choosing weather...\n";
 
     if (isNight) {
         if (weather < 30) {
-            std::cout << (quali ? "Qualifying" : "Race") << ": Night (Dry)\n";
+            //std::cout << (quali ? "Qualifying" : "Race") << ": Night (Dry)\n";
             return std::make_unique<NightCondition>();
         }
         if (weather < 45) {
-            std::cout << (quali ? "Qualifying" : "Race") << ": Night + Windy\n";
+            //std::cout << (quali ? "Qualifying" : "Race") << ": Night + Windy\n";
             return std::make_unique<WindyCondition>();
         }
         if (weather < 60) {
-            std::cout << (quali ? "Qualifying" : "Race") << ": Night + Mixed\n";
+            //std::cout << (quali ? "Qualifying" : "Race") << ": Night + Mixed\n";
             return std::make_unique<MixedCondition>();
         }
         if (weather < 85) {
-            std::cout << (quali ? "Qualifying" : "Race") << ": Night + Intermediate\n";
+            //std::cout << (quali ? "Qualifying" : "Race") << ": Night + Intermediate\n";
             return std::make_unique<IntermediateCondition>();
         }
-        std::cout << (quali ? "Qualifying" : "Race") << ": Night + Wet\n";
+        //std::cout << (quali ? "Qualifying" : "Race") << ": Night + Wet\n";
         return std::make_unique<WetCondition>();
     }
 
     if (weather < 20) {
-        std::cout << (quali ? "Qualifying" : "Race") << ": Hot\n";
+        //std::cout << (quali ? "Qualifying" : "Race") << ": Hot\n";
         return std::make_unique<HotCondition>();
     }
     if (weather < 40) {
-        std::cout << (quali ? "Qualifying" : "Race") << ": Dry\n";
+        //std::cout << (quali ? "Qualifying" : "Race") << ": Dry\n";
         return std::make_unique<DryCondition>();
     }
     if (weather < 55) {
-        std::cout << (quali ? "Qualifying" : "Race") << ": Windy\n";
+        //std::cout << (quali ? "Qualifying" : "Race") << ": Windy\n";
         return std::make_unique<WindyCondition>();
     }
     if (weather < 70) {
-        std::cout << (quali ? "Qualifying" : "Race") << ": Mixed\n";
+        //std::cout << (quali ? "Qualifying" : "Race") << ": Mixed\n";
         return std::make_unique<MixedCondition>();
     }
     if (weather < 85) {
-        std::cout << (quali ? "Qualifying" : "Race") << ": Intermediate\n";
+        //std::cout << (quali ? "Qualifying" : "Race") << ": Intermediate\n";
         return std::make_unique<IntermediateCondition>();
     }
-    std::cout << (quali ? "Qualifying" : "Race") << ": Wet\n";
+    //std::cout << (quali ? "Qualifying" : "Race") << ": Wet\n";
     return std::make_unique<WetCondition>();
 }
