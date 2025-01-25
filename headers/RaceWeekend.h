@@ -38,8 +38,6 @@ public:
     friend void swap(RaceWeekend& first, RaceWeekend& second) noexcept;
     [[nodiscard]] const std::vector<std::pair<Driver*, long long>>& get_quali_results() const;
 
-    void set_quali_weather(const std::unique_ptr<WeatherCondition> &weather);
-    void set_race_weather(const std::unique_ptr<WeatherCondition> &weather);
     void set_teams(const std::vector<Team*>& race_teams);
 
     void record_lap_time(Driver* driver, long long time, int lap);

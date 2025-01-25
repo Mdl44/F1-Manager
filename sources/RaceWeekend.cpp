@@ -21,14 +21,6 @@ RaceWeekend::RaceWeekend(std::string name, const int laps, const int reference_t
     setup_weather();
 }
 
-void RaceWeekend::set_quali_weather(const std::unique_ptr<WeatherCondition> &weather) {
-    quali_weather = weather ? weather->clone() : nullptr;
-}
-
-void RaceWeekend::set_race_weather(const std::unique_ptr<WeatherCondition> &weather) {
-    race_weather = weather ? weather->clone() : nullptr;
-}
-
 int random_time_generator(const int maxOffset = 500) { 
     static std::default_random_engine generator(std::random_device{}()); 
     std::uniform_int_distribution<int> distribution(-maxOffset, maxOffset); 
