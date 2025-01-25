@@ -30,8 +30,8 @@ public:
     [[nodiscard]] const std::string& get_name() const;
     friend std::ostream& operator<<(std::ostream& os, const RaceWeekend& weekend);
     friend void swap(RaceWeekend& first, RaceWeekend& second) noexcept;
-    void print_pre_weather_stats() const;
-    void print_post_weather_stats() const;
+    //void print_pre_weather_stats() const;
+    //void print_post_weather_stats() const;
     void apply_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const;
     void remove_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const;
     std::pair<double, double> calculate_performance_factors(const Driver* driver) const;

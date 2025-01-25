@@ -78,7 +78,7 @@ void swap(RaceWeekend& first, RaceWeekend& second) noexcept {
 }
 
 
-
+/*
 void RaceWeekend::print_pre_weather_stats() const {
     std::cout << "\n=== Pre-Weather Stats ===\n";
     if (!teams.empty()) {
@@ -117,7 +117,7 @@ void RaceWeekend::print_post_weather_stats() const {
                   << " Car: " << (pair2.car ? pair2.car->get_performance().overall_rating : 0) << "\n\n";
     }
 }
-
+*/
 void RaceWeekend::apply_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const {
     if (weather) {
         for (const auto* team : teams) {
@@ -156,9 +156,9 @@ std::pair<double, double> RaceWeekend::calculate_performance_factors(const Drive
 }
 
 void RaceWeekend::quali(const std::vector<std::pair<Driver*, int>>& drivers) {
-    print_pre_weather_stats();
+    //print_pre_weather_stats();
     apply_weather_effects(quali_weather);
-    print_post_weather_stats();
+    //print_post_weather_stats();
 
     quali_results.clear();
     for (const auto& [driver, rating] : drivers) {
@@ -184,9 +184,9 @@ void RaceWeekend::quali(const std::vector<std::pair<Driver*, int>>& drivers) {
 }
 
 std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
-    print_pre_weather_stats();
+    //print_pre_weather_stats();
     apply_weather_effects(race_weather);
-    print_post_weather_stats();
+    //print_post_weather_stats();
 
     race_results.clear();
     for (size_t i = 0; i < quali_results.size(); ++i) {
