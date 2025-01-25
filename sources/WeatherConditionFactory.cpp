@@ -9,7 +9,7 @@
 #include "WindyCondition.h"
 #include "HotCondition.h"
 
-std::unique_ptr<WeatherCondition> WeatherConditionFactory::getWeather(const bool isNight, const bool canRain, const bool quali) {
+std::unique_ptr<WeatherCondition> WeatherConditionFactory::getWeather(const bool isNight, const bool canRain) {
     static std::random_device rd;
     static std::mt19937 gen(rd());
     

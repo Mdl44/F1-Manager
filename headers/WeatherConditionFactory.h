@@ -6,7 +6,7 @@
 
 class WeatherConditionFactory {
 public:
-    static std::unique_ptr<WeatherCondition> getWeather(bool isNight, bool canRain, bool quali);
+    static std::unique_ptr<WeatherCondition> getWeather(bool isNight, bool canRain);
 };
 
 #endif

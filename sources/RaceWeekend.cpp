@@ -114,8 +114,8 @@ void RaceWeekend::print_post_weather_stats() const {
 */
 
 void RaceWeekend::setup_weather() {
-    quali_weather = WeatherConditionFactory::getWeather(night_race, rain, true);
-    race_weather = WeatherConditionFactory::getWeather(night_race, rain, false);
+    quali_weather = WeatherConditionFactory::getWeather(night_race, rain);
+    race_weather = WeatherConditionFactory::getWeather(night_race, rain);
 }
 
 void RaceWeekend::apply_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const {
