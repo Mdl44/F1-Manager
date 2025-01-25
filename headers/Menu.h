@@ -5,27 +5,28 @@
 #include "Season.h"
 
 class Menu {
-  public:
+private:
+    static Menu* instance;
+    GameManager& manager;
+    Player& player; 
+    Season& season;
+    Team* my_team;
+
+    Menu(GameManager& manager, Player& player, Season& season);
+
+public:
     Menu(const Menu&) = delete;
     Menu& operator=(const Menu&) = delete;
 
-    static Menu& getInstance(GameManager &manager, Player &player, Season &season) {
-        static Menu instance(manager, player, season);
-        return instance;
-    }
+    static void init(GameManager& manager, Player& player, Season& season);
+    static Menu& getInstance();
     void run() const;
 
-  private:
-   Menu(GameManager &manager, Player &player, Season &season);
-    static void displayMenu() ;
+private:
+    static void displayMenu();
     bool handleChoice(size_t& current_race) const;
-    [[nodiscard]] bool handleDriver_swap() const;
-    static bool isValidNumber(int &number);
-
-    GameManager &manager;
-    Player &player;
-    Season &season;
-    Team* my_team;
+    [[nodiscard]] bool handleDriver_swap() const; 
+    static bool isValidNumber(int& number);
 };
 
 #endif

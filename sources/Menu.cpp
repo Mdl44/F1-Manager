@@ -24,6 +24,21 @@ bool Menu::isValidNumber(int& number) {
     return true;
 }
 
+Menu* Menu::instance = nullptr;
+
+void Menu::init(GameManager& manager, Player& player, Season& season) {
+    if (!instance) {
+        instance = new Menu(manager, player, season);
+    }
+}
+
+Menu& Menu::getInstance() {
+    if (!instance) {
+        throw std::runtime_error("Menu not initialized! Call Menu::init first.");
+    }
+    return *instance;
+}
+
 bool Menu::handleDriver_swap() const {
     std::cout << "\nSelect your driver to swap (1 or 2): \n";
     std::cout << "1. " << my_team->get_driver_car(1).driver->get_name() << "\n";

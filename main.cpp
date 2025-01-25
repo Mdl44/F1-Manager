@@ -34,7 +34,8 @@ int main() {
             try {
                 Season season(team_ptr);
                 const Player player(game_manager.get_my_team());
-                Menu::getInstance(game_manager, const_cast<Player&>(player), season).run();
+                Menu::init(game_manager, const_cast<Player&>(player), season);
+                Menu::getInstance().run();
 
                 for (const auto& team : game_manager.get_teams()) {
                     team->convert_points_to_budget();
