@@ -17,6 +17,11 @@ class RaceWeekend {
     std::unique_ptr<WeatherCondition> race_weather;
     std::vector<Team*> teams;
     std::vector<std::tuple<Driver*, long long, int>> lap_times;
+    //void print_pre_weather_stats() const;
+    //void print_post_weather_stats() const;
+    void apply_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const;
+    void remove_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const;
+    std::pair<double, double> calculate_performance_factors(const Driver* driver) const;
 
 
 public:
@@ -30,11 +35,6 @@ public:
     [[nodiscard]] const std::string& get_name() const;
     friend std::ostream& operator<<(std::ostream& os, const RaceWeekend& weekend);
     friend void swap(RaceWeekend& first, RaceWeekend& second) noexcept;
-    //void print_pre_weather_stats() const;
-    //void print_post_weather_stats() const;
-    void apply_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const;
-    void remove_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const;
-    std::pair<double, double> calculate_performance_factors(const Driver* driver) const;
     [[nodiscard]] const std::vector<std::pair<Driver*, long long>>& get_quali_results() const;
 
     void set_quali_weather(const std::unique_ptr<WeatherCondition> &weather);
