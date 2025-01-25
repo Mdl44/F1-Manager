@@ -22,7 +22,7 @@ class RaceWeekend {
     void apply_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const;
     void remove_weather_effects(const std::unique_ptr<WeatherCondition>& weather) const;
     std::pair<double, double> calculate_performance_factors(const Driver* driver) const;
-    void setup_weather(); 
+    
 
 
 public:
@@ -37,7 +37,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const RaceWeekend& weekend);
     friend void swap(RaceWeekend& first, RaceWeekend& second) noexcept;
     [[nodiscard]] const std::vector<std::pair<Driver*, long long>>& get_quali_results() const;
-
+    void setup_weather(); 
     void set_teams(const std::vector<Team*>& race_teams);
 
     void record_lap_time(Driver* driver, long long time, int lap);

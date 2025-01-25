@@ -18,7 +18,6 @@ RaceWeekend::RaceWeekend(std::string name, const int laps, const int reference_t
     if (reference_time <= 0) {
         throw RaceWeekendException("Invalid race configuration: Reference time must be positive");
     }
-    setup_weather();
 }
 
 int random_time_generator(const int maxOffset = 500) { 
@@ -28,8 +27,6 @@ int random_time_generator(const int maxOffset = 500) {
 }
 
 RaceWeekend::~RaceWeekend() { 
-    quali_weather.reset();
-    race_weather.reset();
     std::cout << "Deleting RaceWeekend " << name << std::endl; 
 } 
 

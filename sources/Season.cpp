@@ -65,6 +65,7 @@ void Season::race(RaceWeekend& weekend) {
 
     std::vector<std::pair<Driver*, int>> combined_ratings;
     weekend.set_teams(teams);
+    weekend.setup_weather();
     
 
     for (const Team* team : teams) {
