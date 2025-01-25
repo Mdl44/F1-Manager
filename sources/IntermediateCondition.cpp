@@ -87,7 +87,7 @@ int IntermediateCondition::driver_bonus(const Driver* driver) const {
     return std::min(5, static_cast<int>(total) + exp_bonus + adaptation_bonus);
 }
 
-void IntermediateCondition::print_(std::ostream& os) const {
+void IntermediateCondition::do_print_(std::ostream& os) const {
     os << "Intermediate conditions - experience matters\n"
        << "Balanced setup and adaptability are crucial\n";
 }

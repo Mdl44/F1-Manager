@@ -12,7 +12,7 @@ public:
     void remove_effects(Team* team) override;
 
 private:
-    void print_(std::ostream& os) const override;
+    void do_print_(std::ostream& os) const override;
     std::unordered_map<Team*, int> team_mixed_bonuses;
     std::unordered_map<Driver*, int> driver_mixed_bonuses;
 protected:

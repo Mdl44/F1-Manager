@@ -89,7 +89,7 @@ int NightCondition::driver_bonus(const Driver* driver) const {
     return std::min(5, static_cast<int>(total) + exp_bonus);
 }
 
-void NightCondition::print_(std::ostream& os) const {
+void NightCondition::do_print_(std::ostream& os) const {
     os << "Night racing conditions - temperature sensitive\n"
        << "Team infrastructure and driver awareness are crucial\n";
 }

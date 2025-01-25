@@ -86,7 +86,7 @@ int MixedCondition::driver_bonus(const Driver* driver) const {
     return std::min(5, static_cast<int>(total) + strategy_bonus + exp_bonus);
 }
 
-void MixedCondition::print_(std::ostream& os) const {
+void MixedCondition::do_print_(std::ostream& os) const {
     os << "Mixed conditions - Adaptability challenge\n"
        << "Strategy and experience are key factors\n";
 }

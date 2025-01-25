@@ -12,6 +12,7 @@ const std::string& WeatherCondition::get_name() const {
 void WeatherCondition::print_(std::ostream& os) const {
     os << "Weather: " << name << "\n"
        << "Lap time modifier: " << lap_time_modifier << "ms\n";
+    do_print_(os);
 }
 
 std::ostream& operator<<(std::ostream& os, const WeatherCondition& obj) {

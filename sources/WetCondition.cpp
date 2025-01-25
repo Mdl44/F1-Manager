@@ -87,7 +87,7 @@ int WetCondition::driver_bonus(const Driver* driver) const {
     return std::min(5, static_cast<int>(total) + mistake_factor);
 }
 
-void WetCondition::print_(std::ostream& os) const {
+void WetCondition::do_print_(std::ostream& os) const {
     os << "Wet racing conditions - unpredictable performance\n"
        << "Warning: High risk of mistakes!\n";
 }

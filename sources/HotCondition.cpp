@@ -52,7 +52,7 @@ int HotCondition::driver_bonus(const Driver*) const {
     return 0;
 }
 
-void HotCondition::print_(std::ostream& os) const {
+void HotCondition::do_print_(std::ostream& os) const {
     os << "Hot conditions - cooling systems critical\n"
        << "High temperatures affect car performance\n";
 }

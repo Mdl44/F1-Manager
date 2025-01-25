@@ -77,7 +77,7 @@ int DryCondition::driver_bonus(const Driver* driver) const {
     return static_cast<int>((pace_factor + tire_mgmt + exp_factor + awareness_factor) * 0.12f);
 }
 
-void DryCondition::print_(std::ostream& os) const {
+void DryCondition::do_print_(std::ostream& os) const {
     os << "Dry racing conditions - standard performance\n"
        << "Optimal conditions for pure speed and car performance\n";
 }

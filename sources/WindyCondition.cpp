@@ -92,7 +92,7 @@ int WindyCondition::driver_bonus(const Driver* driver) const {
     return std::min(5, static_cast<int>(total) + confidence_factor + exp_bonus);
 }
 
-void WindyCondition::print_(std::ostream& os) const {
+void WindyCondition::do_print_(std::ostream& os) const {
     os << "Windy conditions - challenging aerodynamics\n"
        << "Team aerodynamic efficiency matters!\n";
 }
