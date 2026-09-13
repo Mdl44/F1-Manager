@@ -18,5 +18,6 @@ runs:
           libdrm-dev \
           libgbm-dev \
           libfreetype6-dev \
+          libharfbuzz-dev \
           xorg
       shell: bash
