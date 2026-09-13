@@ -5,9 +5,7 @@
 #include "GameRules.h"
 
 namespace {
-    // Matches the default std::ostream formatting for a float (e.g. "12.5"
-    // instead of std::to_string's fixed "12.500000"), for messages built as
-    // strings instead of printed straight to a stream.
+    // Formats a float like std::ostream would (e.g. "12.5", not "12.500000").
     std::string format_float(const float value) {
         std::ostringstream oss;
         oss << value;

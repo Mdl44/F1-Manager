@@ -2,9 +2,7 @@
 #define GAMEVIEW_H
 #include <string>
 
-// Abstracts every point where the game talks to or asks something of the
-// player, so the simulation can run behind a console today and an SFML
-// front end later without touching the game logic itself.
+// Abstracts player interaction so the game logic isn't tied to a console.
 class GameView {
 public:
     virtual ~GameView() = default;

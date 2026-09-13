@@ -10,8 +10,7 @@
 #include "Stats.h"
 #include "PerformanceTracker.h"
 
-// Everything a completed race weekend produced for display, so Season
-// never prints directly - a GameView renders each part however it wants.
+// Everything a completed race weekend produced, for a GameView to display.
 struct RaceOutcome {
     std::string weekend_report;
     std::string fastest_lap_report;

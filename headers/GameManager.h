@@ -17,6 +17,10 @@ public:
     [[nodiscard]] Team* get_my_team() const;
     std::vector<std::unique_ptr<Team>>& get_teams();
     std::vector<std::unique_ptr<RaceWeekend>>& get_circuits();
+
+private:
+    // Offers circuits dropped from the 2026 calendar as optional bonus rounds.
+    void offer_legacy_circuits(GameView& view);
 };
 
 #endif

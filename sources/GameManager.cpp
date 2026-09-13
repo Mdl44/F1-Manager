@@ -5,13 +5,51 @@
 #include "Exceptions.h"
 #include "GameRules.h"
 
+namespace {
+    // A reserve name of "NONE" means the slot has no confirmed driver.
+    constexpr auto NO_RESERVE = "NONE";
+
+    std::unique_ptr<Driver> read_driver(std::ifstream& file, const bool optional) {
+        std::string name;
+        std::getline(file, name);
+
+        if (optional && name == NO_RESERVE) {
+            return nullptr;
+        }
+
+        int exp, craft, aware, pace, age;
+        file >> exp >> craft >> aware >> pace >> age;
+        file.ignore();
+
+        return std::make_unique<Driver>(name, exp, craft, aware, pace, age);
+    }
+
+    void load_circuits(const std::string& path, std::vector<std::unique_ptr<RaceWeekend>>& target) {
+        std::ifstream file(path);
+        if (!file) {
+            throw ConfigurationFileException(path);
+        }
+
+        std::string name;
+        int laps, reference_time;
+        bool rain, night_race;
+        while (std::getline(file, name)) {
+            if (!(file >> reference_time >> laps >> night_race >> rain)) {
+                throw ConfigurationFileException(path + ": incomplete data for circuit '" + name + "'");
+            }
+            file.ignore();
+            target.emplace_back(std::make_unique<RaceWeekend>(name, laps, reference_time, rain, night_race));
+        }
+    }
+}
+
 GameManager::GameManager() : my_team(nullptr) {}
 
 bool GameManager::initialize(GameView& view) {
     std::vector<std::vector<int>> car_stats;
-    std::ifstream car_file("date_masini.txt");
+    std::ifstream car_file("car_data.txt");
     if (!car_file) {
-        throw ConfigurationFileException("date_masini.txt");
+        throw ConfigurationFileException("car_data.txt");
     }
 
     int aero, power, durability, chassis;
@@ -19,25 +57,11 @@ bool GameManager::initialize(GameView& view) {
         car_stats.push_back({aero, power, durability, chassis});
     }
 
-    std::ifstream circuit_file("circuite.txt");
-    if (!circuit_file) {
-        throw ConfigurationFileException("circuite.txt");
-    }
+    load_circuits("circuits.txt", circuits);
 
-    std::string name;
-    int laps, reference_time;
-    bool rain, night_race;
-    while (std::getline(circuit_file, name)) {
-        if (!(circuit_file >> reference_time >> laps >> night_race >> rain)) {
-            throw ConfigurationFileException("circuite.txt: incomplete data for circuit '" + name + "'");
-        }
-        circuit_file.ignore();
-        circuits.emplace_back(std::make_unique<RaceWeekend>(name, laps, reference_time, rain, night_race));
-    }
-
-    std::ifstream team_file("piloti.txt");
+    std::ifstream team_file("teams.txt");
     if (!team_file) {
-        throw ConfigurationFileException("piloti.txt");
+        throw ConfigurationFileException("teams.txt");
     }
 
     int num_teams;
@@ -46,8 +70,8 @@ bool GameManager::initialize(GameView& view) {
 
     if (static_cast<size_t>(num_teams) > car_stats.size()) {
         throw ConfigurationFileException(
-            "date_masini.txt: only " + std::to_string(car_stats.size()) +
-            " car entries for " + std::to_string(num_teams) + " teams declared in piloti.txt");
+            "car_data.txt: only " + std::to_string(car_stats.size()) +
+            " car entries for " + std::to_string(num_teams) + " teams declared in teams.txt");
     }
 
     for (size_t i = 0; i < static_cast<size_t>(num_teams) && i < car_stats.size(); ++i) {
@@ -58,57 +82,13 @@ bool GameManager::initialize(GameView& view) {
         team_file >> expected_position;
         team_file.ignore();
 
-        std::string driver1_name;
-        int driver1_exp, driver1_craft, driver1_aware, driver1_pace;
-        int driver1_age;
-        
-        std::getline(team_file, driver1_name);
-        team_file >> driver1_exp >> driver1_craft >> driver1_aware >> driver1_pace
-                  >> driver1_age;
-        team_file.ignore();
-
-        std::string driver2_name;
-        int driver2_exp, driver2_craft, driver2_aware, driver2_pace;
-        int driver2_age;
-        
-        std::getline(team_file, driver2_name);
-        team_file >> driver2_exp >> driver2_craft >> driver2_aware >> driver2_pace
-                  >> driver2_age;
-        team_file.ignore();
+        auto driver1 = read_driver(team_file, false);
+        auto driver2 = read_driver(team_file, false);
+        auto reserve1 = read_driver(team_file, true);
+        auto reserve2 = read_driver(team_file, true);
 
         auto car1 = std::make_unique<Car>(car_stats[i][0], car_stats[i][1], car_stats[i][2], car_stats[i][3]);
         auto car2 = std::make_unique<Car>(car_stats[i][0], car_stats[i][1], car_stats[i][2], car_stats[i][3]);
-
-        auto driver1 = std::make_unique<Driver>(driver1_name, driver1_exp, driver1_craft, 
-            driver1_aware, driver1_pace, driver1_age);
-            
-        auto driver2 = std::make_unique<Driver>(driver2_name, driver2_exp, driver2_craft, 
-            driver2_aware, driver2_pace, driver2_age);
-
-        std::string reserve1_name;
-        int reserve1_exp, reserve1_craft, reserve1_aware, reserve1_pace;
-        int reserve1_age;
-        
-        std::getline(team_file, reserve1_name);
-        team_file >> reserve1_exp >> reserve1_craft >> reserve1_aware >> reserve1_pace
-                  >> reserve1_age;
-        team_file.ignore();
-
-        std::string reserve2_name;
-        int reserve2_exp, reserve2_craft, reserve2_aware, reserve2_pace;
-        int reserve2_age;
-        
-        std::getline(team_file, reserve2_name);
-        team_file >> reserve2_exp >> reserve2_craft >> reserve2_aware >> reserve2_pace
-                  >> reserve2_age;
-        team_file.ignore();
-
-        auto reserve1 = std::make_unique<Driver>(reserve1_name, reserve1_exp, reserve1_craft,
-            reserve1_aware, reserve1_pace, reserve1_age);
-            
-        auto reserve2 = std::make_unique<Driver>(reserve2_name, reserve2_exp, reserve2_craft,
-            reserve2_aware, reserve2_pace, reserve2_age);
-
 
         float avg_rating = static_cast<float>(car1->get_performance().overall_rating + car2->get_performance().overall_rating) / 2.0f;
         if (avg_rating > GameRules::Team::TOP_TEAM_RATING_THRESHOLD) {
@@ -129,6 +109,8 @@ bool GameManager::initialize(GameView& view) {
             ));
         }
     }
+
+    offer_legacy_circuits(view);
 
     const int option = view.askChoice(
         "Choose your option:\n"
@@ -242,6 +224,24 @@ Team* GameManager::get_my_team() const {
 
 std::vector<std::unique_ptr<Team>>& GameManager::get_teams() {
     return teams;
+}
+
+void GameManager::offer_legacy_circuits(GameView& view) {
+    std::vector<std::unique_ptr<RaceWeekend>> legacy;
+    load_circuits("legacy_circuits.txt", legacy);
+
+    view.showMessage(
+        "\nA few real circuits were dropped from the 2026 calendar (cancelled "
+        "or not renewed). You can add any of them back as bonus rounds at the "
+        "end of your season.\n");
+
+    for (auto& circuit : legacy) {
+        const int choice = view.askChoice(
+            "Add " + circuit->get_name() + " to your calendar? (1 = Yes, 2 = No): ", 1, 2);
+        if (choice == 1) {
+            circuits.push_back(std::move(circuit));
+        }
+    }
 }
 
 std::vector<std::unique_ptr<RaceWeekend>>& GameManager::get_circuits() {

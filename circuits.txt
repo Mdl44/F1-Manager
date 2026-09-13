@@ -1,0 +1,115 @@
+Albert Park Circuit
+78518
+58
+0
+1
+Shanghai International Circuit
+92064
+56
+0
+1
+Suzuka Circuit
+88778
+53
+0
+1
+Miami International Autodrome
+87798
+57
+0
+1
+Circuit Gilles Villeneuve
+72578
+70
+0
+1
+Circuit de Monaco
+72051
+78
+0
+1
+Circuit de Barcelona-Catalunya
+74679
+66
+0
+0
+Red Bull Ring
+66113
+71
+0
+1
+Silverstone Circuit
+88111
+52
+0
+1
+Circuit de Spa-Francorchamps
+104361
+44
+0
+1
+Hungaroring
+77207
+70
+0
+1
+Circuit Zandvoort
+71163
+72
+0
+1
+Autodromo Nazionale Monza
+81786
+53
+0
+0
+Madring
+91824
+57
+0
+0
+Baku City Circuit
+101395
+51
+0
+0
+Sepang International Circuit
+90076
+57
+0
+1
+Marina Bay Street Circuit
+90009
+62
+1
+1
+Circuit of the Americas
+93683
+56
+0
+1
+Autodromo Hermanos Rodriguez
+76220
+71
+0
+0
+Autodromo Jose Carlos Pace
+69813
+71
+0
+1
+Las Vegas Strip Circuit
+93596
+50
+1
+0
+Lusail International Circuit
+84261
+57
+1
+0
+Yas Marina Circuit
+84142
+58
+1
+0

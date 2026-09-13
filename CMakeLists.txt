@@ -22,15 +22,14 @@ include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 
-# din cauza SFML
+# required because of SFML
 set(WARNINGS_AS_ERRORS OFF)
 
 # NOTE: Also update SFML_VERSION env var in .github/workflows/cmake.yml:84
 FetchContent_Declare(
     SFML
     GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG        2.6.1
-    # GIT_TAG        69ea0cd863aed1d4092b970b676924a716ff718b # 2.6.1
+    GIT_TAG        3.1.0
     # GIT_TAG        origin/master
     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
 )
@@ -101,6 +100,8 @@ add_executable(${PROJECT_NAME}
         headers/GameView.h
         headers/ConsoleView.h
         sources/ConsoleView.cpp
+        headers/TrackMap.h
+        sources/TrackMap.cpp
 
 )
 
@@ -130,23 +131,14 @@ if(APPLE)
     install(FILES launcher.command DESTINATION ${DESTINATION_DIR})
 endif()
 
-# copy dependent DLLs to build dir
-# see https://en.sfml-dev.org/forums/index.php?topic=28580.0
-# remove this if not using audio or if using SFML 3
-if (WIN32 AND SFML_BUILD_AUDIO)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-         ${SFML_SOURCE_DIR}/extlibs/bin/x64/openal32.dll
-         $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    )
-endif()
-
 
 include(cmake/CopyHelper.cmake)
-copy_files(FILES tastatura.txt)
-copy_files(FILES date_masini.txt)
-copy_files(FILES piloti.txt)
-copy_files(FILES circuite.txt)
+copy_files(FILES keybindings.txt)
+copy_files(FILES car_data.txt)
+copy_files(FILES teams.txt)
+copy_files(FILES circuits.txt)
+copy_files(FILES legacy_circuits.txt)
 copy_files(FILES driver_pool.txt)
-# copy_files(FILES tastatura.txt config.json DIRECTORY images sounds)
+copy_files(DIRECTORY tracks)
+# copy_files(FILES keybindings.txt config.json DIRECTORY images sounds)
 # copy_files(DIRECTORY images sounds)

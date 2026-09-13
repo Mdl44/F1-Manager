@@ -2,8 +2,7 @@
 #define CONSOLEVIEW_H
 #include "GameView.h"
 
-// Today's front end: the same std::cin/std::cout interaction the game
-// always had, just moved behind the GameView seam.
+// Console front end: reads/writes via std::cin/std::cout.
 class ConsoleView : public GameView {
 public:
     void showMessage(const std::string& message) override;

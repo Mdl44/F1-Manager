@@ -1,0 +1,104 @@
+11
+Mercedes-AMG Petronas F1 Team
+1
+George Russell
+83 94 93 92 28
+Andrea Kimi Antonelli
+71 85 77 93 20
+Frederik Vesti
+45 68 66 70 24
+NONE
+Scuderia Ferrari HP
+2
+Charles Leclerc
+83 92 91 93 28
+Lewis Hamilton
+98 93 91 90 41
+Antonio Giovinazzi
+58 84 80 82 32
+NONE
+McLaren Formula 1 Team
+3
+Lando Norris
+83 93 85 94 26
+Oscar Piastri
+78 95 84 91 25
+Leonardo Fornaroli
+42 80 72 82 21
+Pato O'Ward
+62 82 78 83 27
+Oracle Red Bull Racing
+4
+Max Verstappen
+88 96 82 97 28
+Isack Hadjar
+72 81 82 87 21
+Yuki Tsunoda
+79 77 73 77 26
+NONE
+Visa Cash App Racing Bulls
+5
+Liam Lawson
+74 81 74 81 24
+Arvid Lindblad
+50 72 66 78 19
+Ayumu Iwasa
+48 78 74 80 24
+NONE
+BWT Alpine F1 Team
+6
+Pierre Gasly
+83 84 78 86 30
+Franco Colapinto
+70 71 74 75 23
+Paul Aron
+38 77 70 78 23
+Kush Maini
+45 62 63 65 26
+TGR Haas F1 Team
+7
+Esteban Ocon
+83 85 84 84 29
+Oliver Bearman
+73 88 70 84 21
+Jack Doohan
+58 70 66 74 23
+Ryo Hirakawa
+55 65 68 62 32
+Audi F1 Team
+8
+Nico Hulkenberg
+88 85 85 85 39
+Gabriel Bortoleto
+70 82 77 82 21
+NONE
+NONE
+Atlassian Williams Racing
+9
+Alexander Albon
+84 86 76 83 30
+Carlos Sainz
+88 87 80 85 32
+Luke Browning
+39 76 69 77 23
+NONE
+Aston Martin Aramco F1 Team
+10
+Fernando Alonso
+99 87 85 90 45
+Lance Stroll
+84 77 73 76 27
+Jak Crawford
+40 79 71 80 22
+Stoffel Vandoorne
+70 75 78 74 34
+Cadillac F1 Team
+11
+Valtteri Bottas
+89 76 93 83 37
+Sergio Perez
+92 83 81 85 36
+Zhou Guanyu
+72 74 77 86 27
+Colton Herta
+50 74 70 76 26

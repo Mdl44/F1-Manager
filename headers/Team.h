@@ -28,9 +28,7 @@ class Team {
     float budget = 0.0f;
     
 public:
-    // Every method below that narrates what it did (upgrades applied,
-    // retirements, swaps, ...) returns those messages instead of printing
-    // them, so a GameView (console today, SFML later) decides how to show them.
+    // These return what happened as messages instead of printing directly.
     std::vector<std::string> apply_downgrade();
 
     void set_control(bool value);

@@ -1,8 +1,7 @@
 #ifndef GAMERULES_H
 #define GAMERULES_H
 
-// Tunable game-balance constants, grouped by domain, so they live in one
-// place instead of being scattered as magic numbers across the simulation.
+// Tunable game-balance constants, grouped by domain.
 struct GameRules {
     struct Driver {
         static constexpr int MIN_STAT = 0;
