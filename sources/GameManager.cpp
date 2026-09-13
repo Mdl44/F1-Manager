@@ -27,7 +27,9 @@ bool GameManager::initialize() {
     int laps, reference_time;
     bool rain, night_race;
     while (std::getline(circuit_file, name)) {
-        if (!(circuit_file >> reference_time >> laps >> night_race >> rain)) break;
+        if (!(circuit_file >> reference_time >> laps >> night_race >> rain)) {
+            throw ConfigurationFileException("circuite.txt: incomplete data for circuit '" + name + "'");
+        }
         circuit_file.ignore();
         circuits.emplace_back(std::make_unique<RaceWeekend>(name, laps, reference_time, rain, night_race));
     }
@@ -40,6 +42,12 @@ bool GameManager::initialize() {
     int num_teams;
     team_file >> num_teams;
     team_file.ignore();
+
+    if (static_cast<size_t>(num_teams) > car_stats.size()) {
+        throw ConfigurationFileException(
+            "date_masini.txt: only " + std::to_string(car_stats.size()) +
+            " car entries for " + std::to_string(num_teams) + " teams declared in piloti.txt");
+    }
 
     for (size_t i = 0; i < static_cast<size_t>(num_teams) && i < car_stats.size(); ++i) {
         std::string team_name;

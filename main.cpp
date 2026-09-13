@@ -32,7 +32,7 @@ int main() {
             }
 
             try {
-                Season season(team_ptr);
+                Season season(team_ptr, static_cast<int>(game_manager.get_circuits().size()));
                 const Player player(game_manager.get_my_team());
                 Menu::init(game_manager, const_cast<Player&>(player), season);
                 Menu::getInstance().run();

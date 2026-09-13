@@ -26,7 +26,7 @@ class Season {
     Driver* fastest_lap_driver = nullptr;
 
 public:
-    explicit Season(const std::vector<Team*>& team_list, int total_races = 24);
+    explicit Season(const std::vector<Team*>& team_list, int total_races);
     Season(const Season&);
     Season& operator=(const Season&);
     ~Season();
