@@ -25,6 +25,9 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 # required because of SFML
 set(WARNINGS_AS_ERRORS OFF)
 
+# we only use sfml-graphics/window/system; skip Network so SFML doesn't require MbedTLS
+set(SFML_BUILD_NETWORK OFF CACHE BOOL "" FORCE)
+
 # NOTE: Also update SFML_VERSION env var in .github/workflows/cmake.yml:84
 FetchContent_Declare(
     SFML
