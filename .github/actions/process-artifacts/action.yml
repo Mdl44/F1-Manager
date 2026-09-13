@@ -21,8 +21,9 @@ runs:
         #   # cp /Library/Developer/CommandLineTools/usr/lib/clang/16/lib/darwin/libclang_rt.asan_osx_dynamic.dylib lib
         #   # install_name_tool -change @rpath/libclang_rt.asan_osx_dynamic.dylib @executable_path/lib/libclang_rt.asan_osx_dynamic.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
         # fi
-        ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% cp artifacts/lib/%.framework/% lib
-        ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
+        # grep exits 1 when there are no frameworks to copy (e.g. a static SFML build) - that's not an error, so don't let it fail the step
+        ls -1 artifacts/lib | { grep framework || true; } | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% cp artifacts/lib/%.framework/% lib
+        ls -1 artifacts/lib | { grep framework || true; } | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
         mv lib ${{ env.ZIP_NAME }}/
 
     # - name: Copy missing dylibs (g++)
