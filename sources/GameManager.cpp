@@ -3,6 +3,7 @@
 #include <iostream>
 #include "TopTeam.h"
 #include "Exceptions.h"
+#include "GameRules.h"
 
 GameManager::GameManager() : my_team(nullptr) {}
 
@@ -110,7 +111,7 @@ bool GameManager::initialize() {
 
 
         float avg_rating = static_cast<float>(car1->get_performance().overall_rating + car2->get_performance().overall_rating) / 2.0f;
-        if (avg_rating > 85) {
+        if (avg_rating > GameRules::Team::TOP_TEAM_RATING_THRESHOLD) {
             teams.push_back(std::make_unique<TopTeam>(
                 i,
                 team_name, std::move(car1), std::move(car2),
@@ -150,14 +151,15 @@ bool GameManager::initialize() {
         my_team = teams[choice - 1].get();
     }
     else if (option == 2) {
-        constexpr float initial_budget = 50.0f;
-        
+        constexpr float initial_budget = GameRules::CustomTeam::INITIAL_BUDGET;
+
         std::cout << "Enter your team name: ";
         std::string custom_team_name;
         std::getline(std::cin, custom_team_name);
 
-        auto custom_car1 = std::make_unique<Car>(55, 55, 55, 55);
-        auto custom_car2 = std::make_unique<Car>(55, 55, 55, 55);
+        constexpr int base_stat = GameRules::CustomTeam::BASE_CAR_STAT;
+        auto custom_car1 = std::make_unique<Car>(base_stat, base_stat, base_stat, base_stat);
+        auto custom_car2 = std::make_unique<Car>(base_stat, base_stat, base_stat, base_stat);
 
         std::vector<std::unique_ptr<Driver>> available_drivers;
         std::ifstream pool_file("driver_pool.txt");
@@ -223,7 +225,7 @@ bool GameManager::initialize() {
             std::move(selected_drivers[1]),
             std::move(selected_drivers[2]),
             std::move(selected_drivers[3]),
-            9
+            static_cast<int>(teams.size()) + 1 // a new custom team starts at the back of the grid
         ));
 
         my_team = teams.back().get();

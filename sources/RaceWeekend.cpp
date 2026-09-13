@@ -4,6 +4,7 @@
 #include <random>
 #include "Exceptions.h"
 #include "WeatherConditionFactory.h"
+#include "GameRules.h"
 
 RaceWeekend::RaceWeekend(std::string name, const int laps, const int reference_time, const bool rain, const bool night_race) 
     : laps(laps), reference_time(reference_time), rain(rain), night_race(night_race) {
@@ -20,7 +21,7 @@ RaceWeekend::RaceWeekend(std::string name, const int laps, const int reference_t
     }
 }
 
-int random_time_generator(const int maxOffset = 500) { 
+int random_time_generator(const int maxOffset) {
     static std::default_random_engine generator(std::random_device{}()); 
     std::uniform_int_distribution<int> distribution(-maxOffset, maxOffset); 
     return distribution(generator); 
@@ -119,7 +120,7 @@ void RaceWeekend::quali(const std::vector<std::pair<Driver*, int>>& drivers) {
         long long time = reference_time;
         time += static_cast<long long>((1.0 - performance_factor) * 800);
         time += static_cast<long long>((1.0 - car_factor) * 1200);
-        time += random_time_generator(200);
+        time += random_time_generator(GameRules::Race::QUALI_RANDOM_VARIATION_MS);
 
         if (quali_weather) {
             time += quali_weather->get_lap_time_modifier();
@@ -141,17 +142,17 @@ std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
     race_results.clear();
     for (size_t i = 0; i < quali_results.size(); ++i) {
         auto& [driver, quali_time] = quali_results[i];
-        const long long start_penalty = static_cast<long long>(i) * 500;
-        
+        const long long start_penalty = static_cast<long long>(i) * GameRules::Race::GRID_POSITION_TIME_PENALTY_MS;
+
         auto [performance_factor, car_factor] = calculate_performance_factors(driver);
-        
-        long long total_time = start_penalty + 1000000;
+
+        long long total_time = start_penalty + GameRules::Race::RACE_BASE_TIME_MS;
         for (int lap = 1; lap <= laps; lap++) {
             long long lap_time = reference_time;
             lap_time += static_cast<long long>((1.0 - performance_factor) * 600);
             lap_time += static_cast<long long>((1.0 - car_factor) * 900);
-            lap_time += random_time_generator(100);
-            lap_time += 2000;
+            lap_time += random_time_generator(GameRules::Race::RACE_RANDOM_VARIATION_MS);
+            lap_time += GameRules::Race::LAP_TIME_FIXED_OVERHEAD_MS;
 
             if (race_weather) {
                 lap_time += race_weather->get_lap_time_modifier();

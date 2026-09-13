@@ -97,6 +97,7 @@ add_executable(${PROJECT_NAME}
         headers/Stats.h
         sources/Stats.cpp
         headers/PerformanceTracker.h
+        headers/GameRules.h
 
 )
 

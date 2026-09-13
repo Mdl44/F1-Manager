@@ -1,6 +1,7 @@
 #include "Team.h"
 #include <iostream>
 #include "Exceptions.h"
+#include "GameRules.h"
 
 Team::Team(const int id,
            std::string name, 
@@ -63,7 +64,7 @@ void Team::update_performance_points(const int actual_position) {
 
     if (diff == 0) upgrade_points++;
     else if (diff < 0) upgrade_points += 1;
-    else if (diff >= 2) downgrade_points += 1;
+    else if (diff >= GameRules::Team::DOWNGRADE_POSITION_THRESHOLD) downgrade_points += 1;
 }
 
 void Team::apply_upgrade_for_ai_team() {
@@ -252,7 +253,7 @@ std::ostream& operator<<(std::ostream& os, const Team& team) {
 }
 void Team::convert_points_to_budget() {
     if (upgrade_points > 0) {
-        const float conversion = static_cast<float>(upgrade_points) * 0.5f;
+        const float conversion = static_cast<float>(upgrade_points) * GameRules::Team::UPGRADE_TO_BUDGET_RATE;
         budget += conversion;
         std::cout << name << " converted " << upgrade_points 
                  << " upgrade points to " << conversion << " budget.\n";
@@ -260,7 +261,7 @@ void Team::convert_points_to_budget() {
     }
 }
 void Team::check_retirements() {
-    if (driver1 && driver1->get_age() >= 45) {
+    if (driver1 && driver1->get_age() >= GameRules::Driver::RETIREMENT_AGE) {
         std::cout << "\n=== DRIVER RETIREMENT ===" << std::endl;
         std::cout << driver1->get_name() << " has retired at age " << driver1->get_age() << std::endl;
         
@@ -275,7 +276,7 @@ void Team::check_retirements() {
         }
     }
 
-    if (driver2 && driver2->get_age() >= 45) {
+    if (driver2 && driver2->get_age() >= GameRules::Driver::RETIREMENT_AGE) {
         std::cout << "\n=== DRIVER RETIREMENT ===" << std::endl;
         std::cout << driver2->get_name() << " has retired at age " << driver2->get_age() << std::endl;
         

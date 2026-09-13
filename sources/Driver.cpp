@@ -2,6 +2,7 @@
 #include <iostream>
 #include "WeatherCondition.h"
 #include "Exceptions.h"
+#include "GameRules.h"
 
 Driver::Driver(std::string name, const int experience, const int race_craft, const int awareness, const int race_pace, const int age)
     :experience(experience), race_craft(race_craft), awareness(awareness), race_pace(race_pace), age(age) {
@@ -11,13 +12,13 @@ Driver::Driver(std::string name, const int experience, const int race_craft, con
         throw InvalidDriverException("Driver name cannot be empty");
     }
     this->name = std::move(name);
-    if (experience < 0 || experience > 100 || 
-        race_craft < 0 || race_craft > 100 ||
-        awareness < 0 || awareness > 100 ||
-        race_pace < 0 || race_pace > 100) {
+    if (experience < GameRules::Driver::MIN_STAT || experience > GameRules::Driver::MAX_STAT ||
+        race_craft < GameRules::Driver::MIN_STAT || race_craft > GameRules::Driver::MAX_STAT ||
+        awareness < GameRules::Driver::MIN_STAT || awareness > GameRules::Driver::MAX_STAT ||
+        race_pace < GameRules::Driver::MIN_STAT || race_pace > GameRules::Driver::MAX_STAT) {
         throw InvalidDriverException("Driver stats must be between 0 and 100");
     }
-    if (age < 16 || age > 50) {
+    if (age < GameRules::Driver::MIN_AGE || age > GameRules::Driver::MAX_AGE) {
         throw InvalidDriverException("Invalid driver age: " + std::to_string(age));
     }
 }
@@ -27,7 +28,7 @@ int Driver::rating() const {
 }
 
 float Driver::market_value() const {
-    return static_cast<float>(rating() - 55);
+    return static_cast<float>(rating()) - GameRules::Driver::MARKET_VALUE_BASELINE;
 }
 
 Driver::Driver(const Driver& other) :
@@ -37,13 +38,13 @@ Driver::Driver(const Driver& other) :
     awareness(other.awareness),
     race_pace(other.race_pace),
     value(other.value),
-    age(other.age) 
+    age(other.age)
 {
-    if (experience < 0 || experience > 100 || 
-        race_craft < 0 || race_craft > 100 ||
-        awareness < 0 || awareness > 100 ||
-        race_pace < 0 || race_pace > 100 ||
-        age < 16 || age > 50) {
+    if (experience < GameRules::Driver::MIN_STAT || experience > GameRules::Driver::MAX_STAT ||
+        race_craft < GameRules::Driver::MIN_STAT || race_craft > GameRules::Driver::MAX_STAT ||
+        awareness < GameRules::Driver::MIN_STAT || awareness > GameRules::Driver::MAX_STAT ||
+        race_pace < GameRules::Driver::MIN_STAT || race_pace > GameRules::Driver::MAX_STAT ||
+        age < GameRules::Driver::MIN_AGE || age > GameRules::Driver::MAX_AGE) {
         throw InvalidDriverException("Invalid driver stats in copy constructor");
     }
 }
@@ -96,7 +97,7 @@ std::ostream& operator<<(std::ostream& os, const Driver& driver) {
 }
 void Driver::increase_age() {
     age++;
-    if (age > 50) {
+    if (age > GameRules::Driver::MAX_AGE) {
         throw InvalidDriverException("Driver is too old");
     }
 }

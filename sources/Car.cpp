@@ -1,12 +1,13 @@
 #include "Car.h"
 #include "Exceptions.h"
+#include "GameRules.h"
 
 Car::Car(const int aerodynamics, const int powertrain, const int durability, const int chasis)
     : aerodynamics(aerodynamics), powertrain(powertrain), durability(durability), chasis(chasis) {
-    if (aerodynamics < 0 || aerodynamics > 100 ||
-        powertrain < 0 || powertrain > 100 ||
-        durability < 0 || durability > 100 ||
-        chasis < 0 || chasis > 100) {
+    if (aerodynamics < GameRules::Car::MIN_STAT || aerodynamics > GameRules::Car::MAX_STAT ||
+        powertrain < GameRules::Car::MIN_STAT || powertrain > GameRules::Car::MAX_STAT ||
+        durability < GameRules::Car::MIN_STAT || durability > GameRules::Car::MAX_STAT ||
+        chasis < GameRules::Car::MIN_STAT || chasis > GameRules::Car::MAX_STAT) {
         throw InvalidTeamException("Car stats must be between 0 and 100");
     }
 }
@@ -19,12 +20,12 @@ Car::Car(const Car& other) :
     aerodynamics(other.aerodynamics),
     powertrain(other.powertrain),
     durability(other.durability),
-    chasis(other.chasis) 
+    chasis(other.chasis)
 {
-    if (aerodynamics < 0 || aerodynamics > 100 ||
-        powertrain < 0 || powertrain > 100 ||
-        durability < 0 || durability > 100 ||
-        chasis < 0 || chasis > 100) {
+    if (aerodynamics < GameRules::Car::MIN_STAT || aerodynamics > GameRules::Car::MAX_STAT ||
+        powertrain < GameRules::Car::MIN_STAT || powertrain > GameRules::Car::MAX_STAT ||
+        durability < GameRules::Car::MIN_STAT || durability > GameRules::Car::MAX_STAT ||
+        chasis < GameRules::Car::MIN_STAT || chasis > GameRules::Car::MAX_STAT) {
         throw InvalidTeamException("Invalid car stats in copy constructor");
     }
 }

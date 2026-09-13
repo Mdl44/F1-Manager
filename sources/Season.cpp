@@ -1,9 +1,11 @@
 #include "Season.h"
 #include <algorithm>
 #include <iostream>
+#include <iterator>
 #include "Exceptions.h"
 #include "WeatherConditionFactory.h"
 #include "Stats.h"
+#include "GameRules.h"
 
 Season::Season(const std::vector<Team*>& team_list, const int total_races)
     : teams(team_list), races(total_races) {
@@ -152,13 +154,13 @@ void Season::race(RaceWeekend& weekend) {
 
 void Season::standings(const std::vector<std::pair<Driver*, long long>>& race_results) {
     auto& stats = Stats::getInstance();
-    const int points[] = {25, 18, 15, 12, 10, 8, 6, 4, 2, 1};
-    
-    for (size_t i = 0; i < race_results.size() && i < 10; i++) {
+    const auto& points = GameRules::Season::POINTS_TABLE;
+
+    for (size_t i = 0; i < race_results.size() && i < std::size(points); i++) {
         const Driver* driver = race_results[i].first;
         int position_points = points[i];
         if (fastest_lap_driver == driver) {
-            position_points += 1;
+            position_points += GameRules::Season::FASTEST_LAP_BONUS_POINT;
         }
 
         driver_points[driver->get_name()] += position_points;
@@ -195,7 +197,7 @@ void Season::update_team_performance() {
                     if (team->get_upgrade_points() > 0) {
                         std::cout << "Player Team has " << team->get_upgrade_points() << " upgrade points available.\n";
                     }
-                } else if (team->get_upgrade_points() >= 5) {
+                } else if (team->get_upgrade_points() >= GameRules::Team::AI_AUTO_UPGRADE_THRESHOLD) {
                     team->apply_upgrade_for_ai_team();
                     std::cout << "AI Team " << team->get_name() << " applied upgrades.\n";
                 }
@@ -295,15 +297,16 @@ void Season::recordSeasonChampions() {
     if (!driver_standings.empty()) {
         stats.recordDriverChampion(driver_standings[0].first);
 
-         for (size_t i = 0; i < 3 && i < driver_standings.size(); i++) {
+         for (size_t i = 0; i < GameRules::Season::CHAMPIONSHIP_BONUS_POSITIONS && i < driver_standings.size(); i++) {
             const std::string& driverName = driver_standings[i].first;
             for (Team* team : teams) {
                 const auto *d1 = team->get_driver_car(1).driver;
                 const auto *d2 = team->get_driver_car(2).driver;
-                if ((d1 && d1->get_name() == driverName) || 
+                if ((d1 && d1->get_name() == driverName) ||
                     (d2 && d2->get_name() == driverName)) {
-                    team->update_performance_points(-(3-static_cast<int>(i)));
-                    std::cout << team->get_name() << " received " << (3-i) 
+                    const int bonus = GameRules::Season::CHAMPIONSHIP_BONUS_POSITIONS - static_cast<int>(i);
+                    team->update_performance_points(-bonus);
+                    std::cout << team->get_name() << " received " << bonus
                              << " upgrade points for driver position " << (i+1) << "\n";
                     break;
                 }
@@ -321,12 +324,13 @@ void Season::recordSeasonChampions() {
 
     if (!team_standings.empty()) {
         stats.recordConstructorChampion(team_standings[0].first);
-        for (size_t i = 0; i < 3 && i < team_standings.size(); i++) {
+        for (size_t i = 0; i < GameRules::Season::CHAMPIONSHIP_BONUS_POSITIONS && i < team_standings.size(); i++) {
             const std::string& teamName = team_standings[i].first;
             for (Team* team : teams) {
                 if (team->get_name() == teamName) {
-                    team->update_performance_points(-(3-static_cast<int>(i)));
-                    std::cout << team->get_name() << " received " << (3-i) 
+                    const int bonus = GameRules::Season::CHAMPIONSHIP_BONUS_POSITIONS - static_cast<int>(i);
+                    team->update_performance_points(-bonus);
+                    std::cout << team->get_name() << " received " << bonus
                              << " upgrade points for constructor position " << (i+1) << "\n";
                     break;
                 }
