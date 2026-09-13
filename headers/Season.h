@@ -10,6 +10,16 @@
 #include "Stats.h"
 #include "PerformanceTracker.h"
 
+// Everything a completed race weekend produced for display, so Season
+// never prints directly - a GameView renders each part however it wants.
+struct RaceOutcome {
+    std::string weekend_report;
+    std::string fastest_lap_report;
+    std::vector<std::string> team_events;
+    std::string season_analysis; // empty unless this was the final race of the season
+    std::string standings_report;
+};
+
 class Season {
     std::vector<Team*> teams;
     std::map<std::string, int> driver_points;
@@ -31,14 +41,14 @@ public:
     Season& operator=(const Season&);
     ~Season();
 
-    void race(RaceWeekend& weekend);
-    void standings(const std::vector<std::pair<Driver*, long long>>& race_results);
+    RaceOutcome race(RaceWeekend& weekend);
+    std::vector<std::string> standings(const std::vector<std::pair<Driver*, long long>>& race_results);
     static void printStandings(std::ostream& os, const std::vector<std::pair<std::string, int>>& standings, const std::string& title, int lungime) ;
 
-    void update_team_performance();
+    std::vector<std::string> update_team_performance();
     static int calculate_combined_rating(const Team* team, const Driver* driver);
     friend std::ostream& operator<<(std::ostream& os, const Season& season);
-    void recordSeasonChampions();
+    std::vector<std::string> recordSeasonChampions();
     
 
     template<typename T>

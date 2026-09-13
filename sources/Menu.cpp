@@ -1,34 +1,28 @@
 #include "Menu.h"
-#include <iostream>
+#include <sstream>
+#include <cstdlib>
+#include <stdexcept>
 
-Menu::Menu(GameManager& manager, Player& player, Season& season)
-    : manager(manager), player(player), season(season), my_team(manager.get_my_team()) {}
+Menu::Menu(GameManager& manager, Player& player, Season& season, GameView& view)
+    : manager(manager), player(player), season(season), view(view), my_team(manager.get_my_team()) {}
 
-void Menu::displayMenu() {
-    std::cout << "\n=== F1 Season Menu ===\n";
-    std::cout << "1. View Team Data\n";
-    std::cout << "2. Apply Upgrades\n";
-    std::cout << "3. Continue to Next Race\n";
-    std::cout << "4. Driver Swap\n";
-    std::cout << "5. Exit Season\n";
-    std::cout << "6. Exit Game\n";
-    std::cout << "Enter your choice: ";
-}
-
-bool Menu::isValidNumber(int& number) {
-    if (!(std::cin >> number)) {
-        std::cin.clear();
-        std::cin.ignore(10000, '\n');
-        return false;
-    }
-    return true;
+void Menu::displayMenu() const {
+    view.showMessage(
+        "\n=== F1 Season Menu ===\n"
+        "1. View Team Data\n"
+        "2. Apply Upgrades\n"
+        "3. Continue to Next Race\n"
+        "4. Driver Swap\n"
+        "5. Exit Season\n"
+        "6. Exit Game\n"
+    );
 }
 
 Menu* Menu::instance = nullptr;
 
-void Menu::init(GameManager& manager, Player& player, Season& season) {
+void Menu::init(GameManager& manager, Player& player, Season& season, GameView& view) {
     if (!instance) {
-        instance = new Menu(manager, player, season);
+        instance = new Menu(manager, player, season, view);
     }
 }
 
@@ -40,95 +34,97 @@ Menu& Menu::getInstance() {
 }
 
 bool Menu::handleDriver_swap() const {
-    std::cout << "\nSelect your driver to swap (1 or 2): \n";
-    std::cout << "1. " << my_team->get_driver_car(1).driver->get_name() << "\n";
-    std::cout << "2. " << my_team->get_driver_car(2).driver->get_name() << "\n";
+    std::ostringstream driverHeader;
+    driverHeader << "\nSelect your driver to swap (1 or 2): \n"
+                 << "1. " << my_team->get_driver_car(1).driver->get_name() << "\n"
+                 << "2. " << my_team->get_driver_car(2).driver->get_name() << "\n";
 
-    int driverNum;
-    if (!isValidNumber(driverNum) || (driverNum != 1 && driverNum != 2)) {
-        std::cout << "Invalid driver selection!\n";
+    const int driverNum = view.askChoice(driverHeader.str(), 1, 2);
+    if (driverNum < 1) {
+        view.showMessage("Invalid driver selection!\n");
         return false;
     }
 
     const Driver* my_driver = my_team->get_driver_car(driverNum).driver;
 
-    std::cout << "\nAvailable drivers for swap:\n";
-    std::cout << "1. Drivers from other teams\n";
-    std::cout << "2. Reserve drivers\n";
-    
-    int swapChoice;
-    if (!isValidNumber(swapChoice) || (swapChoice != 1 && swapChoice != 2)) {
-        std::cout << "Invalid choice!\n";
+    const int swapChoice = view.askChoice(
+        "\nAvailable drivers for swap:\n"
+        "1. Drivers from other teams\n"
+        "2. Reserve drivers\n",
+        1, 2);
+    if (swapChoice < 1) {
+        view.showMessage("Invalid choice!\n");
         return false;
     }
 
     if (swapChoice == 1) {
-        std::cout << "\nAvailable teams for swap:\n";
+        std::ostringstream teamsList;
+        teamsList << "\nAvailable teams for swap:\n";
         size_t displayedIndex = 1;
         std::vector<size_t> teamIndices;
 
         for (size_t i = 0; i < manager.get_teams().size(); ++i) {
             if (manager.get_teams()[i].get() != my_team) {
-                std::cout << displayedIndex << ". " << manager.get_teams()[i]->get_name() << "\n";
+                teamsList << displayedIndex << ". " << manager.get_teams()[i]->get_name() << "\n";
                 teamIndices.push_back(i);
                 ++displayedIndex;
             }
         }
+        teamsList << "\nSelect a team to swap with: ";
 
-        std::cout << "\nSelect a team to swap with: ";
-        int teamChoice;
-        if (!isValidNumber(teamChoice) || teamChoice < 1 ||
-            teamChoice > static_cast<int>(teamIndices.size())) {
-            std::cout << "Invalid team selection!\n";
+        const int teamChoice = view.askChoice(teamsList.str(), 1, static_cast<int>(teamIndices.size()));
+        if (teamChoice < 1) {
+            view.showMessage("Invalid team selection!\n");
             return false;
         }
 
         Team* selectedTeam = manager.get_teams()[teamIndices[teamChoice - 1]].get();
 
-        std::cout << "\nSelect a driver from " << selectedTeam->get_name() << " to swap with:\n";
-        std::cout << "1. " << selectedTeam->get_driver_car(1).driver->get_name() << "\n";
-        std::cout << "2. " << selectedTeam->get_driver_car(2).driver->get_name() << "\n";
+        std::ostringstream driverPrompt;
+        driverPrompt << "\nSelect a driver from " << selectedTeam->get_name() << " to swap with:\n"
+                     << "1. " << selectedTeam->get_driver_car(1).driver->get_name() << "\n"
+                     << "2. " << selectedTeam->get_driver_car(2).driver->get_name() << "\n";
 
-        int targetDriverNum;
-        if (!isValidNumber(targetDriverNum) || (targetDriverNum != 1 && targetDriverNum != 2)) {
-            std::cout << "Invalid driver selection!\n";
+        const int targetDriverNum = view.askChoice(driverPrompt.str(), 1, 2);
+        if (targetDriverNum < 1) {
+            view.showMessage("Invalid driver selection!\n");
             return false;
         }
 
         const Driver* other_driver = selectedTeam->get_driver_car(targetDriverNum).driver;
 
-        if (player.swap_try(my_driver, other_driver, *selectedTeam)) {
-            std::cout << "Swap successful!\n";
+        if (player.swap_try(view, my_driver, other_driver, *selectedTeam)) {
+            view.showMessage("Swap successful!\n");
             return true;
         }
 
-        std::cout << "Swap failed - insufficient market value.\n";
+        view.showMessage("Swap failed - insufficient market value.\n");
         return false;
 
     } else {
-        std::cout << "\nAvailable reserve drivers:\n";
+        std::ostringstream reserveList;
+        reserveList << "\nAvailable reserve drivers:\n";
         size_t displayedIndex = 1;
         std::vector<std::pair<Team*, int>> reserveIndices;
 
         for (const auto& team : manager.get_teams()) {
             if (const auto* reserve1 = team->get_reserve_driver(1)) {
-                std::cout << displayedIndex << ". " << team->get_name() << " - " 
-                         << reserve1->get_name() << "\n";
+                reserveList << displayedIndex << ". " << team->get_name() << " - "
+                            << reserve1->get_name() << "\n";
                 reserveIndices.emplace_back(team.get(), 1);
                 ++displayedIndex;
             }
             if (const auto* reserve2 = team->get_reserve_driver(2)) {
-                std::cout << displayedIndex << ". " << team->get_name() << " - " 
-                         << reserve2->get_name() << "\n";
+                reserveList << displayedIndex << ". " << team->get_name() << " - "
+                            << reserve2->get_name() << "\n";
                 reserveIndices.emplace_back(team.get(), 2);
                 ++displayedIndex;
             }
         }
 
-        int reserveChoice;
-        if (!isValidNumber(reserveChoice) || reserveChoice < 1 || 
-            reserveChoice > static_cast<int>(reserveIndices.size())) {
-            std::cout << "Invalid reserve driver selection!\n";
+        const int reserveChoice = view.askChoice(reserveList.str(), 1, static_cast<int>(reserveIndices.size()));
+        if (reserveChoice < 1) {
+            view.showMessage("Invalid reserve driver selection!\n");
             return false;
         }
 
@@ -136,46 +132,55 @@ bool Menu::handleDriver_swap() const {
         const Driver* reserve_driver = selectedTeam->get_reserve_driver(reserveIndex);
 
         if (selectedTeam->swap_with_reserve(my_driver, reserve_driver)) {
-            std::cout << "Swap with reserve driver successful!\n";
+            view.showMessage("Swap with reserve driver successful!\n");
             return true;
         }
-        
-        std::cout << "Swap with reserve driver failed.\n";
+
+        view.showMessage("Swap with reserve driver failed.\n");
         return false;
     }
 }
 
 bool Menu::handleChoice(size_t& current_race) const {
-    int action;
-    if (!isValidNumber(action)) {
-        std::cout << "Invalid input! Please enter a number.\n";
+    const int action = view.askChoice("Enter your choice: ", 1, 6);
+    if (action < 1) {
+        view.showMessage("Invalid choice! Please try again.\n");
         return true;
     }
 
     switch (action) {
         case 1:
-            player.show_data();
+            player.show_data(view);
             break;
         case 2:
-            player.upgrades();
+            player.upgrades(view);
             break;
-        case 3:
-            season.race(*manager.get_circuits()[current_race]);
+        case 3: {
+            const RaceOutcome outcome = season.race(*manager.get_circuits()[current_race]);
+            view.showMessage(outcome.weekend_report);
+            view.showMessage(outcome.fastest_lap_report);
+            for (const auto& event : outcome.team_events) {
+                view.showMessage(event);
+            }
+            if (!outcome.season_analysis.empty()) {
+                view.showMessage(outcome.season_analysis);
+            }
+            view.showMessage(outcome.standings_report);
             ++current_race;
             break;
+        }
         case 4:
             if (!handleDriver_swap()) {
-                std::cout << "Driver swap failed. Try again.\n";
+                view.showMessage("Driver swap failed. Try again.\n");
             }
-        break;
+            break;
         case 5:
-            std::cout << "Exiting the season.\n";
+            view.showMessage("Exiting the season.\n");
             return false;
         case 6:
-            std::cout << "Exiting the game.\n";
+            view.showMessage("Exiting the game.\n");
             exit(0);
         default:
-            std::cout << "Invalid choice! Please try again.\n";
             break;
     }
     return true;
@@ -190,9 +195,9 @@ void Menu::run() const {
         }
     }
 
-    std::cout << "Season complete!\n";
-    std::cout << season;
-    std::cout << "Press any key to exit...";
-    std::cin.ignore(10000, '\n');
-    std::cin.get();
+    view.showMessage("Season complete!\n");
+    std::ostringstream oss;
+    oss << season;
+    view.showMessage(oss.str());
+    view.askLine("Press any key to exit...");
 }

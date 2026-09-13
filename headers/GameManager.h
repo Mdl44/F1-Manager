@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "Season.h"
+#include "GameView.h"
 
 class GameManager {
     std::vector<std::unique_ptr<Team>> teams;
@@ -12,7 +13,7 @@ class GameManager {
 
 public:
     GameManager();
-    bool initialize();
+    bool initialize(GameView& view);
     [[nodiscard]] Team* get_my_team() const;
     std::vector<std::unique_ptr<Team>>& get_teams();
     std::vector<std::unique_ptr<RaceWeekend>>& get_circuits();

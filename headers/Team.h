@@ -3,10 +3,13 @@
 #include "Car.h"
 #include "Driver.h"
 #include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 struct Driver_Car{
     Driver* driver;
-    Car* car; 
+    Car* car;
 };
 
 class Team {
@@ -25,10 +28,13 @@ class Team {
     float budget = 0.0f;
     
 public:
-    void apply_downgrade();
+    // Every method below that narrates what it did (upgrades applied,
+    // retirements, swaps, ...) returns those messages instead of printing
+    // them, so a GameView (console today, SFML later) decides how to show them.
+    std::vector<std::string> apply_downgrade();
 
     void set_control(bool value);
-    bool swap(const Driver* const& my_driver, const Driver* const& other_driver, Team& other_team);
+    std::pair<bool, std::vector<std::string>> swap(const Driver* const& my_driver, const Driver* const& other_driver, Team& other_team);
     [[nodiscard]] bool is_player_controlled() const;
      Team(int id, std::string name, 
          std::unique_ptr<Car> car1, 
@@ -44,10 +50,10 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Team& team);
 
     void update_performance_points(int actual_position);
-    void apply_upgrade_for_ai_team();
-    void apply_upgrade_for_player_team(int points);
-    void convert_points_to_budget();
-    void check_retirements();
+    std::vector<std::string> apply_upgrade_for_ai_team();
+    std::vector<std::string> apply_upgrade_for_player_team(int points);
+    std::vector<std::string> convert_points_to_budget();
+    std::vector<std::string> check_retirements();
 
     [[nodiscard]] int get_upgrade_points() const;
     [[nodiscard]] int get_downgrade_points() const;

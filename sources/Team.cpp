@@ -1,7 +1,19 @@
 #include "Team.h"
 #include <iostream>
+#include <sstream>
 #include "Exceptions.h"
 #include "GameRules.h"
+
+namespace {
+    // Matches the default std::ostream formatting for a float (e.g. "12.5"
+    // instead of std::to_string's fixed "12.500000"), for messages built as
+    // strings instead of printed straight to a stream.
+    std::string format_float(const float value) {
+        std::ostringstream oss;
+        oss << value;
+        return oss.str();
+    }
+}
 
 Team::Team(const int id,
            std::string name, 
@@ -67,13 +79,10 @@ void Team::update_performance_points(const int actual_position) {
     else if (diff >= GameRules::Team::DOWNGRADE_POSITION_THRESHOLD) downgrade_points += 1;
 }
 
-void Team::apply_upgrade_for_ai_team() {
+std::vector<std::string> Team::apply_upgrade_for_ai_team() {
     if (upgrade_points <= 0) {
-        std::cout << "No upgrade points available for " << name << ".\n";
-        return;
+        return {"No upgrade points available for " + name + ".\n"};
     }
-
-    std::cout << "\nAI team " << name << " is applying upgrades...\n";
 
     for (int i = 0; i < upgrade_points; i++) {
         if (car1) car1->apply_upgrades(1);
@@ -84,16 +93,16 @@ void Team::apply_upgrade_for_ai_team() {
 
     const int points_used = upgrade_points;
     upgrade_points = 0;
-    std::cout << "Applied " << points_used << " upgrade points to the AI team.\n";
+    return {
+        "\nAI team " + name + " is applying upgrades...\n",
+        "Applied " + std::to_string(points_used) + " upgrade points to the AI team.\n"
+    };
 }
 
-void Team::apply_upgrade_for_player_team(const int points) {
+std::vector<std::string> Team::apply_upgrade_for_player_team(const int points) {
     if (points <= 0 || points > upgrade_points) {
-        std::cout << "Invalid upgrade points for " << name << ".\n";
-        return;
+        return {"Invalid upgrade points for " + name + ".\n"};
     }
-
-    std::cout << "\nPlayer team " << name << " is applying upgrades...\n";
 
     for (int i = 0; i < points; i++) {
         if (car1) car1->apply_upgrades(1);
@@ -103,13 +112,14 @@ void Team::apply_upgrade_for_player_team(const int points) {
     }
 
     upgrade_points -= points;
-    std::cout << "Applied " << points << " upgrade points to the team.\n";
+    return {
+        "\nPlayer team " + name + " is applying upgrades...\n",
+        "Applied " + std::to_string(points) + " upgrade points to the team.\n"
+    };
 }
 
-void Team::apply_downgrade() {
-    if (downgrade_points <= 0) return;
-
-    std::cout << "\nApplying performance loss for " << name << "...\n";
+std::vector<std::string> Team::apply_downgrade() {
+    if (downgrade_points <= 0) return {};
 
     for (int i = 0; i < downgrade_points; i++) {
         if (car1) car1->apply_downgrades(1);
@@ -119,6 +129,7 @@ void Team::apply_downgrade() {
     }
 
     downgrade_points = 0;
+    return {"\nApplying performance loss for " + name + "...\n"};
 }
 
 Team::~Team() = default;
@@ -158,27 +169,29 @@ Team& Team::operator=(const Team& other) {
     return *this;
 }
 
-bool Team::swap(const Driver* const& my_driver, const Driver* const& other_driver, Team& other_team) {
+std::pair<bool, std::vector<std::string>> Team::swap(const Driver* const& my_driver, const Driver* const& other_driver, Team& other_team) {
     if (!my_driver || !other_driver) {
         throw InvalidDriverException("Null driver reference in swap operation");
     }
 
+    std::vector<std::string> events;
+
     float total_value = my_driver->get_performance().market_value + budget;
     if (total_value < other_driver->get_performance().market_value) {
-        std::cout << "Can't swap: insufficient combined value (driver + budget)\n";
-        std::cout << "Your value: " << total_value << " (driver: " 
-                 << my_driver->get_performance().market_value 
-                 << " + budget: " << budget << ")\n";
-        std::cout << "Target driver value: " << other_driver->get_performance().market_value << "\n";
-        return false;
+        events.push_back("Can't swap: insufficient combined value (driver + budget)\n");
+        events.push_back("Your value: " + format_float(total_value) + " (driver: "
+                 + format_float(my_driver->get_performance().market_value)
+                 + " + budget: " + format_float(budget) + ")\n");
+        events.push_back("Target driver value: " + format_float(other_driver->get_performance().market_value) + "\n");
+        return {false, events};
     }
 
     if (my_driver->get_performance().market_value < other_driver->get_performance().market_value) {
         const float difference = other_driver->get_performance().market_value -
                           my_driver->get_performance().market_value;
         budget -= difference;
-        std::cout << "Used " << difference << " from budget for swap.\n";
-        std::cout << "Remaining budget: " << budget << "\n";
+        events.push_back("Used " + format_float(difference) + " from budget for swap.\n");
+        events.push_back("Remaining budget: " + format_float(budget) + "\n");
     }
 
     const Car* my_team_car = nullptr;
@@ -196,8 +209,8 @@ bool Team::swap(const Driver* const& my_driver, const Driver* const& other_drive
     }
 
     if (!my_team_car || !other_team_car) {
-        std::cout << "Driver or car not found for swap" << std::endl;
-        return false;
+        events.push_back("Driver or car not found for swap\n");
+        return {false, events};
     }
 
     if (driver1.get() == my_driver) {
@@ -214,8 +227,8 @@ bool Team::swap(const Driver* const& my_driver, const Driver* const& other_drive
         }
     }
 
-    std::cout << "Swap completed successfully\n";
-    return true;
+    events.push_back("Swap completed successfully\n");
+    return {true, events};
 }
 
 Driver_Car Team::get_driver_car(const int index) const {
@@ -251,43 +264,52 @@ std::ostream& operator<<(std::ostream& os, const Team& team) {
        << "\nSecond Driver's Car:\n" << *team.car2;
     return os;
 }
-void Team::convert_points_to_budget() {
+std::vector<std::string> Team::convert_points_to_budget() {
     if (upgrade_points > 0) {
         const float conversion = static_cast<float>(upgrade_points) * GameRules::Team::UPGRADE_TO_BUDGET_RATE;
         budget += conversion;
-        std::cout << name << " converted " << upgrade_points 
-                 << " upgrade points to " << conversion << " budget.\n";
+        std::vector<std::string> events = {
+            name + " converted " + std::to_string(upgrade_points) +
+            " upgrade points to " + format_float(conversion) + " budget.\n"
+        };
         upgrade_points = 0;
+        return events;
     }
+    return {};
 }
-void Team::check_retirements() {
+
+std::vector<std::string> Team::check_retirements() {
+    std::vector<std::string> events;
+
     if (driver1 && driver1->get_age() >= GameRules::Driver::RETIREMENT_AGE) {
-        std::cout << "\n=== DRIVER RETIREMENT ===" << std::endl;
-        std::cout << driver1->get_name() << " has retired at age " << driver1->get_age() << std::endl;
-        
+        events.push_back("\n=== DRIVER RETIREMENT ===\n");
+        events.push_back(driver1->get_name() + " has retired at age " + std::to_string(driver1->get_age()) + "\n");
+
         if (reserve1) {
-            std::cout << "Promoting reserve driver " << reserve1->get_name() << std::endl;
+            events.push_back("Promoting reserve driver " + reserve1->get_name() + "\n");
             promote_reserve_driver(1, 1);
         } else if (reserve2) {
-            std::cout << "Promoting reserve driver " << reserve2->get_name() << std::endl;
+            events.push_back("Promoting reserve driver " + reserve2->get_name() + "\n");
             promote_reserve_driver(2, 1);
         } else {
-            std::cout << "No reserve drivers available for promotion!" << std::endl;
+            events.push_back("No reserve drivers available for promotion!\n");
         }
     }
 
     if (driver2 && driver2->get_age() >= GameRules::Driver::RETIREMENT_AGE) {
-        std::cout << "\n=== DRIVER RETIREMENT ===" << std::endl;
-        std::cout << driver2->get_name() << " has retired at age " << driver2->get_age() << std::endl;
-        
+        events.push_back("\n=== DRIVER RETIREMENT ===\n");
+        events.push_back(driver2->get_name() + " has retired at age " + std::to_string(driver2->get_age()) + "\n");
+
         if (reserve1) {
-            std::cout << "Promoting reserve driver " << reserve1->get_name() << std::endl;
+            events.push_back("Promoting reserve driver " + reserve1->get_name() + "\n");
             promote_reserve_driver(1, 2);
         } else if (reserve2) {
-            std::cout << "Promoting reserve driver " << reserve2->get_name() << std::endl;
+            events.push_back("Promoting reserve driver " + reserve2->get_name() + "\n");
             promote_reserve_driver(2, 2);
         } else {
-            std::cout << "No reserve drivers available for promotion!" << std::endl;
+            events.push_back("No reserve drivers available for promotion!\n");
         }
     }
+
+    return events;
 }

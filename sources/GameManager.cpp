@@ -1,13 +1,13 @@
 #include "GameManager.h"
 #include <fstream>
-#include <iostream>
+#include <sstream>
 #include "TopTeam.h"
 #include "Exceptions.h"
 #include "GameRules.h"
 
 GameManager::GameManager() : my_team(nullptr) {}
 
-bool GameManager::initialize() {
+bool GameManager::initialize(GameView& view) {
     std::vector<std::vector<int>> car_stats;
     std::ifstream car_file("date_masini.txt");
     if (!car_file) {
@@ -130,22 +130,21 @@ bool GameManager::initialize() {
         }
     }
 
-    std::cout << "Choose your option:\n";
-    std::cout << "1. Select existing team\n";
-    std::cout << "2. Create custom team\n";
-    
-    int option;
-    std::cin >> option;
-    std::cin.ignore();
+    const int option = view.askChoice(
+        "Choose your option:\n"
+        "1. Select existing team\n"
+        "2. Create custom team\n",
+        1, 2);
 
     if (option == 1) {
-        std::cout << "\nSelect your team:\n";
+        std::ostringstream team_list;
+        team_list << "\nSelect your team:\n";
         for (size_t i = 0; i < teams.size(); ++i) {
-            std::cout << i + 1 << ". " << teams[i]->get_name() << "\n";
+            team_list << i + 1 << ". " << teams[i]->get_name() << "\n";
         }
 
-        size_t choice;
-        if (!(std::cin >> choice) || choice < 1 || choice > teams.size()) {
+        const int choice = view.askChoice(team_list.str(), 1, static_cast<int>(teams.size()));
+        if (choice < 1) {
             throw InvalidTeamException("Invalid team selection");
         }
         my_team = teams[choice - 1].get();
@@ -153,9 +152,7 @@ bool GameManager::initialize() {
     else if (option == 2) {
         constexpr float initial_budget = GameRules::CustomTeam::INITIAL_BUDGET;
 
-        std::cout << "Enter your team name: ";
-        std::string custom_team_name;
-        std::getline(std::cin, custom_team_name);
+        const std::string custom_team_name = view.askLine("Enter your team name: ");
 
         constexpr int base_stat = GameRules::CustomTeam::BASE_CAR_STAT;
         auto custom_car1 = std::make_unique<Car>(base_stat, base_stat, base_stat, base_stat);
@@ -183,25 +180,27 @@ bool GameManager::initialize() {
         std::vector<std::unique_ptr<Driver>> selected_drivers;
         float remaining_budget = initial_budget;
 
-        std::cout << "\nSelect 4 drivers (2 main, 2 reserve) within budget of " << initial_budget << ":\n";
-        
+        std::ostringstream budget_intro;
+        budget_intro << "\nSelect 4 drivers (2 main, 2 reserve) within budget of " << initial_budget << ":\n";
+        view.showMessage(budget_intro.str());
+
         for (int i = 1; i <= 4; i++) {
-            std::cout << "\nSelecting " << (i <= 2 ? "main" : "reserve") << " driver " 
-                     << (i <= 2 ? i : i-2) << "\n";
-            std::cout << "Remaining budget: " << remaining_budget << "\n\n";
-            
+            std::ostringstream driver_list;
+            driver_list << "\nSelecting " << (i <= 2 ? "main" : "reserve") << " driver "
+                        << (i <= 2 ? i : i - 2) << "\n"
+                        << "Remaining budget: " << remaining_budget << "\n\n";
+
             for (size_t j = 0; j < available_drivers.size(); j++) {
                 const auto& driver = available_drivers[j];
                 float driver_value = driver->get_performance().market_value;
                 if (driver_value <= remaining_budget) {
-                    std::cout << j + 1 << ". " << driver->get_name() 
-                             << " (Value: " << driver_value << ")\n";
+                    driver_list << j + 1 << ". " << driver->get_name()
+                                << " (Value: " << driver_value << ")\n";
                 }
             }
 
-            size_t choice;
-            std::cin >> choice;
-            if (choice < 1 || choice > available_drivers.size()) {
+            const int choice = view.askChoice(driver_list.str(), 1, static_cast<int>(available_drivers.size()));
+            if (choice < 1) {
                 throw InvalidDriverException("Invalid driver selection");
             }
 

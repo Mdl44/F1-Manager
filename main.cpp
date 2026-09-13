@@ -2,29 +2,30 @@
 #include "Menu.h"
 #include "Exceptions.h"
 #include "RegulationChanges.h"
+#include "ConsoleView.h"
 
 int main() {
+    ConsoleView view;
     try {
         GameManager game_manager;
-        if (!game_manager.initialize()) {
+        if (!game_manager.initialize(view)) {
             return 1;
         }
 
-        std::cout << "How many seasons would you like to play? (1-10): ";
-        int num_seasons;
-        std::cin >> num_seasons;
-        
-        if (num_seasons < 1 || num_seasons > 10) {
-            std::cout << "Invalid number of seasons. Defaulting to 1 season.\n";
+        int num_seasons = view.askChoice("How many seasons would you like to play? (1-10): ", 1, 10);
+        if (num_seasons < 1) {
+            view.showMessage("Invalid number of seasons. Defaulting to 1 season.\n");
             num_seasons = 1;
         }
 
         for (int current_season = 1; current_season <= num_seasons; current_season++) {
-            std::cout << "\n=== Starting Season " << current_season << " ===\n";
+            view.showMessage("\n=== Starting Season " + std::to_string(current_season) + " ===\n");
             if (current_season > 1 && (current_season - 1) % 3 == 0) {
-                RegulationChanges::apply_regulation_changes(game_manager.get_teams());
+                for (const auto& event : RegulationChanges::apply_regulation_changes(game_manager.get_teams())) {
+                    view.showMessage(event);
+                }
             }
-    
+
             std::vector<Team*> team_ptr;
             team_ptr.reserve(game_manager.get_teams().size());
             for (const auto& team : game_manager.get_teams()) {
@@ -34,12 +35,14 @@ int main() {
             try {
                 Season season(team_ptr, static_cast<int>(game_manager.get_circuits().size()));
                 const Player player(game_manager.get_my_team());
-                Menu::init(game_manager, const_cast<Player&>(player), season);
+                Menu::init(game_manager, const_cast<Player&>(player), season, view);
                 Menu::getInstance().run();
 
                 for (const auto& team : game_manager.get_teams()) {
-                    team->convert_points_to_budget();
-                    
+                    for (const auto& event : team->convert_points_to_budget()) {
+                        view.showMessage(event);
+                    }
+
                     if (const auto d1 = team->get_driver_car(1).driver) {
                         d1->increase_age();
                     }
@@ -53,7 +56,9 @@ int main() {
                         r2->increase_age();
                     }
 
-                    team->check_retirements();
+                    for (const auto& event : team->check_retirements()) {
+                        view.showMessage(event);
+                    }
                 }
 
             } catch (const RaceWeekendException& e) {

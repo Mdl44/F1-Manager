@@ -1,7 +1,7 @@
 #include "Season.h"
 #include <algorithm>
-#include <iostream>
 #include <iterator>
+#include <sstream>
 #include "Exceptions.h"
 #include "WeatherConditionFactory.h"
 #include "Stats.h"
@@ -61,7 +61,8 @@ int Season::calculate_combined_rating(const Team* team, const Driver* driver) {
     return 0;
 }
 
-void Season::race(RaceWeekend& weekend) {
+RaceOutcome Season::race(RaceWeekend& weekend) {
+    RaceOutcome outcome;
 
     std::vector<std::pair<Driver*, int>> combined_ratings;
     weekend.set_teams(teams);
@@ -97,62 +98,77 @@ void Season::race(RaceWeekend& weekend) {
         race_performances.add_value(results[0].first->get_name(), 
                                   results[0].second, true);
     }
-    std::cout << weekend;
+    std::ostringstream weekend_stream;
+    weekend_stream << weekend;
+    outcome.weekend_report = weekend_stream.str();
 
     const auto race_laps = weekend.get_lap_times();
     auto [fastest_driver, fastest_time, lap_number] = find_fastest_lap<Driver*>(race_laps);
     fastest_lap_driver = fastest_driver;
-    
+
     const int minutes = static_cast<int>((fastest_time % (1000 * 60 * 60)) / (1000 * 60));
     const int seconds = static_cast<int>((fastest_time % (1000 * 60)) / 1000);
     const int milliseconds = static_cast<int>(fastest_time % 1000);
-    
-    std::cout << "\nFastest Lap:\n";
-    std::cout << fastest_driver->get_name() << " - " 
+
+    std::ostringstream lap_stream;
+    lap_stream << "\nFastest Lap:\n";
+    lap_stream << fastest_driver->get_name() << " - "
               << minutes << ":"
               << (seconds < 10 ? "0" : "") << seconds << "."
               << (milliseconds < 100 ? "0" : "")
               << (milliseconds < 10 ? "0" : "")
               << milliseconds
               << " (Lap " << lap_number << ")\n";
+    outcome.fastest_lap_report = lap_stream.str();
 
-    standings(results);
+    outcome.team_events = standings(results);
+
     if (current_race == races) {
-        recordSeasonChampions();
-        std::cout << "\nSEASON PERFORMANCE ANALYSIS\n";
-        std::cout << std::string(60, '-') << "\n";
-        
+        std::ostringstream analysis_stream;
+        for (const auto& event : recordSeasonChampions()) {
+            analysis_stream << event;
+        }
+
+        analysis_stream << "\nSEASON PERFORMANCE ANALYSIS\n";
+        analysis_stream << std::string(60, '-') << "\n";
+
         auto best_cars = car_ratings.get_all_highest();
-        std::cout << "Best Car" << (best_cars.size() > 1 ? "s" : "") << ":\n";
+        analysis_stream << "Best Car" << (best_cars.size() > 1 ? "s" : "") << ":\n";
         for (const auto& [car, rating] : best_cars) {
-            std::cout << "  " << car << " (Rating: " << rating << ")\n";
+            analysis_stream << "  " << car << " (Rating: " << rating << ")\n";
         }
-        
+
         auto best_drivers = driver_ratings.get_all_highest();
-        std::cout << "\nTop Driver Rating" << (best_drivers.size() > 1 ? "s" : "") << ":\n";
+        analysis_stream << "\nTop Driver Rating" << (best_drivers.size() > 1 ? "s" : "") << ":\n";
         for (const auto& [driver, rating] : best_drivers) {
-            std::cout << "  " << driver << " (Rating: " << rating << ")\n";
+            analysis_stream << "  " << driver << " (Rating: " << rating << ")\n";
         }
-        
+
         auto pole_leaders = quali_performances.get_all_most_wins();
-        std::cout << "\nMost Pole Position" << (pole_leaders.size() > 1 ? "s shared" : "") << ":\n";
+        analysis_stream << "\nMost Pole Position" << (pole_leaders.size() > 1 ? "s shared" : "") << ":\n";
         for (const auto& [driver, poles] : pole_leaders) {
-            std::cout << "  " << driver << " (" << poles << " poles)\n";
+            analysis_stream << "  " << driver << " (" << poles << " poles)\n";
         }
-        
+
         auto win_leaders = race_performances.get_all_most_wins();
-        std::cout << "\nMost Race Win" << (win_leaders.size() > 1 ? "s shared" : "") << ":\n";
+        analysis_stream << "\nMost Race Win" << (win_leaders.size() > 1 ? "s shared" : "") << ":\n";
         for (const auto& [driver, wins] : win_leaders) {
-            std::cout << "  " << driver << " (" << wins << " wins)\n";
+            analysis_stream << "  " << driver << " (" << wins << " wins)\n";
         }
-        
-        std::cout << std::string(60, '-') << "\n";
+
+        analysis_stream << std::string(60, '-') << "\n";
+        outcome.season_analysis = analysis_stream.str();
     }
-    std::cout << *this;
+
+    std::ostringstream standings_stream;
+    standings_stream << *this;
+    outcome.standings_report = standings_stream.str();
+
     current_race++;
+    return outcome;
 }
 
-void Season::standings(const std::vector<std::pair<Driver*, long long>>& race_results) {
+std::vector<std::string> Season::standings(const std::vector<std::pair<Driver*, long long>>& race_results) {
     auto& stats = Stats::getInstance();
     const auto& points = GameRules::Season::POINTS_TABLE;
 
@@ -174,10 +190,11 @@ void Season::standings(const std::vector<std::pair<Driver*, long long>>& race_re
             }
         }
     }
-    update_team_performance();
+    return update_team_performance();
 }
 
-void Season::update_team_performance() {
+std::vector<std::string> Season::update_team_performance() {
+    std::vector<std::string> events;
     std::vector<std::pair<std::string, int>> sorted_standings(team_points.begin(), team_points.end());
     std::ranges::sort(sorted_standings, [](const auto& a, const auto& b) {
         return a.second > b.second;
@@ -190,21 +207,24 @@ void Season::update_team_performance() {
                 team->update_performance_points(static_cast<int>(pos + 1));
 
                 if (team->get_downgrade_points() > 0) {
-                    team->apply_downgrade();
+                    auto downgrade_events = team->apply_downgrade();
+                    events.insert(events.end(), downgrade_events.begin(), downgrade_events.end());
                 }
 
                 if (team->is_player_controlled()) {
                     if (team->get_upgrade_points() > 0) {
-                        std::cout << "Player Team has " << team->get_upgrade_points() << " upgrade points available.\n";
+                        events.push_back("Player Team has " + std::to_string(team->get_upgrade_points()) + " upgrade points available.\n");
                     }
                 } else if (team->get_upgrade_points() >= GameRules::Team::AI_AUTO_UPGRADE_THRESHOLD) {
-                    team->apply_upgrade_for_ai_team();
-                    std::cout << "AI Team " << team->get_name() << " applied upgrades.\n";
+                    auto upgrade_events = team->apply_upgrade_for_ai_team();
+                    events.insert(events.end(), upgrade_events.begin(), upgrade_events.end());
+                    events.push_back("AI Team " + team->get_name() + " applied upgrades.\n");
                 }
                 break;
             }
         }
     }
+    return events;
 }
 
 void Season::printStandings(std::ostream& os, const std::vector<std::pair<std::string, int>>& standings, const std::string& title, const int lungime) {
@@ -283,9 +303,10 @@ std::ostream& operator<<(std::ostream& os, const Season& season) {
     
     return os;
 }
-void Season::recordSeasonChampions() {
+std::vector<std::string> Season::recordSeasonChampions() {
+    std::vector<std::string> events;
     auto& stats = Stats::getInstance();
-    
+
     std::vector<std::pair<std::string, int>> driver_standings(
         driver_points.begin(),
         driver_points.end()
@@ -306,8 +327,8 @@ void Season::recordSeasonChampions() {
                     (d2 && d2->get_name() == driverName)) {
                     const int bonus = GameRules::Season::CHAMPIONSHIP_BONUS_POSITIONS - static_cast<int>(i);
                     team->update_performance_points(-bonus);
-                    std::cout << team->get_name() << " received " << bonus
-                             << " upgrade points for driver position " << (i+1) << "\n";
+                    events.push_back(team->get_name() + " received " + std::to_string(bonus) +
+                             " upgrade points for driver position " + std::to_string(i + 1) + "\n");
                     break;
                 }
             }
@@ -330,11 +351,13 @@ void Season::recordSeasonChampions() {
                 if (team->get_name() == teamName) {
                     const int bonus = GameRules::Season::CHAMPIONSHIP_BONUS_POSITIONS - static_cast<int>(i);
                     team->update_performance_points(-bonus);
-                    std::cout << team->get_name() << " received " << bonus
-                             << " upgrade points for constructor position " << (i+1) << "\n";
+                    events.push_back(team->get_name() + " received " + std::to_string(bonus) +
+                             " upgrade points for constructor position " + std::to_string(i + 1) + "\n");
                     break;
                 }
             }
         }
     }
+
+    return events;
 }
