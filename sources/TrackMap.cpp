@@ -41,6 +41,7 @@ TrackMap::TrackMap(const std::string& circuit_name) {
     }
 }
 
+// cppcheck-suppress unusedFunction ; public API, not yet called until the SFML view renders it
 const std::vector<TrackPoint>& TrackMap::get_points() const {
     return points;
 }
