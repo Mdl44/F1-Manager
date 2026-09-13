@@ -61,9 +61,7 @@ Driver& Driver::operator=(const Driver& other) {
     return *this;
 }
 
-Driver::~Driver() {
-    std::cout << "Destructor driver: " << name << std::endl;
-}
+Driver::~Driver() = default;
 
 const std::string& Driver::get_name() const {
     return name;

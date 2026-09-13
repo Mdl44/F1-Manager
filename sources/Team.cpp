@@ -60,11 +60,6 @@ bool Team::swap_with_reserve(const Driver* const& main_driver, const Driver* con
 
 void Team::update_performance_points(const int actual_position) {
     const int diff = actual_position - position;
-    /*
-    std::cout << "Team " << name << " - Initial pos: " << position 
-              << ", Current pos: " << actual_position 
-              << ", Diff: " << diff << std::endl;
-              */
 
     if (diff == 0) upgrade_points++;
     else if (diff < 0) upgrade_points += 1;
@@ -125,9 +120,7 @@ void Team::apply_downgrade() {
     downgrade_points = 0;
 }
 
-Team::~Team() {
-    std::cout << "Destructor Team: " << name << std::endl;
-}
+Team::~Team() = default;
 
 Team::Team(const Team& other)
     : team_id(other.team_id),

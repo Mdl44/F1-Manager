@@ -31,7 +31,6 @@ bool Player::swap_try(const Driver* const& my_driver, const Driver* const& other
 }
 
 Player::~Player() {
-    std::cout << "Destroying player.\n";
     if (my_team) {
         my_team->set_control(false);
         my_team = nullptr;

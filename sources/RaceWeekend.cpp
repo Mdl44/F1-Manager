@@ -26,9 +26,7 @@ int random_time_generator(const int maxOffset = 500) {
     return distribution(generator); 
 }
 
-RaceWeekend::~RaceWeekend() { 
-    std::cout << "Deleting RaceWeekend " << name << std::endl; 
-} 
+RaceWeekend::~RaceWeekend() = default;
 
 RaceWeekend::RaceWeekend(const RaceWeekend& other) 
     : name(other.name), 
@@ -69,49 +67,6 @@ void swap(RaceWeekend& first, RaceWeekend& second) noexcept {
     swap(first.race_weather, second.race_weather);
     swap(first.teams, second.teams);
 }
-
-
-/*
-void RaceWeekend::print_pre_weather_stats() const {
-    std::cout << "\n=== Pre-Weather Stats ===\n";
-    if (!teams.empty()) {
-        for (const auto* team : teams) {
-            std::cout << "Team: " << team->get_name() << "\n";
-            Driver_Car pair1 = team->get_driver_car(1);
-            Driver_Car pair2 = team->get_driver_car(2);
-
-            if (pair1.driver && pair1.car) {
-                std::cout << "Driver 1: " << pair1.driver->get_name()
-                         << " (Rating: " << pair1.driver->get_performance().overall_rating << ")"
-                         << " Car Rating: " << pair1.car->get_performance().overall_rating << "\n";
-            }
-
-            if (pair2.driver && pair2.car) {
-                std::cout << "Driver 2: " << pair2.driver->get_name()
-                         << " (Rating: " << pair2.driver->get_performance().overall_rating << ")"
-                         << " Car Rating: " << pair2.car->get_performance().overall_rating << "\n";
-            }
-            std::cout << "\n";
-        }
-    }
-}
-
-void RaceWeekend::print_post_weather_stats() const {
-    std::cout << "\n=== Post-Weather Stats ===\n";
-    for (const auto* team : teams) {
-        Driver_Car pair1 = team->get_driver_car(1);
-        Driver_Car pair2 = team->get_driver_car(2);
-        std::cout << "Team: " << team->get_name() << "\n";
-        std::cout << "D1: " << (pair1.driver ? pair1.driver->get_name() : "None")
-                  << " (" << (pair1.driver ? pair1.driver->get_performance().overall_rating : 0) << ")"
-                  << " Car: " << (pair1.car ? pair1.car->get_performance().overall_rating : 0) << "\n";
-        std::cout << "D2: " << (pair2.driver ? pair2.driver->get_name() : "None")
-                  << " (" << (pair2.driver ? pair2.driver->get_performance().overall_rating : 0) << ")"
-                  << " Car: " << (pair2.car ? pair2.car->get_performance().overall_rating : 0) << "\n\n";
-    }
-}
-*/
-
 void RaceWeekend::setup_weather() {
     quali_weather = WeatherConditionFactory::getWeather(night_race, rain);
     race_weather = WeatherConditionFactory::getWeather(night_race, rain);
@@ -155,9 +110,7 @@ std::pair<double, double> RaceWeekend::calculate_performance_factors(const Drive
 }
 
 void RaceWeekend::quali(const std::vector<std::pair<Driver*, int>>& drivers) {
-    //print_pre_weather_stats();
     apply_weather_effects(quali_weather);
-    //print_post_weather_stats();
 
     quali_results.clear();
     for (const auto& [driver, rating] : drivers) {
@@ -183,9 +136,7 @@ void RaceWeekend::quali(const std::vector<std::pair<Driver*, int>>& drivers) {
 }
 
 std::vector<std::pair<Driver*, long long>> RaceWeekend::race() {
-    //print_pre_weather_stats();
     apply_weather_effects(race_weather);
-    //print_post_weather_stats();
 
     race_results.clear();
     for (size_t i = 0; i < quali_results.size(); ++i) {

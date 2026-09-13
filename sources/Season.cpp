@@ -27,9 +27,7 @@ Season::Season(const std::vector<Team*>& team_list, const int total_races)
         team_points[team->get_name()] = 0;
     }
 }  
-Season::~Season() {
-    std::cout << "Destroying season." << std::endl;
-}
+Season::~Season() = default;
 
 Season::Season(const Season& other)
     : teams(other.teams),

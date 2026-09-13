@@ -39,9 +39,7 @@ Car& Car::operator=(const Car& other) {
     return *this;
 }
 
-Car::~Car() {
-    std::cout << "destructor car" << std::endl;
-}
+Car::~Car() = default;
 
 CarPerformance Car::get_performance() const {
     return {rating(), aerodynamics, powertrain, durability, chasis};
